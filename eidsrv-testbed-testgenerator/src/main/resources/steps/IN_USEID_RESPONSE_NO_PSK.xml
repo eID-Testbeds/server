@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Step xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd" >
+	<p:TargetInterface>eID-Interface</p:TargetInterface>
+	<!-- Schema name -->
+	<!--<p:Schema>PROVIDE_XSD</p:Schema> -->
+	<!-- HTTP Tokens -->
+	<p:HttpStepToken>
+		<p:name>HTTP_STATUS_CODE</p:name>
+		<p:value>HTTP/1.1 200 OK</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:HttpStepToken>
+	<p:HttpStepToken>
+		<p:name>Content-Type</p:name>
+		<p:value>text/xml;charset=utf-8</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:HttpStepToken>
+	<!-- Protocol tokens -->
+	<p:ProtocolStepToken>
+		<p:name>Session</p:name>
+		<p:value></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>ID</p:name>
+		<p:parentName>Session</p:parentName>
+		<p:value></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>PSK</p:name>
+		<p:value></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>ID</p:name>
+		<p:parentName>PSK</p:parentName>
+		<p:value></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>Key</p:name>
+		<p:parentName>PSK</p:parentName>
+		<p:value></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>ResultMajor</p:name>
+		<p:value>http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ToSave parentName="Session" placeholder="ESERVICE_SESSION">ID</p:ToSave>
+	<p:ToSave parentName="PSK" placeholder="SESSIONIDENTIFIER">ID</p:ToSave>
+</p:Step>

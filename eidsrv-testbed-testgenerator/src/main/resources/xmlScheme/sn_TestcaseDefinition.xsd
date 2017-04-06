@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.secunet.com" targetNamespace="http://www.secunet.com"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+	<xs:element name="testcaseDefinition">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="name" minOccurs="1" maxOccurs="1"
+					type="xs:string" />
+				<xs:element name="description" minOccurs="1" maxOccurs="1"
+					type="xs:string" />
+				<xs:element name="modulePath" minOccurs="1" maxOccurs="1"
+					type="modulePath" />
+				<xs:element name="manualExplanation" minOccurs="0"
+					maxOccurs="1" type="xs:string" />
+				<xs:element name="profiles" minOccurs="1" type="profiles" />
+				<xs:element name="eservice" minOccurs="1" maxOccurs="1"
+					type="eService" default="A" />
+				<xs:element name="clientExplanation" minOccurs="0"
+					maxOccurs="1" type="xs:string">
+					<xs:annotation>
+            			<xs:documentation>This text will be displayed for test subjects which do not have the capability to handle multiple clients.</xs:documentation>
+          			</xs:annotation>
+					</xs:element>
+				<xs:element name="eidcard" minOccurs="0" maxOccurs="1"
+					type="eidCard" />
+				<xs:element name="certificateBaseNames" type="certNames"
+					minOccurs="0" maxOccurs="1" />
+				<xs:element name="steps" type="stepsType" />
+				<xs:element name="variables" type="variables" minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:simpleType name="eService">
+		<xs:restriction base="xs:string">
+			<!-- using cert set 1 -->
+			<xs:enumeration value="A" />
+			<xs:enumeration value="B" />
+			<xs:enumeration value="C" />
+			<xs:enumeration value="D" />
+			<xs:enumeration value="EDSA" />
+			<xs:enumeration value="ERSA" />
+			<xs:enumeration value="EECDSA" />
+			<!-- using cert set 2 -->
+			<xs:enumeration value="A2" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="eidCard">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EIDCARD_1" />
+			<xs:enumeration value="EIDCARD_2" />
+			<xs:enumeration value="EIDCARD_3" />
+			<xs:enumeration value="EIDCARD_4" />
+			<xs:enumeration value="EIDCARD_5" />
+			<xs:enumeration value="EIDCARD_6" />
+			<xs:enumeration value="EIDCARD_7" />
+			<xs:enumeration value="EIDCARD_8" />
+			<xs:enumeration value="EIDCARD_9" />
+			<xs:enumeration value="EIDCARD_10" />
+			<xs:enumeration value="EIDCARD_11" />
+			<xs:enumeration value="EIDCARD_12_1" />
+			<xs:enumeration value="EIDCARD_12_2" />
+			<xs:enumeration value="EIDCARD_12_3" />
+			<xs:enumeration value="EIDCARD_13" />
+			<xs:enumeration value="EIDCARD_14" />
+			<xs:enumeration value="EIDCARD_15" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="modulePath">
+		<xs:sequence>
+			<xs:element name="node" minOccurs="1" maxOccurs="unbounded"
+				type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="stepsType">
+		<xs:choice minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="step" minOccurs="0" maxOccurs="unbounded"
+				type="testStepType" />
+			<xs:element name="reference" type="referenceType"
+				minOccurs="1" maxOccurs="unbounded" />
+		</xs:choice>
+	</xs:complexType>
+
+
+	<xs:complexType name="referenceType">
+		<xs:simpleContent>
+			<xs:extension base="testcaseNameType">
+				<xs:attribute name="targetInterface" type="targetInterfaceType"
+					use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:simpleType name="testcaseNameType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="targetInterfaceType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="eID-Interface" />
+			<xs:enumeration value="eCard-API" />
+			<xs:enumeration value="SAML" />
+			<xs:enumeration value="Attached" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="testStepType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="IN_ATTACHED_WEBPAGE" />
+			<xs:enumeration value="IN_BAD_REQUEST" />
+			<xs:enumeration value="IN_DID_AUTHENTICATE_EAC_1_INPUTTYPE" />
+			<xs:enumeration value="IN_DID_AUTHENTICATE_EAC_1_INPUTTYPE_REQCHAT_SET1" />
+			<xs:enumeration value="IN_DID_AUTHENTICATE_EAC_2_INPUTTYPE" />
+			<xs:enumeration value="IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE" />
+			<xs:enumeration value="IN_DIDLIST" />
+			<xs:enumeration value="IN_DISCONNECT" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_AGEPLACE" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_EIDCARD_2" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_EIDCARD_3" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_ERROR" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_ERROR_2" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_NORESULTYET" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_RESTRICTEDID" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_SET1" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_PLACE" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_AGE" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_PLACE_OPTIONAL" />
+			<xs:enumeration value="IN_GETRESULT_RESPONSE_AGE_OPTIONAL" />
+			<xs:enumeration value="OUT_GETRESULT_REQUEST_TWO_REQUESTCOUNTERS" />
+			<xs:enumeration value="IN_GETSERVERINFO_RESPONSE" />
+			<xs:enumeration value="IN_INITIALIZE_FRAMEWORK" />
+			<xs:enumeration value="IN_MISC" />
+			<xs:enumeration value="IN_SAML_ASSERTION" />
+			<xs:enumeration value="IN_START_PAOS_RESPONSE" />
+			<xs:enumeration value="IN_START_PAOS_RESPONSE_INTERNAL_ERROR" />
+			<xs:enumeration value="IN_START_PAOS_RESPONSE_CUSTOM_ERROR" />
+			<xs:enumeration value="IN_TC_TOKEN" />			<!-- The TC Token received from the SAML processor -->
+			<xs:enumeration value="IN_TC_TOKEN_ATTACHED" />			<!-- The TC Token of the attached eService -->
+			<xs:enumeration value="IN_TC_TOKEN_SAML_ATTACHED" />
+			<xs:enumeration value="IN_TLS" />
+			<xs:enumeration value="IN_TRANSMIT" />
+			<xs:enumeration value="IN_USEID_RESPONSE" />
+			<xs:enumeration value="IN_USEID_RESPONSE_NO_PSK" />
+			<xs:enumeration value="IN_USEID_RESPONSE_ERROR" />
+			<xs:enumeration value="IN_USEID_RESPONSE_PSK" />
+			<xs:enumeration value="IN_USEID_RESPONSE_PSK_ERROR" />
+			<xs:enumeration value="IN_USEID_RESPONSE_UNIQUE" />
+			<xs:enumeration value="OUT_CALL_SAML_INCL_AUTHNREQUEST" />		<!-- The request for the TC Token (only SAML) -->
+			<xs:enumeration
+				value="OUT_CALL_SAML_INCL_AUTHNREQUEST_NO_SIGALG_NO_SIGNATURE" />
+			<xs:enumeration value="OUT_CALL_SAML_INCL_AUTHNREQUEST_NO_SIGNATURE" />
+			<xs:enumeration value="OUT_DID_AUTHENTICATE_EAC_1_OUTPUTTYPE_WITH_CHAT" />
+			<xs:enumeration value="OUT_DID_AUTHENTICATE_EAC_1_OUTPUTTYPE_WITHOUT_CHAT" />
+			<xs:enumeration
+				value="OUT_DID_AUTHENTICATE_EAC_1_OUTPUTTYPE_WITHOUT_IDPICC" />
+			<xs:enumeration
+				value="OUT_DID_AUTHENTICATE_EAC_1_OUTPUTTYPE_WITH_CUSTOM_CHAT" />
+			<xs:enumeration
+				value="OUT_DID_AUTHENTICATE_EAC_1_OUTPUTTYPE_WITHOUT_CHALLENGE" />
+			<xs:enumeration value="OUT_DID_AUTHENTICATE_EAC_1_OUTPUTTYPE_INTERNALERROR" />
+			<xs:enumeration value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A" />
+			<xs:enumeration
+				value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A_CUSTOM_AUTHTOKEN" />
+			<xs:enumeration
+				value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A_NO_EFCARDSECURITY" />
+			<xs:enumeration
+				value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A_NO_AUTHENTICATIONTOKEN" />
+			<xs:enumeration
+				value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A_DUPLICATED_EFCARDSECURITY" />
+			<xs:enumeration
+				value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A_DUPLICATED_AUTHENTICATIONTOKEN" />
+			<xs:enumeration value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A_NO_NONCE" />
+			<xs:enumeration
+				value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A_DUPLICATED_NONCE" />
+			<xs:enumeration
+				value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A_INTERNALERROR" />
+			<xs:enumeration value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_B" />
+			<xs:enumeration value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_B_MANDATORY" />
+			<xs:enumeration value="OUT_DIDLIST" />
+			<xs:enumeration value="OUT_DISCONNECT" />
+			<xs:enumeration value="OUT_GET_TCTOKEN" />		<!-- The request for the TC Token (only attached SOAP) -->
+			<xs:enumeration value="OUT_GET_ATTACHED_WEBPAGE" />		<!-- The request for the webpage containing the link to the TC Token (only attached SOAP) -->
+			<xs:enumeration value="OUT_GETRESULT_REQUEST" />
+			<xs:enumeration value="OUT_GETRESULT_REQUEST_NO_REQUESTCOUNTER" />
+			<xs:enumeration value="OUT_GETRESULT_REQUEST_NO_SID" />
+			<xs:enumeration value="OUT_GETRESULT_REQUEST_REQUESTCOUNTER" />
+			<xs:enumeration value="OUT_GETRESULT_REQUEST_SID" />
+			<xs:enumeration value="OUT_GETSERVERINFO_REQUEST" />
+			<xs:enumeration value="OUT_INITIALIZE_FRAMEWORK_RESPONSE" />
+			<xs:enumeration value="OUT_INITIALIZE_FRAMEWORK_RESPONSE_EMPTY_RESULT" />
+			<xs:enumeration value="OUT_MISC" />
+			<xs:enumeration value="OUT_SAML_ASSERTION" />
+			<xs:enumeration value="OUT_START_PAOS" />
+			<xs:enumeration value="OUT_START_PAOS_DIDPROTOCOLS" />
+			<xs:enumeration value="OUT_TLS_ATTACHED" />
+			<xs:enumeration value="OUT_TLS_ECARDAPI" />
+			<xs:enumeration value="OUT_TLS_EID" />
+			<xs:enumeration value="OUT_TLS_SAML" />
+			<xs:enumeration value="OUT_TRANSMIT" />
+			<xs:enumeration value="OUT_TRANSMIT_INVALID_MAC" />
+			<xs:enumeration value="OUT_TRANSMIT_NO_APDUS" />
+			<xs:enumeration value="OUT_TRANSMIT_NO_MAC" />
+			<xs:enumeration value="OUT_USEID_REQUEST" />
+			<xs:enumeration value="OUT_USEID_REQUEST_ALL" />
+			<xs:enumeration value="OUT_USEID_REQUEST_NO_AGEVERIFICATIONREQUEST" />
+			<xs:enumeration value="OUT_USEID_REQUEST_NO_PLACEVERIFICATIONREQUEST" />
+			<xs:enumeration value="OUT_USEID_REQUEST_NO_USEOPERATIONS" />
+			<xs:enumeration value="OUT_USEID_REQUEST_PSK" />
+			<xs:enumeration value="OUT_USEID_REQUEST_SET1" />
+			<xs:enumeration value="OUT_USEID_REQUEST_PLACE" />
+			<xs:enumeration value="OUT_USEID_REQUEST_AGE" />
+			<xs:enumeration value="OUT_USEID_REQUEST_NO_XMLSIGNATURE" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="profiles">
+		<xs:sequence>
+			<xs:element name="profile" type="profile" minOccurs="1"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="profile">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PAOS" />
+			<xs:enumeration value="EAC" />
+			<xs:enumeration value="EID_ACCESS" />
+			<xs:enumeration value="REVOKED_CARD" />
+			<xs:enumeration value="EXPIRED_CARD" />
+			<xs:enumeration value="NONAUTH_CARD" />
+			<xs:enumeration value="RI_MIGRATION" />
+			<xs:enumeration value="CRYPTO" />
+			<xs:enumeration value="DG_VARIATIONS" />
+			<xs:enumeration value="SOAP" />
+			<xs:enumeration value="SOAP_TLS" />
+			<xs:enumeration value="SAML" />
+			<xs:enumeration value="SAML_ATTACHED" />
+			<xs:enumeration value="ESER_ATTACHED" />
+			<xs:enumeration value="TLS_PSK" />
+			<xs:enumeration value="TLS_ETM" />
+			<xs:enumeration value="ALL_LINK" />
+			<xs:enumeration value="CONF_MAX_SE" />
+			<xs:enumeration value="CONF_TM_OUT" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="certNames">
+		<xs:sequence>
+			<xs:element name="certificate" type="certName" minOccurs="1"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="certName">
+		<xs:restriction base="xs:string">
+			<!-- CERT_SET_1 -->
+			<xs:enumeration value="CERT_ECARD_TLS_EIDSERVER_1" />
+			<xs:enumeration value="CERT_ECARD_TLS_SAMLPROCESSOR_1_" />
+			<xs:enumeration value="CERT_EID_TLS_EIDSERVER_1" />
+			
+			<!-- CERT_SET_2 -->
+			<xs:enumeration value="CERT_EID_TLS_ESERVICE_2_A" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="variables">
+		<xs:choice>
+			<xs:element name="variable" minOccurs="1" maxOccurs="unbounded"
+				type="variable" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="variable">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="name" type="xs:string" use="required">
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<!-- step definitions -->
+
+	<xs:element name="Step">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="TargetInterface" type="targetInterfaceType" />
+				<xs:element name="Optional" minOccurs="0" maxOccurs="1"
+					type="xs:boolean" />
+				<xs:element name="Schema" minOccurs="0" maxOccurs="1"
+					type="xs:string" />
+				<xs:element name="TlsStepToken" minOccurs="0" maxOccurs="unbounded"
+					type="stepToken" />
+				<xs:element name="HttpStepToken" minOccurs="0" maxOccurs="unbounded"
+					type="stepToken" />
+				<xs:element name="ProtocolStepToken" minOccurs="0"
+					maxOccurs="unbounded" type="stepToken" />
+				<xs:element name="ToSave" minOccurs="0" maxOccurs="unbounded"
+					type="optAttrString" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="stepToken">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="parentName" type="xs:string" minOccurs="0" />
+			<xs:element name="value" type="xs:string" minOccurs="0" />
+			<xs:element name="attributes" type="attributes" minOccurs="0" />
+			<xs:element name="maxNumberOfOccurences" type="xs:positiveInteger"
+				minOccurs="0" /> <!-- Maximum number of times this element is allowed to occur. If this is 
+				not provided, the value is set to 1 -->
+			<xs:element name="isMandatory" type="xs:boolean"
+				minOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="negate" type="xs:boolean" default="false"/>
+	</xs:complexType>
+
+	<xs:complexType name="optAttrString">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="parentName" type="xs:string" />
+				<xs:attribute name="placeholder" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="attributes">
+		<xs:sequence>
+			<xs:element name="attribute" type="attribute" minOccurs="1"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="attribute">
+		<xs:sequence>
+			<xs:element name="name" minOccurs="1" type="xs:string" />
+			<xs:element name="value" minOccurs="1" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>

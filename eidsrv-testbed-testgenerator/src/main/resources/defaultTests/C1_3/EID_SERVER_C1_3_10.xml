@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_C1_3_10</p:name>
+	<p:description>This test checks the behaviour of the eID-Server during the PAOS communication in case the eID-Clients repeats the challenge in DIDAuthenticateResponse_EAC2OutputType even after receiving DIDAuthenticate_EAC2InputType containing signature.</p:description>
+	<p:modulePath>
+		<p:node>C</p:node>
+		<p:node>1</p:node>
+		<p:node>3</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>EAC</p:profile>
+		<p:profile>PAOS</p:profile>
+	</p:profiles>
+	<p:eservice>A</p:eservice>
+	<p:eidcard>EIDCARD_1</p:eidcard>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_EID_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_USEID_REQUEST_SET1</p:step>
+		<p:step>IN_USEID_RESPONSE</p:step>
+		<p:step>OUT_START_PAOS</p:step>
+		<p:step>IN_INITIALIZE_FRAMEWORK</p:step>
+		<p:step>OUT_INITIALIZE_FRAMEWORK_RESPONSE</p:step>
+		<p:step>IN_DIDLIST</p:step>
+		<p:step>OUT_DIDLIST</p:step>
+		<p:step>IN_DID_AUTHENTICATE_EAC_1_INPUTTYPE</p:step>
+		<p:step>OUT_DID_AUTHENTICATE_EAC_1_OUTPUTTYPE_WITHOUT_CHAT</p:step>
+		<p:step>IN_DID_AUTHENTICATE_EAC_2_INPUTTYPE</p:step>
+		<p:step>OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_B</p:step>
+		<p:step>IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE</p:step>
+		<p:step>OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_B_MANDATORY</p:step>
+		<p:step>IN_START_PAOS_RESPONSE_CUSTOM_ERROR</p:step>
+	</p:steps>
+	<p:variables>
+		<p:variable name="REQUIREDCHAT">7F4C12060904007F00070301020253050000001007</p:variable> <!-- If present, the element "RequiredCHAT" contains the CHAT value for reading [ATTRIBUTE_SET1]. -->
+		<p:variable name="RES_MIN_IN_START_PAOS_RESPONSE_CUSTOM_ERROR">http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#parameterError</p:variable>
+	</p:variables>
+</p:testcaseDefinition>

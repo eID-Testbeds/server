@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>eidsrv-testbed-testgenerator</artifactId>
+	<name>eID-Server Testbed TestGenerator</name>
+	<packaging>ejb</packaging>
+	<parent>
+		<groupId>com.secunet</groupId>
+		<artifactId>eidserver-testbed</artifactId>
+		<version>0.5</version>
+	</parent>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>testbedutils-CommonUtilities</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-testing</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ejb-plugin</artifactId>
+				<configuration>
+					<ejbVersion>3.1</ejbVersion>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>generate_testcase</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jvnet.jaxb2.maven2</groupId>
+						<artifactId>maven-jaxb2-plugin</artifactId>
+						<version>0.13.1</version>
+						<executions>
+							<execution>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<generatePackage>com.secunet.eidserver.testbed.common.types.testcase</generatePackage>
+							<generateDirectory>../eidsrv-testbed-common/src/main/java</generateDirectory>
+							<schemaDirectory>src/main/resources/xmlScheme</schemaDirectory>
+							<encoding>UTF-8</encoding>
+							<locale>en</locale>
+							<schemaIncludes>
+								<include>sn_TestcaseDefinition.xsd</include>
+							</schemaIncludes>
+							<extension>true</extension>
+							<strict>false</strict>
+							<verbose>true</verbose>
+							<cleanPackageDirectories>false</cleanPackageDirectories>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

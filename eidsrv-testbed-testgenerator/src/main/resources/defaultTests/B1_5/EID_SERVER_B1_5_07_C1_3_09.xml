@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_B1_5_07_C1_3_09</p:name>
+	<p:description>This test case checks the behaviour of the eID-Server at the SAML-Interface in case Online-Authentication failed. </p:description>
+	<p:modulePath>
+		<p:node>B</p:node>
+		<p:node>1</p:node>
+		<p:node>5</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>SAML</p:profile>
+		<p:profile>SAML_ATTACHED</p:profile>
+	</p:profiles>
+	<p:eservice>B</p:eservice><p:clientExplanation>Configure the server to accept the certificate chain for client B. This includes the TLS, XML signature and the CV certificate.</p:clientExplanation>
+	<p:eidcard>EIDCARD_1</p:eidcard>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_ECARD_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_CALL_SAML_INCL_AUTHNREQUEST</p:step>
+		<p:step>IN_TC_TOKEN_SAML_ATTACHED</p:step>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_3_09</p:reference>
+	 	<p:step>OUT_SAML_ASSERTION</p:step>
+	 	<p:step>IN_SAML_ASSERTION</p:step>
+	</p:steps>
+	<p:variables>
+		<p:variable name="USEOP_FAMILYNAMES"/>
+		<p:variable name="USEOP_RESTRICTEDID"/>
+		<p:variable name="USEOP_AGEVERIFICATION"/>
+		<p:variable name="USEOP_PLACEVERIFICATION"/>
+		
+		<!-- TODO: "Response" contains the element "StatusCode" which is not "urn:oasis:names:tc:SAML:2.0:status:Success". -->
+	</p:variables>
+</p:testcaseDefinition>

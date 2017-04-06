@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Step xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd" >
+	<p:TargetInterface>eCard-API</p:TargetInterface>
+    <p:HttpStepToken>
+        <p:name>header</p:name>
+        <p:value><![CDATA[POST [CANDIDATE_PATH] HTTP/1.1
+Host: [CANDIDATE_HOSTNAME]
+User-Agent: [TESTBED_USER_AGENT_NAME]/[TESTBED_USER_AGENT_MAJOR].[TESTBED_USER_AGENT_MINOR].[TESTBED_USER_AGENT_SUBMINOR]
+Connection: keep-alive
+Accept: text/html; application/vnd.paos+xml
+PAOS: ver=&quot;urn:liberty:paos:2006-08&quot;
+Content-Type: application/vnd.paos+xml; charset=UTF-8
+Content-Length: [[CHARLENGTH]]
+requestid: [SESSIONIDENTIFIER]]]></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:HttpStepToken>
+	<p:ProtocolStepToken>
+		<p:name>message</p:name>
+		<p:value><![CDATA[&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
+&lt;soap:Envelope xmlns:soap=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:dss=&quot;urn:oasis:names:tc:dss:1.0:core:schema&quot; xmlns:ecard=&quot;http://www.bsi.bund.de/ecard/api/1.1&quot; xmlns:iso=&quot;urn:iso:std:iso-iec:24727:tech:schema&quot; xmlns:paos=&quot;urn:liberty:paos:2006-08&quot; xmlns:wsa=&quot;http://www.w3.org/2005/03/addressing&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+ &lt;soap:Header&gt;
+  &lt;paos:PAOS soap:actor=&quot;http://schemas.xmlsoap.org/soap/actor/next&quot; soap:mustUnderstand=&quot;1&quot;&gt;
+   &lt;paos:Version&gt;urn:liberty:paos:2006-08&lt;/paos:Version&gt;
+   &lt;paos:EndpointReference&gt;
+    &lt;paos:Address&gt;http://www.projectliberty.org/2006/01/role/paos&lt;/paos:Address&gt;
+    &lt;paos:MetaData&gt;
+     &lt;paos:ServiceType&gt;http://www.bsi.bund.de/ecard/api/1.1/PAOS/GetNextCommand&lt;/paos:ServiceType&gt;
+    &lt;/paos:MetaData&gt;
+   &lt;/paos:EndpointReference&gt;
+  &lt;/paos:PAOS&gt;
+  &lt;wsa:ReplyTo&gt;
+   &lt;wsa:Address&gt;http://www.projectliberty.org/2006/02/role/paos&lt;/wsa:Address&gt;
+  &lt;/wsa:ReplyTo&gt;
+  &lt;wsa:RelatesTo&gt;[MESSAGEID]&lt;/wsa:RelatesTo&gt;
+  &lt;wsa:MessageID&gt;urn:uuid:[[UUID]]&lt;/wsa:MessageID&gt;
+ &lt;/soap:Header&gt;
+ &lt;soap:Body&gt;
+  &lt;DIDAuthenticateResponse xmlns=&quot;urn:iso:std:iso-iec:24727:tech:schema&quot; Profile=&quot;http://www.bsi.bund.de/ecard/api/1.1&quot;&gt;
+   &lt;Result xmlns=&quot;urn:oasis:names:tc:dss:1.0:core:schema&quot;&gt;
+    &lt;ResultMajor&gt;http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok&lt;/ResultMajor&gt;
+   &lt;/Result&gt;
+   &lt;AuthenticationProtocolData Protocol=&quot;urn:oid:1.3.162.15480.3.0.14.2&quot; xsi:type=&quot;iso:EAC2OutputType&quot;&gt;
+    &lt;EFCardSecurity&gt;[EFCARDSECURITY]&lt;/EFCardSecurity&gt;
+    &lt;Nonce&gt;[NONCE]&lt;/Nonce&gt;
+   &lt;/AuthenticationProtocolData&gt;
+  &lt;/DIDAuthenticateResponse&gt;
+ &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;]]></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+</p:Step>

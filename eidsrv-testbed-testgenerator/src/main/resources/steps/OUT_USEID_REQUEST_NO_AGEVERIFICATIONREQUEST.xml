@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Step xmlns:p="http://www.secunet.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd" >
+	<p:TargetInterface>eID-Interface</p:TargetInterface>
+	<p:HttpStepToken>
+		<p:name>header</p:name>
+		<p:value><![CDATA[POST [EID_INTERFACE_PATH] HTTP/1.1
+Accept-Encoding: gzip,deflate
+Content-Type: text/xml;charset=UTF-8
+SOAPAction: "http://bsi.bund.de/eID/useID"
+Content-Length: [[CHARLENGTH]]
+Host: [EID_INTERFACE_HOSTNAME]
+Connection: Keep-Alive
+User-Agent: [TESTBED_USER_AGENT_NAME]/[TESTBED_USER_AGENT_MAJOR].[TESTBED_USER_AGENT_MINOR].[TESTBED_USER_AGENT_SUBMINOR]]]></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:HttpStepToken>
+	<p:ProtocolStepToken>
+		<p:name>message</p:name>
+		<p:value><![CDATA[[[CREATE_SOAP_SECURITY_HEADER]]&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:eid=&quot;http://bsi.bund.de/eID/&quot;&gt;&lt;soapenv:Header /&gt;&lt;soapenv:Body xmlns:wsu=&quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd&quot; wsu:Id=&quot;body-123&quot;&gt;&lt;eid:useIDRequest&gt;&lt;eid:UseOperations&gt;&lt;eid:DocumentType&gt;PROHIBITED&lt;/eid:DocumentType&gt;&lt;eid:IssuingState&gt;PROHIBITED&lt;/eid:IssuingState&gt;&lt;eid:DateOfExpiry&gt;PROHIBITED&lt;/eid:DateOfExpiry&gt;&lt;eid:GivenNames&gt;PROHIBITED&lt;/eid:GivenNames&gt;&lt;eid:FamilyNames&gt;REQUIRED&lt;/eid:FamilyNames&gt;&lt;eid:ArtisticName&gt;PROHIBITED&lt;/eid:ArtisticName&gt;&lt;eid:AcademicTitle&gt;PROHIBITED&lt;/eid:AcademicTitle&gt;&lt;eid:DateOfBirth&gt;PROHIBITED&lt;/eid:DateOfBirth&gt;&lt;eid:PlaceOfBirth&gt;PROHIBITED&lt;/eid:PlaceOfBirth&gt;&lt;eid:Nationality&gt;PROHIBITED&lt;/eid:Nationality&gt;&lt;eid:BirthName&gt;PROHIBITED&lt;/eid:BirthName&gt;&lt;eid:PlaceOfResidence&gt;PROHIBITED&lt;/eid:PlaceOfResidence&gt;&lt;eid:ResidencePermitI&gt;PROHIBITED&lt;/eid:ResidencePermitI&gt;&lt;eid:RestrictedID&gt;REQUIRED&lt;/eid:RestrictedID&gt;&lt;eid:AgeVerification&gt;REQUIRED&lt;/eid:AgeVerification&gt;&lt;eid:PlaceVerification&gt;REQUIRED&lt;/eid:PlaceVerification&gt;&lt;/eid:UseOperations&gt;&lt;eid:PlaceVerificationRequest&gt;&lt;eid:CommunityID&gt;[PLACE_COMPARISON_VALUE]&lt;/eid:CommunityID&gt;&lt;/eid:PlaceVerificationRequest&gt;&lt;/eid:useIDRequest&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;]]></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+</p:Step>

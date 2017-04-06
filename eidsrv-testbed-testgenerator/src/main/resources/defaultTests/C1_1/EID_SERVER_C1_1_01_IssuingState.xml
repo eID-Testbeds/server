@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_C1_1_01_IssuingState</p:name>
+	<p:description>Positive test describing the PAOS communication between the eID-Server and the eID-Client. The eService request requires to read a particular attribute.</p:description>
+	<p:modulePath>
+		<p:node>C</p:node>
+		<p:node>1</p:node>
+		<p:node>1</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>EAC</p:profile>
+		<p:profile>PAOS</p:profile>
+		<p:profile>EID_ACCESS</p:profile>
+	</p:profiles>
+	<p:eservice>A</p:eservice>
+	<p:eidcard>EIDCARD_1</p:eidcard>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_EID_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_USEID_REQUEST</p:step>
+		<p:step>IN_USEID_RESPONSE</p:step>
+		<p:step>OUT_START_PAOS</p:step>
+		<p:step>IN_INITIALIZE_FRAMEWORK</p:step>
+		<p:step>OUT_INITIALIZE_FRAMEWORK_RESPONSE</p:step>
+		<p:step>IN_DIDLIST</p:step>
+		<p:step>OUT_DIDLIST</p:step>
+		<p:step>IN_DID_AUTHENTICATE_EAC_1_INPUTTYPE</p:step>
+		<p:step>OUT_DID_AUTHENTICATE_EAC_1_OUTPUTTYPE_WITHOUT_CHAT</p:step>
+		<p:step>IN_DID_AUTHENTICATE_EAC_2_INPUTTYPE</p:step>
+		<p:step>OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_B</p:step>
+		<p:step>IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE</p:step>
+		<p:step>OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A</p:step>
+		<p:step>IN_TRANSMIT</p:step>
+		<p:step>OUT_TRANSMIT</p:step>
+		<p:step>IN_START_PAOS_RESPONSE</p:step>
+	</p:steps>
+	<p:variables>
+		<p:variable name="USEOP_ISSUINGSTATE">REQUIRED</p:variable> <!-- <eid:UseOperations> -->
+		<p:variable name="REQUIREDCHAT">7F4C12060904007F00070301020253050000000200</p:variable>
+	</p:variables>
+</p:testcaseDefinition>

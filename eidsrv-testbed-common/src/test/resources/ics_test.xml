@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Ics xmlns="http://trdoccheck.bsi.bund.de/server/ics" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://trdoccheck.bsi.bund.de/server/ics ../../main/resources/ics_schema.xsd ">
+
+	<Metadata>
+		<eCardApiUrl>secunet.com:8445/ecardpaos/paosreceiver</eCardApiUrl>
+		<eIdInterfaceiUrl>secunet.com:8443/eID-Server/eID</eIdInterfaceiUrl>
+		<SamlUrl>secunet.com:8443/saml/async</SamlUrl>
+		<Vendor>secunet AG</Vendor>
+		<Name>secunet eID-Server</Name>
+		<VersionMajor>0</VersionMajor>
+		<VersionMinor>5</VersionMinor>
+	</Metadata>
+
+	<API>
+		<ApiVersionMajor>2</ApiVersionMajor>
+		<ApiVersionMinor>0</ApiVersionMinor>
+		<ApiVersionSubminor>1</ApiVersionSubminor>
+	</API>
+
+	<Profiles>
+		<MandatoryProfile>EAC</MandatoryProfile>
+		<MandatoryProfile>PAOS</MandatoryProfile>
+		<OptionalProfile>SAML</OptionalProfile>
+		<OptionalProfile>TLS_PSK</OptionalProfile>
+	</Profiles>
+
+	<Cryptography>
+
+		<eCard-Api>
+			<PskChannel>
+				<TLS version="TLSv12">
+					<Ciphersuites>
+						<Ciphersuite>TLS_RSA_PSK_WITH_AES_256_GCM_SHA384</Ciphersuite>
+					</Ciphersuites>
+				</TLS>
+			</PskChannel>
+			<AttachedServer>
+				<TLS version="TLSv12">
+					<Ciphersuites>
+						<Ciphersuite>TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384</Ciphersuite>
+					</Ciphersuites>
+					<EllipticCurves>
+						<NamedCurve>sect193r1</NamedCurve>
+					</EllipticCurves>
+					<SignatureAlgorithms>
+						<Algorithm>SHA1withRSA</Algorithm>
+					</SignatureAlgorithms>
+				</TLS>
+			</AttachedServer>
+		</eCard-Api>
+
+		<eID-Interface>
+			<TLS version="TLSv12">
+				<Ciphersuites>
+					<Ciphersuite>TLS_DHE_DSS_WITH_AES_128_CBC_SHA</Ciphersuite>
+				</Ciphersuites>
+				<EllipticCurves>
+					<NamedCurve>secp521r1</NamedCurve>
+				</EllipticCurves>
+				<SignatureAlgorithms>
+					<Algorithm>SHA1withRSA</Algorithm>
+				</SignatureAlgorithms>
+				<ClientCertificates>
+					<ClientCertificate>
+						<Type>rsa_sign</Type>
+						<SignatureAlgorithm>SHA256withRSA</SignatureAlgorithm>
+					</ClientCertificate>
+				</ClientCertificates>
+			</TLS>
+			<XmlSignature>
+				<Signature URI="http://www.w3.org/2000/09/xmldsig#rsa-sha1">
+					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>
+					<Canonicalization>http://www.w3.org/TR/2001/REC-xml-c14n-20010315</Canonicalization>
+					<Parameters>
+						<BitLength>2048</BitLength>
+					</Parameters>
+				</Signature>
+				<Signature URI="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1">
+					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>
+					<Canonicalization>http://www.w3.org/2006/12/xml-c14n11#WithComments</Canonicalization>
+					<Parameters>
+						<NamedCurve>sect283k1</NamedCurve>
+					</Parameters>
+				</Signature>
+			</XmlSignature>
+		</eID-Interface>
+
+		<SAML>
+			<TransportSecurity>
+				<TLS version="TLSv12">
+					<Ciphersuites>
+						<Ciphersuite>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384</Ciphersuite>
+					</Ciphersuites>
+					<EllipticCurves>
+						<NamedCurve>sect193r1</NamedCurve>
+					</EllipticCurves>
+					<SignatureAlgorithms>
+						<Algorithm>SHA1withRSA</Algorithm>
+					</SignatureAlgorithms>
+				</TLS>
+			</TransportSecurity>
+			<XmlSignature>
+				<Signature URI="http://www.w3.org/2000/09/xmldsig#rsa-sha1">
+					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>
+					<Canonicalization>http://www.w3.org/2010/10/xml-c14n2</Canonicalization>
+					<Parameters>
+						<BitLength>2048</BitLength>
+						<BitLength>4096</BitLength>
+					</Parameters>
+				</Signature>
+			</XmlSignature>
+			<XmlEncryption>
+				<KeyTransportAlgorithms>
+					<TransportAlgorithm URI="http://www.w3.org/2001/04/xmlenc#rsa-1_5">
+						<Parameter>2048</Parameter>
+					</TransportAlgorithm>
+				</KeyTransportAlgorithms>
+				<KeyAgreementAlgorithms>
+					<AgreementAlgorithm URI="http://www.w3.org/2009/xmlenc11#ECDH-ES">
+						<Parameters>
+							<NamedCurve>secp224k1</NamedCurve>
+							<NamedCurve>sect193r1</NamedCurve>
+							<NamedCurve>secp192r1</NamedCurve>
+							<NamedCurve>secp256r1</NamedCurve>
+						</Parameters>
+						<KeyWrappingUri>http://www.w3.org/2001/04/xmlenc#kw-aes256</KeyWrappingUri>
+					</AgreementAlgorithm>
+				</KeyAgreementAlgorithms>
+				<ContentEncryptionAlgorithms>
+					<URI>http://www.w3.org/2001/04/xmlenc#aes256-cbc</URI>
+				</ContentEncryptionAlgorithms>
+			</XmlEncryption>
+		</SAML>
+
+		<ChipAuthentication>
+			<Algorithm>id-CA-DH-AES-CBC-CMAC-256</Algorithm>
+			<Algorithm>id-CA-ECDH-AES-CBC-CMAC-256</Algorithm>
+			<DomainParameter>modp2048_256</DomainParameter>
+			<DomainParameter>brainpoolp384r1</DomainParameter>
+		</ChipAuthentication>
+
+	</Cryptography>
+
+</Ics>

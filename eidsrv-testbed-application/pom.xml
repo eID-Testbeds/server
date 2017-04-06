@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.secunet</groupId>
+		<artifactId>eidserver-testbed</artifactId>
+		<version>0.5</version>
+	</parent>
+
+	<artifactId>eidsrv-testbed-application</artifactId>
+	<name>eID-Server Testbed Application</name>
+
+	<packaging>ear</packaging>
+
+	<dependencies>
+		<!-- UI -->
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-webui</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+
+		<!-- Libraries -->
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-common</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+		</dependency>
+
+		<!-- EJBs -->
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-database</artifactId>
+			<version>${project.version}</version>
+			<type>ejb</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-core</artifactId>
+			<version>${project.version}</version>
+			<type>ejb</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-reportgenerator</artifactId>
+			<version>${project.version}</version>
+			<type>ejb</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-testgenerator</artifactId>
+			<version>${project.version}</version>
+			<type>ejb</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-runner</artifactId>
+			<version>${project.version}</version>
+			<type>ejb</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-tls</artifactId>
+			<version>${project.version}</version>
+			<type>ejb</type>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Build the EAR for deployment -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ear-plugin</artifactId>
+				<version>2.10.1</version>
+				<configuration>
+					<defaultLibBundleDir>lib</defaultLibBundleDir>
+					<skinnyWars>true</skinnyWars>
+					<modules>
+						<!-- UI -->
+						<webModule>
+							<groupId>com.secunet</groupId>
+							<artifactId>eidsrv-testbed-webui</artifactId>
+							<bundleFileName>eidsrv-testbed-webui.war</bundleFileName>
+							<contextRoot>/eID-Server-Testbed</contextRoot>
+						</webModule>
+
+						<!-- EJBs -->
+						<ejbModule>
+							<groupId>com.secunet</groupId>
+							<artifactId>eidsrv-testbed-database</artifactId>
+							<bundleFileName>eidsrv-testbed-database.jar</bundleFileName>
+						</ejbModule>
+						<ejbModule>
+							<groupId>com.secunet</groupId>
+							<artifactId>eidsrv-testbed-core</artifactId>
+							<bundleFileName>eidsrv-testbed-core.jar</bundleFileName>
+						</ejbModule>
+						<ejbModule>
+							<groupId>com.secunet</groupId>
+							<artifactId>eidsrv-testbed-reportgenerator</artifactId>
+							<bundleFileName>eidsrv-testbed-reportgenerator.jar</bundleFileName>
+						</ejbModule>
+						<ejbModule>
+							<groupId>com.secunet</groupId>
+							<artifactId>eidsrv-testbed-testgenerator</artifactId>
+							<bundleFileName>eidsrv-testbed-testgenerator.jar</bundleFileName>
+						</ejbModule>
+						<ejbModule>
+							<groupId>com.secunet</groupId>
+							<artifactId>eidsrv-testbed-runner</artifactId>
+							<bundleFileName>eidsrv-testbed-runner.jar</bundleFileName>
+						</ejbModule>
+						<ejbModule>
+							<groupId>com.secunet</groupId>
+							<artifactId>eidsrv-testbed-tls</artifactId>
+							<bundleFileName>eidsrv-testbed-tls.jar</bundleFileName>
+						</ejbModule>
+					</modules>
+					<displayName>eID-Server Testbed</displayName>
+					<generateApplicationXml>true</generateApplicationXml>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>

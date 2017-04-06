@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_A1_2_01_PlaceOfResidence</p:name>
+	<p:description>This test case checks the behaviour of the eID-Server at the eID-Interface in case the eService requests to read a data group without having the corresponding authorization in the terminal certificate.</p:description>
+	<p:modulePath>
+		<p:node>A</p:node>
+		<p:node>1</p:node>
+		<p:node>2</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>SOAP</p:profile>
+		<p:profile>EID_ACCESS</p:profile>
+	</p:profiles>
+	<p:eservice>C</p:eservice>
+	<p:clientExplanation>Configure the server to accept the certificate chain for client C. This includes the TLS, XML signature and the CV certificate.</p:clientExplanation>
+	<p:eidcard>EIDCARD_1</p:eidcard>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_EID_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_USEID_REQUEST</p:step>
+		<p:step>IN_USEID_RESPONSE_ERROR</p:step>
+	</p:steps>
+	<p:variables>
+		<p:variable name="USEOP_PLACEOFRESIDENCE">REQUIRED</p:variable> <!-- <eid:UseOperations> -->
+		<p:variable name="RES_MIN_IN_USEID_RESPONSE_ERROR">http://www.bsi.bund.de/eid/server/2.0/resultminor/useID#missingTerminalRights</p:variable> <!-- <eid:OperationsAllowedByUser> -->
+	</p:variables>
+</p:testcaseDefinition>

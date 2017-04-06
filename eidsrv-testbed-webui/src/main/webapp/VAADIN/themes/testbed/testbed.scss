@@ -1,0 +1,52 @@
+@import "../valo/valo";
+
+@mixin testbed {
+
+	@include valo;
+
+	//
+	// BUG FIXES
+	//
+	/* BUG FIX for list builder addon */
+	.v-listbuilder .v-button-caption {
+		    width: 11px;
+		    height: 11px;
+		    background-repeat: no-repeat;
+		    background-position: left bottom;
+		    padding-top: 3px;
+		    display: inline-block;
+	}
+	// Bug fix for ListSelect Selection Error display
+	.v-select-error .v-select-select {
+			border-color: #ed473b !important
+	}
+	
+	
+	
+	//
+	// ACTUAL CONTENT
+	//
+	
+	/* Custom loading screen */
+	.v-app-loading {
+		height: 100%;
+		width: 100%;
+		background-image: url(imgs/testbed.jpg);
+		background-repeat: no-repeat;
+		background-position: 50% 55%;
+	}
+	
+	
+	/* use smallmargins as a style with smaller margins */
+	.smallmargins.v-margin-left   { padding-left:   10px; }
+	.smallmargins.v-margin-right  { padding-right:  10px; }
+	.smallmargins.v-margin-top    { padding-top:    10px; }
+	.smallmargins.v-margin-bottom { padding-bottom: 10px; }
+	
+	/* use smallmargins as a style with smaller margins */
+	.smallermargins.v-margin-left   { padding-left:   5px; }
+	.smallermargins.v-margin-right  { padding-right:  5px; }
+	.smallermargins.v-margin-top    { padding-top:    5px; }
+	.smallermargins.v-margin-bottom { padding-bottom: 5px; }
+
+}

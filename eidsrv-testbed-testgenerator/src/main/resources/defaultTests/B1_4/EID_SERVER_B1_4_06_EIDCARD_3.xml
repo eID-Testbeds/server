@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_B1_4_06_EIDCARD_3</p:name>
+	<p:description>Positive test describing the SAML interaction during Online-Authentication in case the requested data groups are not present or empty.</p:description>
+	<p:modulePath>
+		<p:node>B</p:node>
+		<p:node>1</p:node>
+		<p:node>4</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>SAML</p:profile>
+		<p:profile>EID_ACCESS</p:profile>
+		<p:profile>DG_VARIATIONS</p:profile>
+		<p:profile>SAML_ATTACHED</p:profile>
+	</p:profiles>
+	<p:eservice>A</p:eservice>
+	<p:eidcard>EIDCARD_2</p:eidcard>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_ECARD_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_CALL_SAML_INCL_AUTHNREQUEST</p:step>
+		<p:step>IN_TC_TOKEN_SAML_ATTACHED</p:step>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_05_EIDCARD_3</p:reference>
+	 	<p:step>OUT_SAML_ASSERTION</p:step>
+		<p:step>IN_SAML_ASSERTION</p:step>
+	</p:steps>
+	<p:variables>
+		<!-- The element "AuthnRequestExtension" requires [ATTRIBUTE_ALL] to be read from the eID-Card.  -->
+		<p:variable name="USEOP_DOCUMENTTYPE"/>
+		<p:variable name="USEOP_ISSUINGSTATE"/>
+		<p:variable name="USEOP_DATEOFEXPIRY"/>
+		<p:variable name="USEOP_GIVENNAMES"/>
+		<p:variable name="USEOP_FAMILYNAMES"/>
+		<p:variable name="USEOP_ARTISTICNAME"/>
+		<p:variable name="USEOP_ACADEMICTITLE"/>
+		<p:variable name="USEOP_DATEOFBIRTH"/>
+		<p:variable name="USEOP_PLACEOFBIRTH"/>
+		<p:variable name="USEOP_NATIONALITY"/>
+		<p:variable name="USEOP_BIRTHNAME"/>
+		<p:variable name="USEOP_PLACEOFRESIDENCE"/>
+		<p:variable name="USEOP_RESIDENCEPERMITI"/>
+		<p:variable name="USEOP_RESTRICTEDID"/>
+		<p:variable name="USEOP_AGEVERIFICATION"/>
+		<p:variable name="USEOP_PLACEVERIFICATION"/>
+		
+		<p:variable name="OABU_DOCUMENTTYPE">ALLOWED</p:variable>
+		<p:variable name="OABU_ISSUINGSTATE">ALLOWED</p:variable>
+		<p:variable name="OABU_DATEOFEXPIRY">ALLOWED</p:variable>
+		<p:variable name="OABU_GIVENNAMES">ALLOWED</p:variable>
+		<p:variable name="OABU_FAMILYNAMES">ALLOWED</p:variable>
+		<p:variable name="OABU_ARTISTICNAME">ALLOWED</p:variable>
+		<p:variable name="OABU_ACADEMICTITLE">ALLOWED</p:variable>
+		<p:variable name="OABU_DATEOFBIRTH">ALLOWED</p:variable>
+		<p:variable name="OABU_PLACEOFBIRTH">ALLOWED</p:variable>
+		<p:variable name="OABU_NATIONALITY">ALLOWED</p:variable>
+		<p:variable name="OABU_BIRTHNAME">NOTONCHIP</p:variable>
+		<p:variable name="OABU_PLACEOFRESIDENCE">ALLOWED</p:variable>
+		<p:variable name="OABU_RESIDENCEPERMITI">NOTONCHIP</p:variable>
+		<p:variable name="OABU_RESTRICTEDID">ALLOWED</p:variable>
+		<p:variable name="OABU_AGEVERIFICATION">ALLOWED</p:variable>
+		<p:variable name="OABU_PLACEVERIFICATION">ALLOWED</p:variable>
+	</p:variables>
+</p:testcaseDefinition>

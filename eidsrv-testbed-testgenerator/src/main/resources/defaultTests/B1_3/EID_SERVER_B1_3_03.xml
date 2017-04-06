@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_B1_3_03</p:name>
+	<p:description>This test case checks the behaviour of the eID-Server at the SAML interface in case the mandatory element "Issuer" in AuthnRequest is entirely missing.</p:description>
+	<p:modulePath>
+		<p:node>B</p:node>
+		<p:node>1</p:node>
+		<p:node>3</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>SAML</p:profile>
+		<p:profile>EID_ACCESS</p:profile>
+		<p:profile>TLS_PSK</p:profile>
+	</p:profiles>
+	<p:eservice>A</p:eservice>
+	<p:eidcard>EIDCARD_1</p:eidcard>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_ECARD_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_CALL_SAML_INCL_AUTHNREQUEST</p:step>
+		<p:step>IN_BAD_REQUEST</p:step>
+	</p:steps>
+	<p:variables>
+		<p:variable name="USEOP_FAMILYNAMES"/>
+		<p:variable name="USEOP_RESTRICTEDID"/>
+		<p:variable name="USEOP_AGEVERIFICATION"/>
+		<p:variable name="USEOP_PLACEVERIFICATION"/>
+		
+		<p:variable name="SAML_AUTHNREQUEST_ISSUER" />
+	</p:variables>
+</p:testcaseDefinition>

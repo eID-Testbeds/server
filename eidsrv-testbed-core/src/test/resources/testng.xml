@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Generic Unit Tests" verbose="0" parallel="tests">
+
+	<test name="Model Tests" verbose="0" parallel="true">
+		<classes>
+			<class name="com.secunet.eidserver.testbed.model.entities.ModelTests" />
+		</classes>
+	</test>
+
+	<test name="Controller Tests" verbose="0" parallel="true">
+		<classes>
+			<class name="com.secunet.eidserver.testbed.controller.UAControllerTest" />
+			<class
+				name="com.secunet.eidserver.testbed.controller.AuthenticationControllerTest" />
+			<class name="com.secunet.eidserver.testbed.controller.RunReportControllerTest" />
+			<class
+				name="com.secunet.eidserver.testbed.controller.ProfileControllerTest" />
+			<class
+				name="com.secunet.eidserver.testbed.controller.TestCaseControllerTest" />
+				<class
+				name="com.secunet.eidserver.testbed.controller.CertificateControllerTest" />
+		</classes>
+	</test>
+
+
+</suite>

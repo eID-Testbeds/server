@@ -1,0 +1,799 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns="http://www.secunet.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.secunet.com cv_schema.xsd">
+
+	<keys>
+		<key name="CVCA1_KEY" create="true">
+			<filePrivateKey>./keys/CERT_ECARD_CV_CVCA_1.pkcs8</filePrivateKey>
+			<filePublicKey>./keys/CERT_ECARD_CV_CVCA_1.x509</filePublicKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="DV1A_KEY" create="true">
+			<filePrivateKey>./keys/CERT_ECARD_CV_DV_1_A.pkcs8</filePrivateKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="TERM1A_KEY" create="true">
+			<filePrivateKey>./keys/CERT_ECARD_CV_TERM_1_A.pkcs8</filePrivateKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="TERM1B_KEY" create="true">
+			<filePrivateKey>./keys/CERT_ECARD_CV_TERM_1_B.pkcs8</filePrivateKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="TERM1C_KEY" create="true">
+			<filePrivateKey>./keys/CERT_ECARD_CV_TERM_1_C.pkcs8</filePrivateKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="TERM1D_KEY" create="true">
+			<filePrivateKey>./keys/CERT_ECARD_CV_TERM_1_D.pkcs8</filePrivateKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="SECTOR1_KEY" create="true">
+			<filePrivateKey>./keys/TERM_SECTOR1.pkcs8</filePrivateKey>
+			<filePublicKey>./keys/TERM_SECTOR1.x509</filePublicKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="SECTOR2_KEY" create="true">
+			<filePrivateKey>./keys/TERM_SECTOR2.pkcs8</filePrivateKey>
+			<filePublicKey>./keys/TERM_SECTOR2.x509</filePublicKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="CVCA2A_KEY" create="true">
+			<filePrivateKey>./keys/CERT_ECARD_CV_CVCA_2_A.pkcs8</filePrivateKey>
+			<filePublicKey>./keys/CERT_ECARD_CV_CVCA_2_A.x509</filePublicKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="CVCA2B_KEY" create="true">
+			<filePrivateKey>./keys/CERT_ECARD_CV_CVCA_2_B.pkcs8</filePrivateKey>
+			<filePublicKey>./keys/CERT_ECARD_CV_CVCA_2_B.x509</filePublicKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="CVCA2C_KEY" create="true">
+			<filePrivateKey>./keys/CERT_ECARD_CV_CVCA_2_C.pkcs8</filePrivateKey>
+			<filePublicKey>./keys/CERT_ECARD_CV_CVCA_2_C.x509</filePublicKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="DV2A_KEY" create="true">
+			<filePrivateKey>./keys/CERT_ECARD_CV_DV_2_A.pkcs8</filePrivateKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+		<key name="TERM2A_KEY" create="true">
+			<filePrivateKey>./keys/CERT_ECARD_CV_TERM_2_A.pkcs8</filePrivateKey>
+			<algorithm>TA_ECDSA_SHA_256</algorithm>
+			<ecdsa>BRAINPOOL::p256r1</ecdsa>			
+		</key>
+	</keys>
+
+	<!-- ROOT CVCA1 Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTCVCA100001</certAuthRef>
+		<publicKey domainParam="true">CVCA1_KEY</publicKey>
+		<certHolderRef>DEESTCVCA100001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>CVCA</role>
+			<writeDG17>true</writeDG17>
+			<writeDG18>true</writeDG18>
+			<writeDG19>true</writeDG19>
+			<writeDG20>true</writeDG20>
+			<writeDG21>true</writeDG21>
+			<readDG1>true</readDG1>
+			<readDG2>true</readDG2>
+			<readDG3>true</readDG3>
+			<readDG4>true</readDG4>
+			<readDG5>true</readDG5>
+			<readDG6>true</readDG6>
+			<readDG7>true</readDG7>
+			<readDG8>true</readDG8>
+			<readDG9>true</readDG9>
+			<readDG10>true</readDG10>
+			<readDG11>true</readDG11>
+			<readDG12>true</readDG12>
+			<readDG13>true</readDG13>
+			<readDG14>true</readDG14>
+			<readDG15>true</readDG15>
+			<readDG16>true</readDG16>
+			<readDG17>true</readDG17>
+			<readDG18>true</readDG18>
+			<readDG19>true</readDG19>
+			<readDG20>true</readDG20>
+			<readDG21>true</readDG21>
+			<installQualifiedCertificate>true</installQualifiedCertificate>
+			<installCertificate>true</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>true</communityIDVerification>
+			<ageVerification>true</ageVerification>
+		</certHolderAuth>
+		<effDate>2016-04-01</effDate>
+		<expDateOffset>6000</expDateOffset>
+		<signKey>CVCA1_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_CVCA_1.cvcert</outputFile>
+	</cert>
+
+	<!-- DV1A Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTCVCA100001</certAuthRef>
+		<publicKey>DV1A_KEY</publicKey>
+		<certHolderRef>DEESTDV1A00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>DV_DOMESTIC</role>
+			<writeDG17>true</writeDG17>
+			<writeDG18>true</writeDG18>
+			<writeDG19>true</writeDG19>
+			<writeDG20>true</writeDG20>
+			<writeDG21>true</writeDG21>
+			<readDG1>true</readDG1>
+			<readDG2>true</readDG2>
+			<readDG3>true</readDG3>
+			<readDG4>true</readDG4>
+			<readDG5>true</readDG5>
+			<readDG6>true</readDG6>
+			<readDG7>true</readDG7>
+			<readDG8>true</readDG8>
+			<readDG9>true</readDG9>
+			<readDG10>true</readDG10>
+			<readDG11>true</readDG11>
+			<readDG12>true</readDG12>
+			<readDG13>true</readDG13>
+			<readDG14>true</readDG14>
+			<readDG15>true</readDG15>
+			<readDG16>true</readDG16>
+			<readDG17>true</readDG17>
+			<readDG18>true</readDG18>
+			<readDG19>true</readDG19>
+			<readDG20>true</readDG20>
+			<readDG21>true</readDG21>
+			<installQualifiedCertificate>true</installQualifiedCertificate>
+			<installCertificate>true</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>true</communityIDVerification>
+			<ageVerification>true</ageVerification>
+		</certHolderAuth>
+		<effDateOffset>0</effDateOffset>
+		<expDateOffset>5000</expDateOffset>
+		<signKey>CVCA1_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_DV_1_A.cvcert</outputFile>
+	</cert>
+
+	<!-- AT Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTDV1A00001</certAuthRef>
+		<publicKey>TERM1A_KEY</publicKey>
+		<certHolderRef>DEESTTERM1A00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>TERMINAL</role>
+			<writeDG17>true</writeDG17>
+			<writeDG18>true</writeDG18>
+			<writeDG19>true</writeDG19>
+			<writeDG20>true</writeDG20>
+			<readDG1>true</readDG1>
+			<readDG2>true</readDG2>
+			<readDG3>true</readDG3>
+			<readDG4>true</readDG4>
+			<readDG5>true</readDG5>
+			<readDG6>true</readDG6>
+			<readDG7>true</readDG7>
+			<readDG8>true</readDG8>
+			<readDG9>true</readDG9>
+			<readDG10>true</readDG10>
+			<readDG13>true</readDG13>
+			<readDG14>true</readDG14>
+			<readDG15>true</readDG15>
+			<readDG16>true</readDG16>
+			<readDG17>true</readDG17>
+			<readDG18>true</readDG18>
+			<readDG19>true</readDG19>
+			<readDG20>true</readDG20>
+			<installQualifiedCertificate>true</installQualifiedCertificate>
+			<installCertificate>true</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>true</communityIDVerification>
+			<ageVerification>true</ageVerification>
+		</certHolderAuth>
+		<effDateOffset>0</effDateOffset>
+		<expDateOffset>4000</expDateOffset>
+		<extensions>
+			<description>
+				<issuerName>secunet</issuerName>
+				<subjectName>eID-Server Testbed</subjectName>
+				<subjectURL>https://some.test.url.de</subjectURL>
+				<!-- <fileTermsOfUsage>./desc/ATSN01.txt</fileTermsOfUsage> -->
+				<termsOfUsage>CV Terms of Usage</termsOfUsage>
+				<commCerts>
+					<!-- <fileCommCert>./keys/ServerCertificate.der</fileCommCert> -->
+					<hashCommCert>71B89F97689425CCAD573F4754D74BAAFDBB95980D9135605EED4BF29781674C</hashCommCert>
+					<hashCommCert>5C6FCAC6857D69B469B8E8E523B656338BDDA1AC43DEA739E0510C862901D06D</hashCommCert>
+				</commCerts>
+				<fileDescription>./desc/CERT_ECARD_CV_TERM_1_A.bin</fileDescription>
+			</description>
+			<!-- <description import="true">
+				<fileDescription>./desc/TerminalCertificateDesc.bin</fileDescription>
+			</description> -->
+			<terminalSector>
+				<fileSectorPublicKey>./keys/TERM_SECTOR1.x509.cv</fileSectorPublicKey>
+			</terminalSector>
+		</extensions>
+		<signKey>DV1A_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_TERM_1_A.cvcert</outputFile>
+	</cert>
+
+	<!-- AT Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTDV1A00001</certAuthRef>
+		<publicKey>TERM1B_KEY</publicKey>
+		<certHolderRef>DEESTTERM1B00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>TERMINAL</role>
+			<writeDG17>false</writeDG17>
+			<writeDG18>false</writeDG18>
+			<writeDG19>false</writeDG19>
+			<writeDG20>false</writeDG20>
+			<readDG1>false</readDG1>
+			<readDG2>false</readDG2>
+			<readDG3>false</readDG3>
+			<readDG4>false</readDG4>
+			<readDG5>true</readDG5>
+			<readDG6>false</readDG6>
+			<readDG7>false</readDG7>
+			<readDG8>false</readDG8>
+			<readDG9>false</readDG9>
+			<readDG10>false</readDG10>
+			<readDG13>false</readDG13>
+			<readDG14>false</readDG14>
+			<readDG15>false</readDG15>
+			<readDG16>false</readDG16>
+			<readDG17>false</readDG17>
+			<readDG18>false</readDG18>
+			<readDG19>false</readDG19>
+			<readDG20>false</readDG20>
+			<installQualifiedCertificate>false</installQualifiedCertificate>
+			<installCertificate>false</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>true</communityIDVerification>
+			<ageVerification>true</ageVerification>
+		</certHolderAuth>
+		<effDateOffset>0</effDateOffset>
+		<expDateOffset>4000</expDateOffset>
+		<extensions>
+			<description>
+				<issuerName>secunet</issuerName>
+				<subjectName>eID-Server Testbed</subjectName>
+				<subjectURL>https://some.test.url.de</subjectURL>
+				<!-- <fileTermsOfUsage>./desc/ATSN01.txt</fileTermsOfUsage> -->
+				<termsOfUsage>CV Terms of Usage</termsOfUsage>
+				<commCerts>
+					<!-- <fileCommCert>./keys/ServerCertificate.der</fileCommCert> -->
+					<hashCommCert>71B89F97689425CCAD573F4754D74BAAFDBB95980D9135605EED4BF29781674C</hashCommCert>
+					<hashCommCert>5C6FCAC6857D69B469B8E8E523B656338BDDA1AC43DEA739E0510C862901D06D</hashCommCert>
+				</commCerts>
+				<fileDescription>./desc/CERT_ECARD_CV_TERM_1_B.bin</fileDescription>
+			</description>
+			<!-- <description import="true">
+				<fileDescription>./desc/TerminalCertificateDesc.bin</fileDescription>
+			</description> -->
+			<terminalSector>
+				<fileSectorPublicKey>./keys/TERM_SECTOR1.x509.cv</fileSectorPublicKey>
+			</terminalSector>
+		</extensions>
+		<signKey>DV1A_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_TERM_1_B.cvcert</outputFile>
+	</cert>
+
+	<!-- AT Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTDV1A00001</certAuthRef>
+		<publicKey>TERM1C_KEY</publicKey>
+		<certHolderRef>DEESTTERM1C00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>TERMINAL</role>
+			<writeDG17>false</writeDG17>
+			<writeDG18>false</writeDG18>
+			<writeDG19>false</writeDG19>
+			<writeDG20>false</writeDG20>
+			<readDG1>false</readDG1>
+			<readDG2>false</readDG2>
+			<readDG3>false</readDG3>
+			<readDG4>false</readDG4>
+			<readDG5>false</readDG5>
+			<readDG6>false</readDG6>
+			<readDG7>false</readDG7>
+			<readDG8>false</readDG8>
+			<readDG9>false</readDG9>
+			<readDG10>false</readDG10>
+			<readDG13>false</readDG13>
+			<readDG14>false</readDG14>
+			<readDG15>false</readDG15>
+			<readDG16>false</readDG16>
+			<readDG17>false</readDG17>
+			<readDG18>false</readDG18>
+			<readDG19>false</readDG19>
+			<readDG20>false</readDG20>
+			<installQualifiedCertificate>false</installQualifiedCertificate>
+			<installCertificate>false</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>false</restrictedIdentification>
+			<communityIDVerification>false</communityIDVerification>
+			<ageVerification>false</ageVerification>
+		</certHolderAuth>
+		<effDateOffset>0</effDateOffset>
+		<expDateOffset>4000</expDateOffset>
+		<extensions>
+			<description>
+				<issuerName>secunet</issuerName>
+				<subjectName>eID-Server Testbed</subjectName>
+				<subjectURL>https://some.test.url.de</subjectURL>
+				<!-- <fileTermsOfUsage>./desc/ATSN01.txt</fileTermsOfUsage> -->
+				<termsOfUsage>CV Terms of Usage</termsOfUsage>
+				<commCerts>
+					<!-- <fileCommCert>./keys/ServerCertificate.der</fileCommCert> -->
+					<hashCommCert>71B89F97689425CCAD573F4754D74BAAFDBB95980D9135605EED4BF29781674C</hashCommCert>
+					<hashCommCert>5C6FCAC6857D69B469B8E8E523B656338BDDA1AC43DEA739E0510C862901D06D</hashCommCert>
+				</commCerts>
+				<fileDescription>./desc/CERT_ECARD_CV_TERM_1_C.bin</fileDescription>
+			</description>
+			<!-- <description import="true">
+				<fileDescription>./desc/TerminalCertificateDesc.bin</fileDescription>
+			</description> -->
+			<terminalSector>
+				<fileSectorPublicKey>./keys/TERM_SECTOR1.x509.cv</fileSectorPublicKey>
+			</terminalSector>
+		</extensions>
+		<signKey>DV1A_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_TERM_1_C.cvcert</outputFile>
+	</cert>
+
+	<!-- AT Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTDV1A00001</certAuthRef>
+		<publicKey>TERM1D_KEY</publicKey>
+		<certHolderRef>DEESTTERM1D00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>TERMINAL</role>
+			<writeDG17>false</writeDG17>
+			<writeDG18>false</writeDG18>
+			<writeDG19>false</writeDG19>
+			<writeDG20>false</writeDG20>
+			<readDG1>false</readDG1>
+			<readDG2>false</readDG2>
+			<readDG3>false</readDG3>
+			<readDG4>false</readDG4>
+			<readDG5>false</readDG5>
+			<readDG6>false</readDG6>
+			<readDG7>false</readDG7>
+			<readDG8>false</readDG8>
+			<readDG9>false</readDG9>
+			<readDG10>false</readDG10>
+			<readDG13>false</readDG13>
+			<readDG14>false</readDG14>
+			<readDG15>false</readDG15>
+			<readDG16>false</readDG16>
+			<readDG17>false</readDG17>
+			<readDG18>false</readDG18>
+			<readDG19>false</readDG19>
+			<readDG20>false</readDG20>
+			<installQualifiedCertificate>false</installQualifiedCertificate>
+			<installCertificate>false</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>false</communityIDVerification>
+			<ageVerification>false</ageVerification>
+		</certHolderAuth>
+		<effDateOffset>0</effDateOffset>
+		<expDateOffset>4000</expDateOffset>
+		<extensions>
+			<description>
+				<issuerName>secunet</issuerName>
+				<subjectName>eID-Server Testbed</subjectName>
+				<subjectURL>https://some.test.url.de</subjectURL>
+				<!-- <fileTermsOfUsage>./desc/ATSN01.txt</fileTermsOfUsage> -->
+				<termsOfUsage>CV Terms of Usage</termsOfUsage>
+				<commCerts>
+					<hashCommCert>71B89F97689425CCAD573F4754D74BAAFDBB95980D9135605EED4BF29781674C</hashCommCert>
+					<hashCommCert>5C6FCAC6857D69B469B8E8E523B656338BDDA1AC43DEA739E0510C862901D06D</hashCommCert>
+				</commCerts>
+				<fileDescription>./desc/CERT_ECARD_CV_TERM_1_D.bin</fileDescription>
+			</description>
+			<!-- <description import="true">
+				<fileDescription>./desc/TerminalCertificateDesc.bin</fileDescription>
+			</description> -->
+			<terminalSector>
+				<fileSectorPublicKey>./keys/TERM_SECTOR1.x509.cv</fileSectorPublicKey>
+				<fileSectorPublicKey>./keys/TERM_SECTOR2.x509.cv</fileSectorPublicKey>
+			</terminalSector>
+		</extensions>
+		<signKey>DV1A_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_TERM_1_D.cvcert</outputFile>
+	</cert>
+
+	<!-- ROOT CVCA2A Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTCVCA2A00001</certAuthRef>
+		<publicKey domainParam="true">CVCA2A_KEY</publicKey>
+		<certHolderRef>DEESTCVCA2A00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>CVCA</role>
+			<writeDG17>true</writeDG17>
+			<writeDG18>true</writeDG18>
+			<writeDG19>true</writeDG19>
+			<writeDG20>true</writeDG20>
+			<writeDG21>true</writeDG21>
+			<readDG1>true</readDG1>
+			<readDG2>true</readDG2>
+			<readDG3>true</readDG3>
+			<readDG4>true</readDG4>
+			<readDG5>true</readDG5>
+			<readDG6>true</readDG6>
+			<readDG7>true</readDG7>
+			<readDG8>true</readDG8>
+			<readDG9>true</readDG9>
+			<readDG10>true</readDG10>
+			<readDG11>true</readDG11>
+			<readDG12>true</readDG12>
+			<readDG13>true</readDG13>
+			<readDG14>true</readDG14>
+			<readDG15>true</readDG15>
+			<readDG16>true</readDG16>
+			<readDG17>true</readDG17>
+			<readDG18>true</readDG18>
+			<readDG19>true</readDG19>
+			<readDG20>true</readDG20>
+			<readDG21>true</readDG21>
+			<installQualifiedCertificate>true</installQualifiedCertificate>
+			<installCertificate>true</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>true</communityIDVerification>
+			<ageVerification>true</ageVerification>
+		</certHolderAuth>
+		<effDate>2016-04-01</effDate>
+		<expDateOffset>6000</expDateOffset>
+		<signKey>CVCA2A_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_CVCA_2_A.cvcert</outputFile>
+	</cert>
+
+	<!-- ROOT CVCA2B Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTCVCA2B00001</certAuthRef>
+		<publicKey domainParam="true">CVCA2B_KEY</publicKey>
+		<certHolderRef>DEESTCVCA2B00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>CVCA</role>
+			<writeDG17>true</writeDG17>
+			<writeDG18>true</writeDG18>
+			<writeDG19>true</writeDG19>
+			<writeDG20>true</writeDG20>
+			<writeDG21>true</writeDG21>
+			<readDG1>true</readDG1>
+			<readDG2>true</readDG2>
+			<readDG3>true</readDG3>
+			<readDG4>true</readDG4>
+			<readDG5>true</readDG5>
+			<readDG6>true</readDG6>
+			<readDG7>true</readDG7>
+			<readDG8>true</readDG8>
+			<readDG9>true</readDG9>
+			<readDG10>true</readDG10>
+			<readDG11>true</readDG11>
+			<readDG12>true</readDG12>
+			<readDG13>true</readDG13>
+			<readDG14>true</readDG14>
+			<readDG15>true</readDG15>
+			<readDG16>true</readDG16>
+			<readDG17>true</readDG17>
+			<readDG18>true</readDG18>
+			<readDG19>true</readDG19>
+			<readDG20>true</readDG20>
+			<readDG21>true</readDG21>
+			<installQualifiedCertificate>true</installQualifiedCertificate>
+			<installCertificate>true</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>true</communityIDVerification>
+			<ageVerification>true</ageVerification>
+		</certHolderAuth>
+		<effDate>2016-04-01</effDate>
+		<expDateOffset>6000</expDateOffset>
+		<signKey>CVCA2B_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_CVCA_2_B.cvcert</outputFile>
+	</cert>
+
+	<!-- ROOT CVCA2C Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTCVCA2C00001</certAuthRef>
+		<publicKey domainParam="true">CVCA2C_KEY</publicKey>
+		<certHolderRef>DEESTCVCA2C00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>CVCA</role>
+			<writeDG17>true</writeDG17>
+			<writeDG18>true</writeDG18>
+			<writeDG19>true</writeDG19>
+			<writeDG20>true</writeDG20>
+			<writeDG21>true</writeDG21>
+			<readDG1>true</readDG1>
+			<readDG2>true</readDG2>
+			<readDG3>true</readDG3>
+			<readDG4>true</readDG4>
+			<readDG5>true</readDG5>
+			<readDG6>true</readDG6>
+			<readDG7>true</readDG7>
+			<readDG8>true</readDG8>
+			<readDG9>true</readDG9>
+			<readDG10>true</readDG10>
+			<readDG11>true</readDG11>
+			<readDG12>true</readDG12>
+			<readDG13>true</readDG13>
+			<readDG14>true</readDG14>
+			<readDG15>true</readDG15>
+			<readDG16>true</readDG16>
+			<readDG17>true</readDG17>
+			<readDG18>true</readDG18>
+			<readDG19>true</readDG19>
+			<readDG20>true</readDG20>
+			<readDG21>true</readDG21>
+			<installQualifiedCertificate>true</installQualifiedCertificate>
+			<installCertificate>true</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>true</communityIDVerification>
+			<ageVerification>true</ageVerification>
+		</certHolderAuth>
+		<effDate>2016-04-01</effDate>
+		<expDateOffset>6000</expDateOffset>
+		<signKey>CVCA2C_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_CVCA_2_C.cvcert</outputFile>
+	</cert>
+
+	<!-- CVCA LINK2A Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTCVCA2A00001</certAuthRef>
+		<publicKey domainParam="true">CVCA2B_KEY</publicKey>
+		<certHolderRef>DEESTCVCA2B00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>CVCA</role>
+			<writeDG17>true</writeDG17>
+			<writeDG18>true</writeDG18>
+			<writeDG19>true</writeDG19>
+			<writeDG20>true</writeDG20>
+			<writeDG21>true</writeDG21>
+			<readDG1>true</readDG1>
+			<readDG2>true</readDG2>
+			<readDG3>true</readDG3>
+			<readDG4>true</readDG4>
+			<readDG5>true</readDG5>
+			<readDG6>true</readDG6>
+			<readDG7>true</readDG7>
+			<readDG8>true</readDG8>
+			<readDG9>true</readDG9>
+			<readDG10>true</readDG10>
+			<readDG11>true</readDG11>
+			<readDG12>true</readDG12>
+			<readDG13>true</readDG13>
+			<readDG14>true</readDG14>
+			<readDG15>true</readDG15>
+			<readDG16>true</readDG16>
+			<readDG17>true</readDG17>
+			<readDG18>true</readDG18>
+			<readDG19>true</readDG19>
+			<readDG20>true</readDG20>
+			<readDG21>true</readDG21>
+			<installQualifiedCertificate>true</installQualifiedCertificate>
+			<installCertificate>true</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>true</communityIDVerification>
+			<ageVerification>true</ageVerification>
+		</certHolderAuth>
+		<effDate>2016-04-01</effDate>
+		<expDateOffset>6000</expDateOffset>
+		<signKey>CVCA2A_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_LINK_2_A.cvcert</outputFile>
+	</cert>
+
+	<!-- CVCA LINK2B Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTCVCA2B00001</certAuthRef>
+		<publicKey domainParam="true">CVCA2C_KEY</publicKey>
+		<certHolderRef>DEESTCVCA2C00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>CVCA</role>
+			<writeDG17>true</writeDG17>
+			<writeDG18>true</writeDG18>
+			<writeDG19>true</writeDG19>
+			<writeDG20>true</writeDG20>
+			<writeDG21>true</writeDG21>
+			<readDG1>true</readDG1>
+			<readDG2>true</readDG2>
+			<readDG3>true</readDG3>
+			<readDG4>true</readDG4>
+			<readDG5>true</readDG5>
+			<readDG6>true</readDG6>
+			<readDG7>true</readDG7>
+			<readDG8>true</readDG8>
+			<readDG9>true</readDG9>
+			<readDG10>true</readDG10>
+			<readDG11>true</readDG11>
+			<readDG12>true</readDG12>
+			<readDG13>true</readDG13>
+			<readDG14>true</readDG14>
+			<readDG15>true</readDG15>
+			<readDG16>true</readDG16>
+			<readDG17>true</readDG17>
+			<readDG18>true</readDG18>
+			<readDG19>true</readDG19>
+			<readDG20>true</readDG20>
+			<readDG21>true</readDG21>
+			<installQualifiedCertificate>true</installQualifiedCertificate>
+			<installCertificate>true</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>true</communityIDVerification>
+			<ageVerification>true</ageVerification>
+		</certHolderAuth>
+		<effDate>2016-04-01</effDate>
+		<expDateOffset>6000</expDateOffset>
+		<signKey>CVCA2B_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_LINK_2_B.cvcert</outputFile>
+	</cert>
+
+	<!-- DV2A Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTCVCA2C00001</certAuthRef>
+		<publicKey>DV2A_KEY</publicKey>
+		<certHolderRef>DEESTDV2A00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>DV_DOMESTIC</role>
+			<writeDG17>true</writeDG17>
+			<writeDG18>true</writeDG18>
+			<writeDG19>true</writeDG19>
+			<writeDG20>true</writeDG20>
+			<writeDG21>true</writeDG21>
+			<readDG1>true</readDG1>
+			<readDG2>true</readDG2>
+			<readDG3>true</readDG3>
+			<readDG4>true</readDG4>
+			<readDG5>true</readDG5>
+			<readDG6>true</readDG6>
+			<readDG7>true</readDG7>
+			<readDG8>true</readDG8>
+			<readDG9>true</readDG9>
+			<readDG10>true</readDG10>
+			<readDG11>true</readDG11>
+			<readDG12>true</readDG12>
+			<readDG13>true</readDG13>
+			<readDG14>true</readDG14>
+			<readDG15>true</readDG15>
+			<readDG16>true</readDG16>
+			<readDG17>true</readDG17>
+			<readDG18>true</readDG18>
+			<readDG19>true</readDG19>
+			<readDG20>true</readDG20>
+			<readDG21>true</readDG21>
+			<installQualifiedCertificate>true</installQualifiedCertificate>
+			<installCertificate>true</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>true</communityIDVerification>
+			<ageVerification>true</ageVerification>
+		</certHolderAuth>
+		<effDateOffset>0</effDateOffset>
+		<expDateOffset>5000</expDateOffset>
+		<signKey>CVCA2C_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_DV_2_A.cvcert</outputFile>
+	</cert>
+	
+	<!-- AT Certificate -->
+	<cert>
+		<profileId>0</profileId>
+		<certAuthRef>DEESTDV2A00001</certAuthRef>
+		<publicKey>TERM2A_KEY</publicKey>
+		<certHolderRef>DEESTTERM2A00001</certHolderRef>
+		<certHolderAuth type="AT">
+			<role>TERMINAL</role>
+			<writeDG17>true</writeDG17>
+			<writeDG18>true</writeDG18>
+			<writeDG19>true</writeDG19>
+			<writeDG20>true</writeDG20>
+			<readDG1>true</readDG1>
+			<readDG2>true</readDG2>
+			<readDG3>true</readDG3>
+			<readDG4>true</readDG4>
+			<readDG5>true</readDG5>
+			<readDG6>true</readDG6>
+			<readDG7>true</readDG7>
+			<readDG8>true</readDG8>
+			<readDG9>true</readDG9>
+			<readDG10>true</readDG10>
+			<readDG13>true</readDG13>
+			<readDG14>true</readDG14>
+			<readDG15>true</readDG15>
+			<readDG16>true</readDG16>
+			<readDG17>true</readDG17>
+			<readDG18>true</readDG18>
+			<readDG19>true</readDG19>
+			<readDG20>true</readDG20>
+			<installQualifiedCertificate>true</installQualifiedCertificate>
+			<installCertificate>true</installCertificate>
+			<pinManagement>true</pinManagement>
+			<canAllowed>true</canAllowed>
+			<privilegedTerminal>true</privilegedTerminal>
+			<restrictedIdentification>true</restrictedIdentification>
+			<communityIDVerification>true</communityIDVerification>
+			<ageVerification>true</ageVerification>
+		</certHolderAuth>
+		<effDateOffset>0</effDateOffset>
+		<expDateOffset>4000</expDateOffset>
+		<extensions>
+			<description>
+				<issuerName>secunet</issuerName>
+				<subjectName>eID-Server Testbed</subjectName>
+				<subjectURL>https://some.test.url.de</subjectURL>
+				<!-- <fileTermsOfUsage>./desc/ATSN01.txt</fileTermsOfUsage> -->
+				<termsOfUsage>CV Terms of Usage</termsOfUsage>
+				<commCerts>
+					<!-- <fileCommCert>./keys/ServerCertificate.der</fileCommCert> -->
+					<hashCommCert>71B89F97689425CCAD573F4754D74BAAFDBB95980D9135605EED4BF29781674C</hashCommCert>
+					<hashCommCert>5C6FCAC6857D69B469B8E8E523B656338BDDA1AC43DEA739E0510C862901D06D</hashCommCert>
+				</commCerts>
+ 				<fileDescription>./desc/CERT_ECARD_CV_TERM_2_A.bin</fileDescription>
+			</description>
+			<!-- <description import="true">
+				<fileDescription>./desc/TerminalCertificateDesc.bin</fileDescription>
+			</description> -->
+			<terminalSector>
+				<fileSectorPublicKey>./keys/TERM_SECTOR1.x509.cv</fileSectorPublicKey>
+			</terminalSector>
+		</extensions>
+		<signKey>DV2A_KEY</signKey>
+		<outputFile>./certs/CERT_ECARD_CV_TERM_2_A.cvcert</outputFile>
+	</cert>
+</root>

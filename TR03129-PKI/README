@@ -1,0 +1,29 @@
+TR-03129 Mock Alpha 1
+
+1. Systemvoraussetzungen
+
+- Java 8 (http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 64 Bit
+	+ Installierte JCE (http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
+- Payara Full (http://www.payara.fish/downloads)
+
+2. Installation
+
+1) Payara starten
+2) Applications -> Deploy...
+3) Packaged File to Be Uploaded to the Server -> Datei auswählen
+4) tr03129-*.war suchen und auswählen
+5) Rechts oben auf "Ok" drücken
+6) URLs (siehe 4.) im Testkandidaten eintragen
+
+3. Hinweise
+
+Das TR-03129 Mockup des eID-Server-Testbeds beinhaltet vier Schnittstellen. Der Terminal Authentication Service, Restricted Identifiaction Service sowie Passive Authentication Service entsprechen hierbei den Vorgaben der Technischen Richtlinie. Zur Verwendung der Certificate Description - Schnittstelle die in diesem Archiv beiliegende WSDL genutzt werden.
+
+4. Service-URLs
+
+[CATAG]: Muss entweder "CA1" oder "CA2" beinhalten
+
+- TA-Service: http://<IP>:8080/[CATAG]/TA-Service
+- RI-Service: http://<IP>:8080/[CATAG]/RI-Service
+- PA-Service: http://<IP>:8080/[CATAG]/PA-Service
+- CD-Service (Certificate Description): http://<IP>:8080/[CATAG]/CD-Service

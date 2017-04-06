@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Step xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd" >
+	<p:TargetInterface>eID-Interface</p:TargetInterface>
+	<p:TlsStepToken>
+		<p:name>Version</p:name>
+		<p:value>TLSv12</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>SelectedVersion</p:name>
+		<p:value>TLSv12</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>CipherSuites</p:name>
+		<p:value>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>EllipticCurves</p:name>
+		<p:value>secp256r1,secp384r1</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+</p:Step>

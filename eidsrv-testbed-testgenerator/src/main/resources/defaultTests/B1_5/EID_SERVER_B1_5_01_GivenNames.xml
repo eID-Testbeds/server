@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_B1_5_01_GivenNames</p:name>
+	<p:description>This test case checks the behavior of the eID-Server at the SAML-Interface in case the eService requests to read an attribute without having the corresponding authorization in the terminal certificate.</p:description>
+	<p:modulePath>
+		<p:node>B</p:node>
+		<p:node>1</p:node>
+		<p:node>5</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>SAML</p:profile>
+		<p:profile>EID_ACCESS</p:profile>
+		<p:profile>SAML_ATTACHED</p:profile>
+	</p:profiles>
+	<p:eservice>C</p:eservice><p:clientExplanation>Configure the server to accept the certificate chain for client C. This includes the TLS, XML signature and the CV certificate.</p:clientExplanation>
+	<p:eidcard>EIDCARD_1</p:eidcard>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_ECARD_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_CALL_SAML_INCL_AUTHNREQUEST</p:step>
+		<p:step>IN_BAD_REQUEST</p:step>
+	</p:steps>
+	<p:variables>
+		<p:variable name="USEOP_GIVENNAMES"/>
+	</p:variables>
+</p:testcaseDefinition>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence">
+  <persistence-unit name="EIDSTB-PU" transaction-type="JTA">
+    <jta-data-source>jdbc/H2</jta-data-source>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <shared-cache-mode>NONE</shared-cache-mode>
+    <properties>
+      <property name="eclipselink.ddl-generation" value="create"/><!-- create-tables       If there is an SQL script to initially fill the database, this should be set to 'none'.  -->
+      <property name="eclipselink.logging.level" value="INFO"/>
+      <property name="eclipselink.logging.level.sql" value="INFO"/>
+      <property name="eclipselink.logging.parameters" value="false"/>
+    </properties>
+  </persistence-unit>
+</persistence>

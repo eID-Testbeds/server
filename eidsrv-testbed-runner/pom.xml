@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.secunet</groupId>
+		<artifactId>eidserver-testbed</artifactId>
+		<version>0.5</version>
+	</parent>
+
+	<artifactId>eidsrv-testbed-runner</artifactId>
+	<name>eID-Server Testbed TestRunner</name>
+	<packaging>ejb</packaging>
+
+	<dependencies>
+		<!-- Common utils -->
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>testbedutils-EAC2</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>testbedutils-CVC</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<!-- Own libraries -->
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-testing</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- 3rd party libraries -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml</artifactId>
+			<version>2.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>xmltooling</artifactId>
+			<version>1.4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>openws</artifactId>
+			<version>1.5.4</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ejb-plugin</artifactId>
+				<configuration>
+					<ejbVersion>3.1</ejbVersion>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>lib/opensaml-2.6.4.jar</Class-Path>
+							<Class-Path>lib/xmltooling-1.4.4.jar</Class-Path>
+							<Class-Path>lib/openws-1.5.4.jar</Class-Path>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

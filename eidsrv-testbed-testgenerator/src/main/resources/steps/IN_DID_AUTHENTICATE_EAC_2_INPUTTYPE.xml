@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Step xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd" >
+	<p:TargetInterface>eCard-API</p:TargetInterface>
+	<!-- Schema name -->
+	<!-- <p:Schema>PROVIDE_XSD</p:Schema> -->
+	<!-- HTTP Tokens -->
+	<p:HttpStepToken>
+		<p:name>HTTP_STATUS_CODE</p:name>
+		<p:value>HTTP/1.1 200 OK</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:HttpStepToken>
+	<p:HttpStepToken>
+		<p:name>Content-Type</p:name>
+		<p:value>application/vnd.paos+xml</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:HttpStepToken>
+	<!-- Protocol tokens -->
+	<p:ProtocolStepToken>
+		<p:name>DIDAuthenticate</p:name>
+		<p:value></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>DIDName</p:name>
+		<p:value>PIN</p:value>
+		<p:isMandatory>false</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>SlotHandle</p:name>
+		<p:value>36333334</p:value>
+		<p:isMandatory>false</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>CardApplication</p:name>
+		<p:value>E80704007F00070302</p:value>
+		<p:isMandatory>false</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>AuthenticationProtocolData</p:name>
+		<p:attributes>
+			<p:attribute>
+				<p:name>Protocol</p:name>
+				<p:value>urn:oid:1.0.24727.3.0.0.7.2</p:value>
+			</p:attribute>
+			<p:attribute>
+				<p:name>type</p:name>
+				<p:value>iso:EAC2InputType</p:value>
+			</p:attribute>
+		</p:attributes>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>EphemeralPublicKey</p:name>
+		<p:value></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>Signature</p:name>
+		<p:value></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+	<!-- Values that shall be saved -->
+	<p:ToSave>EphemeralPublicKey</p:ToSave>
+	<p:ToSave>MessageID</p:ToSave>
+</p:Step>

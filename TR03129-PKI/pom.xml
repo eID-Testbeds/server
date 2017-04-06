@@ -1,0 +1,212 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.secunet</groupId>
+	<artifactId>tr03129</artifactId>
+	<version>0.1</version>
+	<packaging>war</packaging>
+	<name>TR-03129 PKI</name>
+	<description>A mock PKI service which provides TA, PA and RI in compliance with TR-03129</description>
+
+	<dependencies>
+		<!-- CVC support -->
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>testbedutils-CVC</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<!-- Utilities -->
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>testbedutils-CommonUtilities</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<!-- Web services support -->
+		<dependency>
+			<groupId>com.sun.xml.ws</groupId>
+			<artifactId>jaxws-rt</artifactId>
+			<version>2.2.10</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/javax/javaee-web-api -->
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>7.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.10</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+
+		<!-- LOG4J2 -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.7</version>
+		</dependency>
+
+		<!-- Unit Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<webResources>
+						<resource>
+							<directory>${basedir}/src/main/resources/wsdl</directory>
+							<filtering>true</filtering>
+							<targetPath>WEB-INF/wsdl</targetPath>
+						</resource>
+						<resource>
+							<directory>${basedir}/src/main/resources/schema</directory>
+							<filtering>true</filtering>
+							<targetPath>WEB-INF/schema</targetPath>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${basedir}/target/generated/src/main/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxws-maven-plugin</artifactId>
+				<version>2.4.1</version>
+				<!-- global configuration -->
+				<configuration>
+					<wsdlDirectory>${basedir}/src/main/resources/wsdl/</wsdlDirectory>
+					<keep>true</keep>
+					<vmArgs>
+						<vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
+						<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
+					</vmArgs>
+					<args>
+						<arg>-extension</arg>
+					</args>
+				</configuration>
+
+				<executions>
+					<!-- service specific executions -->
+					<execution>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<id>CertificateDescription</id>
+						<configuration>
+							<wsdlFiles>
+								<wsdlFile>CertDesc.wsdl</wsdlFile>
+							</wsdlFiles>
+							<packageName>com.secunet.tr03129.cd</packageName>
+							<sourceDestDir>${basedir}/target/generated/src/main/java</sourceDestDir>
+						</configuration>
+					</execution>
+
+					<execution>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<id>PassiveAuthentication</id>
+						<configuration>
+							<wsdlFiles>
+								<wsdlFile>WS_DV_PassiveAuth.wsdl</wsdlFile>
+							</wsdlFiles>
+							<packageName>com.secunet.tr03129.pa</packageName>
+							<sourceDestDir>${basedir}/target/generated/src/main/java</sourceDestDir>
+						</configuration>
+					</execution>
+
+					<execution>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<id>RestrictedID</id>
+						<configuration>
+							<wsdlFiles>
+								<wsdlFile>WS_DV_RestrictedID.wsdl</wsdlFile>
+							</wsdlFiles>
+							<packageName>com.secunet.tr03129.ri</packageName>
+							<sourceDestDir>${basedir}/target/generated/src/main/java</sourceDestDir>
+						</configuration>
+					</execution>
+
+					<execution>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<id>TerminalAuthentication</id>
+						<configuration>
+							<wsdlFiles>
+								<wsdlFile>WS_DV_TerminalAuth.wsdl</wsdlFile>
+							</wsdlFiles>
+							<packageName>com.secunet.tr03129.ta</packageName>
+							<sourceDestDir>${basedir}/target/generated/src/main/java</sourceDestDir>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

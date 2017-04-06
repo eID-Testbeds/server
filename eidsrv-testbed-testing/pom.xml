@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.secunet</groupId>
+		<artifactId>eidserver-testbed</artifactId>
+		<version>0.5</version>
+	</parent>
+	<artifactId>eidsrv-testbed-testing</artifactId>
+	<name>eID-Server Testbed Test Support</name>
+	<description>This project is only used for testing purposes. None of the resources may be used in production code.</description>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidsrv-testbed-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

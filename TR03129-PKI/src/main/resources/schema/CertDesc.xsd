@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. 
+	RI's version is Metro/2.3 (tags/2.3-7528; 2013-04-29T19:34:10+0000) JAXWS-RI/2.2.8 
+	JAXWS/2.2 svn-revision#unknown. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	version="1.0" targetNamespace="urn:DVCA/v2/Types">
+
+	<xs:element name="GetCertificateDescriptionRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="hash" type="xs:hexBinary" />
+				<xs:any processContents="skip" namespace="##other" minOccurs="0"
+					maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="GetCertificateDescriptionResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="certificateDescription" type="xs:hexBinary" />
+				<xs:any processContents="skip" namespace="##other" minOccurs="0"
+					maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

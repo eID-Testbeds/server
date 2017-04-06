@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Step xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd" >
+	<p:TargetInterface>SAML</p:TargetInterface>
+    <p:HttpStepToken>
+        <p:name>header</p:name>
+        <p:value>GET [SAML_PROCESSOR_PATH][[CREATE_SAML_NO_SIGNATURE]] HTTP/1.1
+Host: [SAML_PROCESSOR_HOSTNAME]
+User-Agent: [USER_AGENT]
+Content-Type: text/xml;charset=utf-8</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:HttpStepToken>
+</p:Step>

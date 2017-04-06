@@ -1,0 +1,11 @@
+@import "designs.scss";
+@import "addons.scss";
+@import "testbed.scss";
+
+.testbed {
+
+  @include addons;
+
+  @include testbed;
+
+}

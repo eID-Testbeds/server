@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Step xmlns:p="http://www.secunet.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd" >
+	<p:TargetInterface>eID-Interface</p:TargetInterface>
+	<p:HttpStepToken>
+		<p:name>header</p:name>
+		<p:value><![CDATA[POST [EID_INTERFACE_PATH] HTTP/1.1
+Accept-Encoding: gzip,deflate
+Content-Type: text/xml;charset=UTF-8
+SOAPAction: "http://bsi.bund.de/eID/getResult"
+Content-Length: [[CHARLENGTH]]
+Host: [EID_INTERFACE_HOSTNAME]
+Connection: Keep-Alive
+User-Agent: [TESTBED_USER_AGENT_NAME]/[TESTBED_USER_AGENT_MAJOR].[TESTBED_USER_AGENT_MINOR].[TESTBED_USER_AGENT_SUBMINOR]]]></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:HttpStepToken>
+	<p:ProtocolStepToken>
+		<p:name>message</p:name>
+		<p:value><![CDATA[[[CREATE_SOAP_SECURITY_HEADER]]&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:eid=&quot;http://bsi.bund.de/eID/&quot;&gt;&lt;soapenv:Header /&gt;&lt;soapenv:Body xmlns:wsu=&quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd&quot; wsu:Id=&quot;body-123&quot;&gt;&lt;eid:getResultRequest&gt;&lt;eid:Session&gt;&lt;eid:ID&gt;[ESERVICE_SESSION]&lt;/eid:ID&gt;&lt;/eid:Session&gt;&lt;eid:RequestCounter&gt;[REQUESTCOUNTER_1]&lt;/eid:RequestCounter&gt;&lt;/eid:getResultRequest&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;]]></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+</p:Step>

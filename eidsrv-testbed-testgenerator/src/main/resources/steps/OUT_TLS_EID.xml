@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Step xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd" >
+	<p:TargetInterface>eID-Interface</p:TargetInterface>
+	<p:TlsStepToken>
+		<p:name>Version</p:name>
+		<p:value>[TLS_VERSION]</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>SelectedVersion</p:name>
+		<p:value>[TLS_SELECTED_VERSION]</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>CipherSuites</p:name>
+		<p:value>[TLS_CIPHER_SUITES]</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>SelectedCipherSuite</p:name>
+		<p:value>[TLS_SELECTED_CIPHER_SUITE]</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>EllipticCurves</p:name>
+		<p:value>[TLS_ELLIPTIC_CURVES]</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>SupportedSignatureAlgorithms</p:name>
+		<p:value>[TLS_SUPPORTED_SIGNATURE_ALGORITHMS]</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>AlertLevelReceived</p:name>
+		<p:value>[TLS_ALERT_LEVEL_RECEIVED]</p:value><!-- -1 = skip this check, 0 = no alert, 1 = warning, 2 = fatal -->
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>EncryptThenMACExtension</p:name>
+		<p:value>[TLS_ENCRYPT_THEN_MAC_EXTENSION]</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>EncryptThenMACExtensionEnabled</p:name>
+		<p:value>[TLS_ENCRYPT_THEN_MAC_EXTENSION_ENABLED]</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+	<p:TlsStepToken>
+		<p:name>ClientAuthentication</p:name>
+		<p:value>[TLS_CLIENT_AUTHENTICATION]</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:TlsStepToken>
+</p:Step>

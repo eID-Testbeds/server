@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_A1_4_09</p:name>
+	<p:description>This test case checks the behaviour of the eID-Server in case the session ID in getResultRequest does not match the session ID submitted by the eID-Server.</p:description>
+	<p:modulePath>
+		<p:node>A</p:node>
+		<p:node>1</p:node>
+		<p:node>4</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>SOAP</p:profile>
+	</p:profiles>
+	<p:eservice>B</p:eservice><p:clientExplanation>Configure the server to accept the certificate chain for client B. This includes the TLS, XML signature and the CV certificate.</p:clientExplanation>
+	<p:eidcard>EIDCARD_1</p:eidcard>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_EID_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_USEID_REQUEST_SET1</p:step>
+		<p:step>IN_USEID_RESPONSE</p:step>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_13</p:reference>
+		<p:step>OUT_GETRESULT_REQUEST_SID</p:step>
+		<p:step>IN_GETRESULT_RESPONSE_ERROR</p:step>
+	</p:steps>
+	<p:variables>
+		<!-- The element "Session" contains a manipulated [SID] previously assigned by the eID-Server. -->
+		<p:variable name="ESERVICE_SESSION_INV">ABCDEF</p:variable>
+		
+		<p:variable name="RES_MIN_IN_GETRESULT_RESPONSE_ERROR">http://www.bsi.bund.de/eid/server/2.0/resultminor/getResult#invalidSession</p:variable>
+	</p:variables>
+</p:testcaseDefinition>

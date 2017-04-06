@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_A1_1_03_GivenNames</p:name>
+	<p:description>Positive test describing the eID-Interface interaction in case the user restricts access to a required attribute.</p:description>
+	<p:modulePath>
+		<p:node>A</p:node>
+		<p:node>1</p:node>
+		<p:node>1</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>SOAP</p:profile>
+		<p:profile>EID_ACCESS</p:profile>
+	</p:profiles>
+	<p:eservice>A</p:eservice>
+	<p:eidcard>EIDCARD_1</p:eidcard>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_EID_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_USEID_REQUEST</p:step>
+		<p:step>IN_USEID_RESPONSE</p:step>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_03_GivenNames</p:reference>
+	 	<p:step>OUT_GETRESULT_REQUEST</p:step>
+		<p:step>IN_GETRESULT_RESPONSE</p:step>
+	</p:steps>
+	<p:variables>
+		<p:variable name="USEOP_FAMILYNAMES">REQUIRED</p:variable> <!-- [DGROUP_B] -->
+		<p:variable name="USEOP_GIVENNAMES">REQUIRED</p:variable> <!-- [ATTRIBUTE_DEN] -->
+		
+		<p:variable name="OABU_FAMILYNAMES">ALLOWED</p:variable> <!-- [DGROUP_B]  -->
+		<p:variable name="OABU_GIVENNAMES">PROHIBITED</p:variable> <!-- [ATTRIBUTE_DEN] -->
+		<p:variable name="PERSONAL_FAMILYNAMES">MUSTERMANN</p:variable>
+	</p:variables>
+</p:testcaseDefinition>

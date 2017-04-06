@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Step xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd" >
+	<p:TargetInterface>eCard-API</p:TargetInterface>
+	<!-- Schema name -->
+	<!--<p:Schema>PROVIDE_XSD</p:Schema> -->
+	<!-- HTTP Tokens -->
+	<p:HttpStepToken>
+		<p:name>HTTP_STATUS_CODE</p:name>
+		<p:value>HTTP/1.1 200 OK</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:HttpStepToken>
+	<p:HttpStepToken>
+		<p:name>Content-Type</p:name>
+		<p:value>application/vnd.paos+xml</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:HttpStepToken>
+	<!-- Protocol tokens -->
+	<p:ProtocolStepToken>
+		<p:name>Signature</p:name>
+		<p:value></p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+</p:Step>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence">
+	<persistence-unit name="EIDSTB-PU" transaction-type="JTA">
+		<jta-data-source>jdbc/H2</jta-data-source>
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+		<shared-cache-mode>NONE</shared-cache-mode>
+		<properties>
+			<property name="eclipselink.logging.level" value="INFO" />
+			<property name="eclipselink.logging.level.sql" value="INFO" />
+			<property name="eclipselink.logging.parameters" value="false" />
+			<property name="javax.persistence.schema-generation.database.action" value="drop-and-create" />
+		<!--	<property name="javax.persistence.schema-generation.scripts.action" value="drop-and-create" />
+		 	<property name="javax.persistence.schema-generation.scripts.create-target" value="file:/tmp/createTables.ddl" />
+			<property name="javax.persistence.schema-generation.scripts.drop-target" value="file:/tmp/dropTables.ddl" />
+			<property name="eclipselink.ddlgen-terminate-statements" value="true" />  -->
+		</properties>
+	</persistence-unit>
+</persistence>

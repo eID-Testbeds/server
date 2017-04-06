@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_A1_4_12</p:name>
+	<p:description>This test case checks the behaviour of the eID-Server in case the RequestCounter is reused.</p:description>
+	<p:modulePath>
+		<p:node>A</p:node>
+		<p:node>1</p:node>
+		<p:node>4</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>SOAP</p:profile>
+	</p:profiles>
+	<p:eservice>B</p:eservice><p:clientExplanation>Configure the server to accept the certificate chain for client B. This includes the TLS, XML signature and the CV certificate.</p:clientExplanation>
+	<p:eidcard>EIDCARD_1</p:eidcard>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_EID_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_USEID_REQUEST_SET1</p:step>
+		<p:step>IN_USEID_RESPONSE</p:step>
+		<p:step>OUT_GETRESULT_REQUEST</p:step>
+		<p:step>IN_GETRESULT_RESPONSE_NORESULTYET</p:step>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_13</p:reference>
+		<p:step>OUT_GETRESULT_REQUEST_REQUESTCOUNTER</p:step>
+		<p:step>IN_GETRESULT_RESPONSE_ERROR</p:step>
+	</p:steps>
+	<p:variables>
+		<!-- The element "Result" contains the parameter "ResultMajor" which equals /resultmajor#error and the parameter "ResultMinor" which equals /getResult#invalidCounter. -->
+		<p:variable name="RES_MIN_IN_GETRESULT_RESPONSE_ERROR">http://www.bsi.bund.de/eid/server/2.0/resultminor/getResult#invalidCounter</p:variable>
+		
+		<!-- The element "RequestCounter" contains the same value [RC] that was used in the previous call. -->
+		<p:variable name="REQUESTCOUNTER_1">1</p:variable>
+	</p:variables>
+</p:testcaseDefinition>

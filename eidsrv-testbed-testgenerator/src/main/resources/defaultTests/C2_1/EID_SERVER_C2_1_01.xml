@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_C2_1_01</p:name>
+	<p:description>Positive test verifying the eID-Server support the given cipher suite and parameters for TLS-2 using a PSK-based cipher suite.</p:description>
+	<p:modulePath>
+		<p:node>C</p:node>
+		<p:node>2</p:node>
+		<p:node>1</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>PAOS</p:profile>
+		<p:profile>EAC</p:profile>
+		<p:profile>CRYPTO</p:profile>
+		<p:profile>TLS_PSK</p:profile>
+	</p:profiles>
+	<p:eservice>A</p:eservice>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_EID_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_USEID_REQUEST</p:step>
+		<p:step>IN_USEID_RESPONSE</p:step>
+		<p:step>OUT_TLS_ECARDAPI</p:step>
+	</p:steps>
+	<p:variables>
+		<p:variable name="TLS_ALERT_LEVEL_RECEIVED">0</p:variable>
+	</p:variables>
+	
+</p:testcaseDefinition>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Generic Unit Tests" verbose="0" parallel="false">
+    <test name="Common Unit tests" verbose="0" parallel="false">
+        <classes>
+            <class name="com.secunet.eidserver.testbed.common.classes.EidCardsTest"/>
+            <class name="com.secunet.eidserver.testbed.common.ics.IcsTest"/>
+            <class name="com.secunet.eidserver.testbed.common.helper.BcTlsHelperTest"/>
+        </classes>
+    </test>
+</suite>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_A3_02_TLSv10</p:name>
+	<p:description>This test case checks the behaviour of the eID-Server in case the SSL/TLS version during eID-Interface handshake does not meet the requirements stated in [TR-03130-1].</p:description>
+	<p:modulePath>
+		<p:node>A</p:node>
+		<p:node>3</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>SOAP</p:profile>
+		<p:profile>SOAP_TLS</p:profile>
+		<p:profile>CRYPTO</p:profile>
+	</p:profiles>
+	<p:eservice>ERSA</p:eservice><p:clientExplanation>Configure the server to accept the certificate chain for client E. This includes the TLS, XML signature and the CV certificate.</p:clientExplanation>
+	<p:steps>
+		<p:step>OUT_TLS_EID</p:step>
+	</p:steps>
+	<p:variables>
+		<p:variable name="TLS_VERSION">TLSv10</p:variable>
+		<p:variable name="TLS_CIPHER_SUITES">TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</p:variable>
+		<p:variable name="TLS_ELLIPTIC_CURVES">secp256r1,secp384r1</p:variable>
+		<p:variable name="TLS_SUPPORTED_SIGNATURE_ALGORITHMS">SHA256withRSA</p:variable>
+		<p:variable name="TLS_ALERT_LEVEL_RECEIVED">2</p:variable>
+		<p:variable name="TLS_CLIENT_AUTHENTICATION">true</p:variable>
+	</p:variables>
+	
+</p:testcaseDefinition>

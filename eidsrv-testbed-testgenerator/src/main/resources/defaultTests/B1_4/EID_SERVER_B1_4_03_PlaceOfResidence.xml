@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_B1_4_03_PlaceOfResidence</p:name>
+	<p:description>Positive test describing the SAML interaction during Online Authentication. The eService requests to read a particular attribute, the field RequiredAttribute is set to 'false'.</p:description>
+	<p:modulePath>
+		<p:node>B</p:node>
+		<p:node>1</p:node>
+		<p:node>4</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>SAML</p:profile>
+		<p:profile>EID_ACCESS</p:profile>
+		<p:profile>SAML_ATTACHED</p:profile>
+	</p:profiles>
+	<p:eservice>A</p:eservice>
+	<p:eidcard>EIDCARD_1</p:eidcard>
+	<p:certificateBaseNames>
+		<p:certificate>CERT_ECARD_TLS_EIDSERVER_1</p:certificate>
+	</p:certificateBaseNames>
+	<p:steps>
+		<p:step>OUT_CALL_SAML_INCL_AUTHNREQUEST</p:step>
+		<p:step>IN_TC_TOKEN_SAML_ATTACHED</p:step>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_02_PlaceOfResidence</p:reference>
+	 	<p:step>OUT_SAML_ASSERTION</p:step>
+		<p:step>IN_SAML_ASSERTION</p:step>
+	</p:steps>
+	<p:variables>
+		<p:variable name="USEOP_PLACEOFRESIDENCE">ALLOWED</p:variable> <!-- <eid:UseOperations> -->
+		<p:variable name="PERSONAL_PLACEOFRESIDENCE">DKÖLN51147HEIDESTRASSE 17</p:variable>
+		<p:variable name="OABU_PLACEOFRESIDENCE">ALLOWED</p:variable> <!-- <eid:OperationsAllowedByUser> -->
+	</p:variables>
+</p:testcaseDefinition>
