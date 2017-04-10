@@ -30,6 +30,7 @@ import com.secunet.eidserver.testbed.common.ics.IcsOptionalprofile;
 import com.secunet.eidserver.testbed.common.ics.IcsTlsCiphersuite;
 import com.secunet.eidserver.testbed.common.ics.IcsTlsSignaturealgorithms;
 import com.secunet.eidserver.testbed.common.ics.IcsTlsVersion;
+import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionContentUri;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsecSignatureCanonicalization;
 import com.secunet.eidserver.testbed.common.interfaces.beans.RunController;
 import com.secunet.eidserver.testbed.common.interfaces.beans.Runner;
@@ -45,6 +46,7 @@ import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCase;
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestRun;
 import com.secunet.eidserver.testbed.common.interfaces.entities.Tls;
+import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyTransport;
 import com.secunet.eidserver.testbed.common.interfaces.entities.XmlSignature;
 import com.secunet.eidserver.testbed.common.types.testcase.TargetInterfaceType;
 import com.secunet.testbedutils.helperclasses.Pair;
@@ -189,41 +191,37 @@ public class RunControllerBean implements RunController
 				expandedToAdd.addAll(expanded);
 				callables.addAll(tasks);
 			}
-			// XML/SOAP Signature
+			// XML Signature
 			else if (testCase.getTestCaseSteps().size() == 2 && null != testCase.getVariables() && !testCase.getVariables().isEmpty()
 					&& testCase.getVariables().containsKey(GeneralConstants.XML_SIGNATURE) && !testCase.getVariables().get(GeneralConstants.XML_SIGNATURE).isEmpty())
 			{
-				List<RunTask> tasks = new ArrayList<>();
 				if (!testCase.getOptionalProfiles().contains(IcsOptionalprofile.SAML) && testCase.getVariables().containsKey(GeneralConstants.XML_SIGNATURE_DIGEST)
 						&& !testCase.getVariables().get(GeneralConstants.XML_SIGNATURE_DIGEST).isEmpty())
 				{
 					// special negative SOAP test case: test all supported signature algorithms using configured digest and canonicalization
-					LinkedList<TestCase> xmlTestCases = getExpandedXmlTestCases(testCase);
-					for (TestCase xmlTestCase : xmlTestCases)
-					{
-						expandedToAdd.add(xmlTestCase);
-						tasks.add(new RunTask(testCandidate, xmlTestCase, startDate));
-					}
+					LinkedList<TestCase> xmlSignatureTestCases = getExpandedXmlSignatureTestCases(testCase);
+					xmlSignatureTestCases.forEach(tc -> {
+						expandedToAdd.add(tc);
+						callables.add(new RunTask(testCandidate, tc, startDate));
+					});
 				}
 				else if (testCase.getOptionalProfiles().contains(IcsOptionalprofile.SAML) && testCase.getVariables().containsKey(GeneralConstants.XML_SIGNATURE_URI)
 						&& !testCase.getVariables().get(GeneralConstants.XML_SIGNATURE_URI).isEmpty())
 				{
-					// special negative SAML test case: test unsupported signature algorithm
+					// special negative SAML test case: test unsupported signature algorithms
 					expandedToAdd.add(testCase);
-					RunTask task = new RunTask(testCandidate, testCase, startDate);
-					callables.add(task);
+					callables.add(new RunTask(testCandidate, testCase, startDate));
 				}
+				// add all combinations signature algorithm, canonicalization and digest declared in the ics for the current interface
 				else
 				{
 					Set<XmlSignature> algos = null;
 					if (testCase.getOptionalProfiles().contains(IcsOptionalprofile.SAML))
 					{
-						// SAML
 						algos = testCandidate.getXmlSignatureAlgorithmsSaml();
 					}
 					else
 					{
-						// SOAP
 						algos = testCandidate.getXmlSignatureAlgorithmsEid();
 					}
 
@@ -232,7 +230,7 @@ public class RunControllerBean implements RunController
 						// Check signature algorithm
 						if (testCase.getVariables().get(GeneralConstants.XML_SIGNATURE).startsWith(CryptoHelper.getAlgorithm(xmlsig.getSignatureAlgorithm().value(), true)))
 						{
-							TestCase xmlTestCase = getExpandedXmlTestCase(testCase);
+							TestCase xmlTestCase = cloneTestCase(testCase);
 							xmlTestCase.getVariables().put(GeneralConstants.XML_SIGNATURE_URI, xmlsig.getSignatureAlgorithm().value());
 							if (!testCase.getOptionalProfiles().contains(IcsOptionalprofile.SAML))
 							{
@@ -247,17 +245,37 @@ public class RunControllerBean implements RunController
 
 							}
 							expandedToAdd.add(xmlTestCase);
-							tasks.add(new RunTask(testCandidate, xmlTestCase, startDate));
+							callables.add(new RunTask(testCandidate, xmlTestCase, startDate));
 						}
 					}
 				}
 				nonExpandedToRemove.add(testCase);
-				callables.addAll(tasks);
+			}
+			// XML encryption handling - only add test cases supported by the candidate and expand all key transports
+			// TODO also expand other crypto parameters
+			else if (testCase.getTestCaseSteps().size() == 2 && null != testCase.getVariables() && !testCase.getVariables().isEmpty()
+					&& testCase.getVariables().containsKey(GeneralConstants.SAML_ENCRYPTION_BLOCK_CIPHER) && !testCase.getVariables().get(GeneralConstants.SAML_ENCRYPTION_BLOCK_CIPHER).isEmpty())
+			{
+				nonExpandedToRemove.add(testCase);
+				for (IcsXmlsecEncryptionContentUri xmlEncryption : testCandidate.getXmlEncryptionAlgorithms())
+				{
+					if (xmlEncryption.value().equals(testCase.getVariables().get(GeneralConstants.SAML_ENCRYPTION_BLOCK_CIPHER)))
+					{
+						for (XmlEncryptionKeyTransport xmlKeyTransport : testCandidate.getXmlKeyTransport())
+						{
+							TestCase encryptionTestCase = cloneTestCase(testCase);
+							encryptionTestCase.getVariables().put(GeneralConstants.SAML_ENCRYPTION_BLOCK_CIPHER, xmlKeyTransport.getTransportAlgorithm().value());
+							encryptionTestCase.setName(testCase.getName() + "_" + xmlKeyTransport.getTransportAlgorithm().value());
+							expandedToAdd.add(encryptionTestCase);
+							callables.add(new RunTask(testCandidate, encryptionTestCase, startDate));
+						}
+						break;
+					}
+				}
 			}
 			else
 			{
-				RunTask task = new RunTask(testCandidate, testCase, startDate);
-				callables.add(task);
+				callables.add(new RunTask(testCandidate, testCase, startDate));
 			}
 		}
 
@@ -278,25 +296,29 @@ public class RunControllerBean implements RunController
 		}
 		else
 		{
-			for (final Callable<Log> callable : callables)
-			{
-				executorService.submit(callable);
-			}
+			callables.forEach(callable -> executorService.submit(callable));
 		}
 	}
 
-
-	private TestCase getExpandedXmlTestCase(TestCase testCase)
+	/**
+	 * Create a copy of the given {@link TestCase}. This is not implemented as a copy constructor due to JPA (EclipseLink) constraints.
+	 * 
+	 * @param testCase
+	 * @return
+	 */
+	private TestCase cloneTestCase(TestCase testCase)
 	{
 		TestCase xmlTestCase = testCaseDAO.createNew();
 		xmlTestCase.setCandidates(testCase.getCandidates());
 		xmlTestCase.setCard(testCase.getCard());
+		xmlTestCase.setEservice(testCase.getEservice());
 		xmlTestCase.setCertificateBaseNames(testCase.getCertificateBaseNames());
 		xmlTestCase.setDescription(testCase.getDescription());
 		xmlTestCase.setMandatoryProfiles(testCase.getMandatoryProfiles());
 		xmlTestCase.setModule(testCase.getModule());
 		xmlTestCase.setOptionalProfiles(testCase.getOptionalProfiles());
 		xmlTestCase.setTestCaseSteps(testCase.getTestCaseSteps());
+		xmlTestCase.setRelevantSteps(testCase.getRelevantSteps());
 		Map<String, String> vars = new HashMap<>();
 		for (Map.Entry<String, String> entry : testCase.getVariables().entrySet())
 		{
@@ -306,8 +328,13 @@ public class RunControllerBean implements RunController
 		return xmlTestCase;
 	}
 
-
-	private LinkedList<TestCase> getExpandedXmlTestCases(TestCase testCase)
+	/**
+	 * Create a {@link List} of {@link TestCase}s from the given XML signature testCase. The list contains a
+	 * 
+	 * @param testCase
+	 * @return
+	 */
+	private LinkedList<TestCase> getExpandedXmlSignatureTestCases(TestCase testCase)
 	{
 		LinkedList<TestCase> list = new LinkedList<TestCase>();
 
@@ -322,33 +349,7 @@ public class RunControllerBean implements RunController
 			List<String> signAlgos = CryptoHelper.getSupportedSignatureAlgorithms(CryptoHelper.getAlgorithm(testCase.getVariables().get(GeneralConstants.XML_SIGNATURE), true));
 			for (String signAlgo : signAlgos)
 			{
-				TestCase xmlTestCase = getExpandedXmlTestCase(testCase);
-				xmlTestCase.getVariables().put(GeneralConstants.XML_SIGNATURE_URI, signAlgo);
-				xmlTestCase.getVariables().put(GeneralConstants.XML_SIGNATURE_DIGEST, digest);
-				xmlTestCase.getVariables().put(GeneralConstants.XML_SIGNATURE_CANONICALIZATION, canonicalization);
-				xmlTestCase.setName(testCase.getName() + "_" + signAlgo + "_" + canonicalization + "_" + digest);
-				list.add(xmlTestCase);
-			}
-		}
-		return list;
-	}
-
-	private LinkedList<TestCase> getExpandedXmlEncryptionTestCases(TestCase testCase)
-	{
-		LinkedList<TestCase> list = new LinkedList<TestCase>();
-
-		if (testCase.getVariables().containsKey(GeneralConstants.XML_SIGNATURE_DIGEST) && !testCase.getVariables().get(GeneralConstants.XML_SIGNATURE_DIGEST).isEmpty())
-		{
-			String canonicalization = IcsXmlsecSignatureCanonicalization.HTTP_WWW_W_3_ORG_2001_10_XML_EXC_C_14_N.value();
-			if (testCase.getVariables().containsKey(GeneralConstants.XML_SIGNATURE_CANONICALIZATION) && !testCase.getVariables().get(GeneralConstants.XML_SIGNATURE_CANONICALIZATION).isEmpty())
-			{
-				canonicalization = testCase.getVariables().get(GeneralConstants.XML_SIGNATURE_CANONICALIZATION);
-			}
-			String digest = testCase.getVariables().get(GeneralConstants.XML_SIGNATURE_DIGEST);
-			List<String> signAlgos = CryptoHelper.getSupportedSignatureAlgorithms(CryptoHelper.getAlgorithm(testCase.getVariables().get(GeneralConstants.XML_SIGNATURE), true));
-			for (String signAlgo : signAlgos)
-			{
-				TestCase xmlTestCase = getExpandedXmlTestCase(testCase);
+				TestCase xmlTestCase = cloneTestCase(testCase);
 				xmlTestCase.getVariables().put(GeneralConstants.XML_SIGNATURE_URI, signAlgo);
 				xmlTestCase.getVariables().put(GeneralConstants.XML_SIGNATURE_DIGEST, digest);
 				xmlTestCase.getVariables().put(GeneralConstants.XML_SIGNATURE_CANONICALIZATION, canonicalization);
@@ -523,6 +524,7 @@ public class RunControllerBean implements RunController
 		tc.setModule(testCase.getModule());
 		tc.setOptionalProfiles(testCase.getOptionalProfiles());
 		tc.setTestCaseSteps(testCase.getTestCaseSteps());
+		tc.setRelevantSteps(testCase.getRelevantSteps());
 		// create copy of variables
 		Map<String, String> vars = new HashMap<>(testCase.getVariables());
 		vars.put(GeneralConstants.TLS_VERSION, version);

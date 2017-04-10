@@ -25,7 +25,6 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
 import com.secunet.eidserver.testbed.common.enumerations.Interface;
 import com.secunet.eidserver.testbed.common.exceptions.CandidateException;
 import com.secunet.eidserver.testbed.common.exceptions.ComponentNotInitializedException;
@@ -51,7 +50,6 @@ import com.secunet.eidserver.testbed.common.ics.IcsMandatoryprofile;
 import com.secunet.eidserver.testbed.common.ics.IcsOptionalprofile;
 import com.secunet.eidserver.testbed.common.ics.IcsTlsSignaturealgorithms;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionContentUri;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionKeyTransportUri;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsignature;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsignatures;
 import com.secunet.eidserver.testbed.common.interfaces.beans.CandidateController;
@@ -74,7 +72,6 @@ import com.secunet.eidserver.testbed.common.interfaces.entities.TlsClientCertifi
 import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyAgreement;
 import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyTransport;
 import com.secunet.eidserver.testbed.common.interfaces.entities.XmlSignature;
-import com.secunet.eidserver.testbed.controller.RunControllerBean.RunTask;
 
 @Stateful
 public class CandidateControllerBean implements CandidateController
@@ -162,35 +159,6 @@ public class CandidateControllerBean implements CandidateController
 		// filter for the given candidate (by profile)
 		Set<TestCase> relevant = defaultTestcases.stream().filter(dtc -> candidate.getMandatoryProfiles().containsAll(dtc.getMandatoryProfiles()))
 				.filter(dtc -> candidate.getOptionalProfiles().containsAll(dtc.getOptionalProfiles())).collect(Collectors.toSet());
-		// also filter by other ics data (e.g. supported SAML encryption params)
-		// XML encryption (SAML)
-
-		for (TestCase testCase : relevant)
-		{
-			if (testCase.getVariables().containsKey(GeneralConstants.SAML_ENCRYPTION_BLOCK_CIPHER) && testCase.getVariables().containsKey(GeneralConstants.SAML_ENCRYPTION_BLOCK_CIPHER)
-					&& candidate.getOptionalProfiles().contains(IcsOptionalprofile.SAML) && candidate.getXmlEncryptionAlgorithms() != null && candidate.getXmlKeyTransport() != null)
-			{
-				String blockCipher = testCase.getVariables().get(GeneralConstants.SAML_ENCRYPTION_BLOCK_CIPHER);
-				IcsXmlsecEncryptionContentUri blockUri = IcsXmlsecEncryptionContentUri.fromValue(blockCipher);
-				if (blockCipher != null && candidate.getXmlEncryptionAlgorithms().contains(blockUri))
-				{
-					String keyTransport = testCase.getVariables().get(GeneralConstants.SAML_ENCRYPTION_KEY_TRANSPORT);
-					IcsXmlsecEncryptionKeyTransportUri transportUri = IcsXmlsecEncryptionKeyTransportUri.fromValue(keyTransport);
-					if (transportUri != null)
-					{
-						for (XmlEncryptionKeyTransport transport : candidate.getXmlKeyTransport())
-						{
-							if (transport.getTransportAlgorithm().equals(transportUri))
-							{
-								RunTask xmlEncryptionTask = new RunTask(candidate, testCase, startDate);
-								callables.add(xmlEncryptionTask);
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
 		return relevant;
 	}
 

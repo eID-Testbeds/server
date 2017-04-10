@@ -2,12 +2,12 @@
 <p:testcaseDefinition xmlns:p="http://www.secunet.com"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
-	<p:name>EID_SERVER_B2_2_01_AES192GCM_RSA15</p:name>
+	<p:name>EID_SERVER_B2_2_01_AES128GCM</p:name>
 	<p:description>Positive test verifying the eID-Server to support all algorithms and parameters listed in the ICS for XML decryption during communication using the SAML-Profile.</p:description>
 	<p:modulePath>
 		<p:node>B</p:node>
 		<p:node>2</p:node>
-		<p:node>1</p:node>
+		<p:node>2</p:node>
 	</p:modulePath>
 	<p:profiles>
 		<p:profile>SAML</p:profile>
@@ -22,8 +22,7 @@
 		<p:step>IN_TC_TOKEN</p:step>
 	</p:steps>
 	<p:variables>
-		<p:variable name="SAML_ENCRYPTION_BLOCK_CIPHER">http://www.w3.org/2009/xmlenc11#aes192-gcm</p:variable>
-		<p:variable name="SAML_ENCRYPTION_KEY_TRANSPORT">http://www.w3.org/2001/04/xmlenc#rsa-1_5</p:variable>
+		<p:variable name="SAML_ENCRYPTION_BLOCK_CIPHER">http://www.w3.org/2009/xmlenc11#aes128-gcm</p:variable>
 		<p:variable name="USEOP_FAMILYNAMES"/>
 	</p:variables>
 </p:testcaseDefinition>

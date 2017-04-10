@@ -351,13 +351,18 @@ public class StepHandlerSAML extends StepHandler
 
 			AuthnRequest request = buildAuthRequest(encKey);
 
-			String signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-			CryptoHelper.Algorithm algCryptoSign = CryptoHelper.getAlgorithmFromService(service);
+			String signatureAlgorithm;
+			CryptoHelper.Algorithm algCryptoSign;
 			if (knownValues.containsElement(GeneralConstants.XML_SIGNATURE) && (knownValues.get(GeneralConstants.XML_SIGNATURE).getValue() != null))
 			{
 				signatureAlgorithm = knownValues.get(GeneralConstants.XML_SIGNATURE_URI).getValue();
 				algCryptoSign = CryptoHelper.Algorithm
 						.getFromAlgorithmName(CommonUtil.getSubstringBefore(knownValues.get(GeneralConstants.XML_SIGNATURE).getValue(), GeneralConstants.MANIPULATED_SUFFIX, true));
+			}
+			else
+			{
+				signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+				algCryptoSign = CryptoHelper.getAlgorithmFromService(service);
 			}
 
 			// then sign using the testbed saml signing key
