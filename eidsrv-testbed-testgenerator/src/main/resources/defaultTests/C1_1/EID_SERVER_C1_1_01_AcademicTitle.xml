@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <p:testcaseDefinition xmlns:p="http://www.secunet.com"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	xsi:schemaLocation="http://www.secunet.com ../../xmlScheme/sn_TestcaseDefinition.xsd ">
 	<p:name>EID_SERVER_C1_1_01_AcademicTitle</p:name>
 	<p:description>Positive test describing the PAOS communication between the eID-Server and the eID-Client. The eService request requires to read a particular attribute.</p:description>
 	<p:modulePath>
@@ -11,7 +11,7 @@
 	</p:modulePath>
 	<p:profiles>
 		<p:profile>EAC</p:profile>
-		<p:profile>PAOS</p:profile>
+		<p:profile>PAOS</p:profile><p:profile>SOAP</p:profile>
 		<p:profile>EID_ACCESS</p:profile>
 	</p:profiles>
 	<p:eservice>A</p:eservice>

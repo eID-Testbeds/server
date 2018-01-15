@@ -568,10 +568,13 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 	{
 		ecardapiUrl = generateTextField(I18NHandler.getText(I18NText.TestCandidate_ecardapiUrl));
 		ecardapiUrl.setConverter(new StringToUrlConverter());
+		ecardapiUrl.setRequired(false);
 		eidinterfaceUrl = generateTextField(I18NHandler.getText(I18NText.TestCandidate_eidinterfaceUrl));
 		eidinterfaceUrl.setConverter(new StringToUrlConverter());
+		eidinterfaceUrl.setRequired(false);
 		samlUrl = generateTextField(I18NHandler.getText(I18NText.TestCandidate_samlUrl));
 		samlUrl.setConverter(new StringToUrlConverter());
+		samlUrl.setRequired(false);
 		attachedUrl = generateTextField(I18NHandler.getText(I18NText.TestCandidate_attachedUrl));
 		attachedUrl.setConverter(new StringToUrlConverter());
 		attachedUrl.setRequired(false);

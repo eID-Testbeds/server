@@ -25,8 +25,8 @@
 	<p:variables>
 		<p:variable name="TLS_VERSION">TLSv12</p:variable>
 		<p:variable name="TLS_SELECTED_VERSION">TLSv12</p:variable>
-		<p:variable name="TLS_CIPHER_SUITES">TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</p:variable>
-		<p:variable name="TLS_SELECTED_CIPHER_SUITE">TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</p:variable>
+		<p:variable name="TLS_CIPHER_SUITES">TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256</p:variable>
+		<p:variable name="TLS_SELECTED_CIPHER_SUITE">TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256</p:variable>
 		<p:variable name="TLS_ELLIPTIC_CURVES">secp192r1,secp160r1</p:variable>
 		<p:variable name="TLS_SUPPORTED_SIGNATURE_ALGORITHMS">SHA256withRSA</p:variable>
 		<p:variable name="TLS_ALERT_LEVEL_RECEIVED">2</p:variable>

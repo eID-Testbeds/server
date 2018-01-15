@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -18,8 +17,10 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -36,6 +37,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.naming.ConfigurationException;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -55,38 +57,38 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.xml.security.exceptions.Base64DecodingException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Base64;
 import org.joda.time.DateTime;
-import org.opensaml.Configuration;
-import org.opensaml.DefaultBootstrap;
-import org.opensaml.common.SAMLObjectBuilder;
-import org.opensaml.common.SAMLVersion;
-import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.saml2.common.Extensions;
-import org.opensaml.saml2.core.Attribute;
-import org.opensaml.saml2.core.AttributeValue;
-import org.opensaml.saml2.core.AuthnRequest;
-import org.opensaml.saml2.core.Issuer;
-import org.opensaml.saml2.core.impl.AttributeBuilder;
-import org.opensaml.saml2.encryption.Encrypter;
-import org.opensaml.saml2.encryption.Encrypter.KeyPlacement;
-import org.opensaml.xml.ConfigurationException;
-import org.opensaml.xml.Namespace;
-import org.opensaml.xml.XMLObjectBuilder;
-import org.opensaml.xml.XMLObjectBuilderFactory;
-import org.opensaml.xml.encryption.EncryptedData;
-import org.opensaml.xml.encryption.EncryptionConstants;
-import org.opensaml.xml.encryption.EncryptionException;
-import org.opensaml.xml.encryption.EncryptionParameters;
-import org.opensaml.xml.encryption.KeyEncryptionParameters;
-import org.opensaml.xml.io.Marshaller;
-import org.opensaml.xml.io.MarshallingException;
-import org.opensaml.xml.schema.XSAny;
-import org.opensaml.xml.schema.impl.XSAnyMarshaller;
-import org.opensaml.xml.security.credential.BasicCredential;
-import org.opensaml.xml.security.credential.UsageType;
-import org.opensaml.xml.security.keyinfo.KeyInfoGeneratorFactory;
-import org.opensaml.xml.util.Base64;
-import org.opensaml.xml.util.XMLHelper;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.xml.Namespace;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.core.xml.schema.XSAny;
+import org.opensaml.core.xml.schema.impl.XSAnyMarshaller;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeValue;
+import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Extensions;
+import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.impl.AttributeBuilder;
+import org.opensaml.saml.saml2.encryption.Encrypter;
+import org.opensaml.saml.saml2.encryption.Encrypter.KeyPlacement;
+import org.opensaml.security.credential.BasicCredential;
+import org.opensaml.security.credential.UsageType;
+import org.opensaml.xmlsec.encryption.EncryptedData;
+import org.opensaml.xmlsec.encryption.support.DataEncryptionParameters;
+import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
+import org.opensaml.xmlsec.encryption.support.EncryptionException;
+import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
+import org.opensaml.xmlsec.keyinfo.KeyInfoGeneratorFactory;
+import org.opensaml.xmlsec.keyinfo.impl.BasicKeyInfoGeneratorFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -105,15 +107,19 @@ import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionContentUri;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionKeyTransportUri;
 import com.secunet.eidserver.testbed.common.interfaces.dao.LogMessageDAO;
 import com.secunet.eidserver.testbed.common.interfaces.entities.LogMessage;
+import com.secunet.eidserver.testbed.common.interfaces.entities.TestCaseStep;
 import com.secunet.eidserver.testbed.common.types.testcase.EService;
 import com.secunet.eidserver.testbed.common.types.testcase.EidCard;
 import com.secunet.eidserver.testbed.common.types.testcase.Step;
 import com.secunet.eidserver.testbed.common.types.testcase.StepToken;
+import com.secunet.eidserver.testbed.common.types.testcase.TestStepType;
 import com.secunet.eidserver.testbed.runner.exceptions.EphemeralKeyNotFoundException;
 import com.secunet.eidserver.testbed.runner.exceptions.InvalidTestCaseDescriptionException;
 import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyException;
 import com.secunet.testbedutils.utilities.CommonUtil;
 import com.secunet.testbedutils.utilities.JaxBUtil;
+
+import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 public class StepHandlerSAML extends StepHandler
 {
@@ -168,22 +174,19 @@ public class StepHandlerSAML extends StepHandler
 		knownValues.add(new KnownValue(Replaceable.COMMUNICATIONERRORADDRESS.toString(), communicationErrorAddress));
 	}
 
-	/**
-	 * Extracts the path from the refresh address
-	 */
-	protected void updateRefreshAddress()
+	@Override
+	public List<LogMessage> validateStep(String receivedMessage, List<TestCaseStep> alternatives)
 	{
-		URL refreshUrl;
-		try
+		if (TestStepType.IN_SAML_ASSERTION.toString().equals(alternatives.get(0).getName()))
 		{
-			refreshUrl = new URL(knownValues.get(Replaceable.REFRESHADDRESS.toString()).getValue());
-			knownValues.add(new KnownValue(Replaceable.REFRESHADDRESS.toString(), getNonEmptyPath(refreshUrl)));
+			LogMessage message = validateAssertion(receivedMessage, alternatives.get(0).getName());
+			List<LogMessage> messages = new ArrayList<>();
+			messages.add(message);
+			return messages;
 		}
-		catch (MalformedURLException e)
+		else
 		{
-			StringWriter trace = new StringWriter();
-			e.printStackTrace(new PrintWriter(trace));
-			logger.error("Updating the refresh URL failed: " + System.getProperty("line.separator") + trace.toString());
+			return super.validateStep(receivedMessage, alternatives);
 		}
 	}
 
@@ -223,7 +226,7 @@ public class StepHandlerSAML extends StepHandler
 			samlAssertion = assertion.substring(assertion.indexOf(responseString) + responseString.length() + 1, assertion.indexOf("&SigAlg="));
 		}
 		String SIGAlg = assertion.substring(assertion.indexOf("&SigAlg=") + "&SigAlg=".length(), assertion.indexOf("&Signature="));
-		String signature = assertion.substring(assertion.indexOf("&Signature=") + "&Signature=".length(), assertion.indexOf("\r", assertion.indexOf("&Signature=")));
+		String signature = assertion.substring(assertion.indexOf("&Signature=") + "&Signature=".length(), assertion.indexOf(System.getProperty("line.separator"), assertion.indexOf("&Signature=")));
 		try
 		{
 			// validate the signature
@@ -337,13 +340,23 @@ public class StepHandlerSAML extends StepHandler
 		try
 		{
 			// first, encrypt using the candidate SAML encryption key
-			String certName = (service.equals(EService.EDSA) || service.equals(EService.EECDSA) || service.equals(EService.ERSA)) ? (EService.ERSA + GeneralConstants.ENCRYPTION_SUFFIX)
-					: (service + GeneralConstants.ENCRYPTION_SUFFIX);
-			X509Certificate x509Enc = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.RSA_ALG_ID, certName);
+			X509Certificate x509Enc = null;
+			if (service.equals(EService.EDSA))
+			{
+				x509Enc = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.DSA_ALG_ID, service.toString() + GeneralConstants.ENCRYPTION_SUFFIX);
+			}
+			else if (service.equals(EService.EECDSA))
+			{
+				x509Enc = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.ECDSA_ALG_ID, service.toString() + GeneralConstants.ENCRYPTION_SUFFIX);
+			}
+			else
+			{
+				x509Enc = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.RSA_ALG_ID, service.toString() + GeneralConstants.ENCRYPTION_SUFFIX);
+			}
+
 			if (x509Enc == null)
 			{
-				logger.error("Could not load encryption x509 certificate file: " + CryptoHelper.Protocol.SAML_PROT_ID.getProtocolName() + ", " + CryptoHelper.Algorithm.RSA_ALG_ID.getAlgorithmName()
-						+ ", " + (service + GeneralConstants.ENCRYPTION_SUFFIX));
+				logger.error("Could not load encryption x509 certificate file: " + CryptoHelper.Protocol.SAML_PROT_ID.getProtocolName() + ", " + (service + GeneralConstants.ENCRYPTION_SUFFIX));
 				return "";
 			}
 
@@ -375,7 +388,8 @@ public class StepHandlerSAML extends StepHandler
 			else
 				return "";
 		}
-		catch (ConfigurationException | InvalidKeyException | NoSuchAlgorithmException | SignatureException | MarshallingException | IOException | TransformerException | EncryptionException e)
+		catch (ConfigurationException | InvalidKeyException | NoSuchAlgorithmException | SignatureException | MarshallingException | IOException | TransformerException | EncryptionException
+				| InitializationException e)
 		{
 			StringWriter trace = new StringWriter();
 			e.printStackTrace(new PrintWriter(trace));
@@ -387,11 +401,13 @@ public class StepHandlerSAML extends StepHandler
 	private String encodeAndSign(AuthnRequest request, String signatureAlgorithm, CryptoHelper.Algorithm alg, boolean withSigAlg, boolean withSignature)
 			throws MarshallingException, IOException, NoSuchAlgorithmException, InvalidKeyException, java.security.SignatureException, TransformerException
 	{
-		Marshaller marshaller = org.opensaml.Configuration.getMarshallerFactory().getMarshaller(request);
-		org.w3c.dom.Element authDOM = marshaller.marshall(request);
-		StringWriter rspWrt = new StringWriter();
-		XMLHelper.writeNode(authDOM, rspWrt);
-		String messageXML = rspWrt.toString();
+		// Marshaller marshaller = XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(request.getElementQName()); ????
+		Marshaller marshaller = XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(request);
+		Element authDOM = marshaller.marshall(request);
+		// StringWriter rspWrt = new StringWriter();
+		// XMLHelper.writeNode(authDOM, rspWrt);
+		// String messageXML = rspWrt.toString();
+		String messageXML = SerializeSupport.prettyPrintXML(authDOM);
 		additionalOutboundData = ((null != additionalOutboundData) ? additionalOutboundData : "") + System.getProperty("line.separator") + "Generated AuthnRequest:"
 				+ System.getProperty("line.separator") + prettyPrintXml(messageXML, false);
 
@@ -402,7 +418,9 @@ public class StepHandlerSAML extends StepHandler
 		deflaterOutputStream.write(messageXML.getBytes());
 		deflaterOutputStream.close();
 
-		String samlAutnRequest = Base64.encodeBytes(byteArrayOutputStream.toByteArray(), Base64.DONT_BREAK_LINES);
+		// TODO
+		// String samlAutnRequest = Base64.encodeBytes(byteArrayOutputStream.toByteArray(), Base64.DONT_BREAK_LINES);
+		String samlAutnRequest = Base64.toBase64String(byteArrayOutputStream.toByteArray());
 		samlAutnRequest = URLEncoder.encode(samlAutnRequest, "UTF-8");
 
 		if (withSigAlg)
@@ -417,7 +435,9 @@ public class StepHandlerSAML extends StepHandler
 			if (withSignature)
 			{
 				byte[] signed = sig.sign();
-				String signature = Base64.encodeBytes(signed, Base64.DONT_BREAK_LINES);
+				// TODO
+				// String signature = Base64.encodeBytes(signed, Base64.DONT_BREAK_LINES);
+				String signature = Base64.toBase64String(signed);
 
 				if (knownValues.containsElement(GeneralConstants.XML_SIGNATURE))
 				{
@@ -432,8 +452,9 @@ public class StepHandlerSAML extends StepHandler
 								signed[byteToChange] = 0x00;
 							else
 								signed[byteToChange] = 0x01;
-
-							String signatureMod = Base64.encodeBytes(signed, Base64.DONT_BREAK_LINES);
+							// TODO
+							// String signatureMod = Base64.encodeBytes(signed, Base64.DONT_BREAK_LINES);
+							String signatureMod = Base64.toBase64String(signed);
 							if (signature.equals(signatureMod))
 							{
 								logger.error("Could not manipulate Signature");
@@ -460,12 +481,12 @@ public class StepHandlerSAML extends StepHandler
 	}
 
 	@SuppressWarnings("unchecked")
-	protected AuthnRequest buildAuthRequest(PublicKey encKey) throws EncryptionException, MarshallingException, ConfigurationException, TransformerException
+	protected AuthnRequest buildAuthRequest(PublicKey encKey) throws EncryptionException, MarshallingException, ConfigurationException, TransformerException, InitializationException
 	{
 		logger.entry("Building the AuthnRequest");
 		DateTime now = new DateTime();
-		DefaultBootstrap.bootstrap();
-		XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
+		InitializationService.initialize();
+		XMLObjectBuilderFactory builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 		SAMLObjectBuilder<AuthnRequest> requestBuilder = (SAMLObjectBuilder<AuthnRequest>) builderFactory.getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
 		AuthnRequest request = requestBuilder.buildObject();
 		request.setIssueInstant(now);
@@ -482,11 +503,11 @@ public class StepHandlerSAML extends StepHandler
 			request.setAssertionConsumerServiceURL(GeneralConstants.TESTBED_REFRESH_URL);
 		}
 		request.setProviderName(GeneralConstants.PROVIDER_NAME);
-		request.getNamespaceManager().registerNamespace(new Namespace("http://bsi.bund.de/eID/", "eid"));
-		request.getNamespaceManager().registerNamespace(new Namespace(SAMLConstants.SAML20_NS, SAMLConstants.SAML20_PREFIX));
-		request.getNamespaceManager().registerNamespace(new Namespace("http://www.w3.org/2000/09/xmldsig#", "ds"));
-		request.getNamespaceManager().registerNamespace(new Namespace("http://www.w3.org/2001/04/xmlenc#", "enc"));
-		request.getNamespaceManager().registerNamespace(new Namespace("http://www.w3.org/2001/XMLSchema-instance", "xsi"));
+		request.getNamespaceManager().registerNamespaceDeclaration(new Namespace("http://bsi.bund.de/eID/", "eid"));
+		request.getNamespaceManager().registerNamespaceDeclaration(new Namespace(SAMLConstants.SAML20_NS, SAMLConstants.SAML20_PREFIX));
+		request.getNamespaceManager().registerNamespaceDeclaration(new Namespace("http://www.w3.org/2000/09/xmldsig#", "ds"));
+		request.getNamespaceManager().registerNamespaceDeclaration(new Namespace("http://www.w3.org/2001/04/xmlenc#", "enc"));
+		request.getNamespaceManager().registerNamespaceDeclaration(new Namespace("http://www.w3.org/2001/XMLSchema-instance", "xsi"));
 
 		// Create Issuer
 		SAMLObjectBuilder<?> issuerBuilder = (SAMLObjectBuilder<?>) builderFactory.getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
@@ -514,26 +535,27 @@ public class StepHandlerSAML extends StepHandler
 			KnownValue issuerValue = knownValues.get(GeneralConstants.SAML_AUTHNREQUEST_EXTENSIONS);
 			if (null != issuerValue.getValue() && issuerValue.getValue().toUpperCase().equals("NULL"))
 			{
-				QName name = new QName(SAMLConstants.SAML20P_NS, Extensions.LOCAL_NAME, SAMLConstants.SAML20P_PREFIX);
-				Extensions ext = (Extensions) Configuration.getBuilderFactory().getBuilder(name).buildObject(name);
+				QName name = new QName(SAMLConstants.SAML20P_NS, Extensions.TYPE_LOCAL_NAME, SAMLConstants.SAML20P_PREFIX);
+				Extensions ext = (Extensions) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(name).buildObject(name);
 				request.setExtensions(ext);
 			}
 		}
 		else
 		{
-			QName name = new QName(SAMLConstants.SAML20P_NS, Extensions.LOCAL_NAME, SAMLConstants.SAML20P_PREFIX);
-			Extensions ext = (Extensions) Configuration.getBuilderFactory().getBuilder(name).buildObject(name);
+			QName name = new QName(SAMLConstants.SAML20P_NS, Extensions.TYPE_LOCAL_NAME, SAMLConstants.SAML20P_PREFIX);
+			Extensions ext = (Extensions) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(name).buildObject(name);
 
 
 			// Build the encrypted part
-			XMLObjectBuilder<XSAny> xsAnyBuilder = builderFactory.getBuilder(XSAny.TYPE_NAME);
+			// TODO
+			XMLObjectBuilder<XSAny> xsAnyBuilder = (XMLObjectBuilder<XSAny>) builderFactory.getBuilder(XSAny.TYPE_NAME);
 			XSAny encrytpedAuthnRequestExtention = xsAnyBuilder.buildObject("http://bsi.bund.de/eID/", "EncryptedAuthnRequestExtension", "eid");
 			if (!knownValues.containsElement(GeneralConstants.SAML_AUTHNREQUEST_ENCRYPTED_AUTHN_REQUEST_EXTENSION))
 			{
 				XSAny authnRequestExtension = xsAnyBuilder.buildObject("http://bsi.bund.de/eID/", "AuthnRequestExtension", "eid");
-				authnRequestExtension.getNamespaceManager().registerNamespace(new Namespace(SAMLConstants.SAML20_NS, SAMLConstants.SAML20_PREFIX));
-				authnRequestExtension.getNamespaceManager().registerNamespace(new Namespace("http://www.w3.org/2001/XMLSchema-Instance", "xsi"));
-				authnRequestExtension.getNamespaceManager().registerNamespace(new Namespace("http://www.w3.org/2001/XMLSchema", "xs"));
+				authnRequestExtension.getNamespaceManager().registerNamespaceDeclaration(new Namespace(SAMLConstants.SAML20_NS, SAMLConstants.SAML20_PREFIX));
+				authnRequestExtension.getNamespaceManager().registerNamespaceDeclaration(new Namespace("http://www.w3.org/2001/XMLSchema-Instance", "xsi"));
+				authnRequestExtension.getNamespaceManager().registerNamespaceDeclaration(new Namespace("http://www.w3.org/2001/XMLSchema", "xs"));
 				authnRequestExtension.getUnknownAttributes().put(new QName("Version"), "2");
 
 				XSAny requestedAtrributes = xsAnyBuilder.buildObject("http://bsi.bund.de/eID/", "RequestedAttributes", "eid");
@@ -560,7 +582,7 @@ public class StepHandlerSAML extends StepHandler
 							sf = SpecialFunction.getFromName(kv.getName(), true);
 							attr.getUnknownAttributes().put(new QName("Name"), sf.toString());
 						}
-						attr.getNamespaceManager().registerNamespace(new Namespace("http://bsi.bund.de/eID/", "eid"));
+						attr.getNamespaceManager().registerNamespaceDeclaration(new Namespace("http://bsi.bund.de/eID/", "eid"));
 						if (GeneralConstants.PERMISSION_REQUIRED.equals(kv.getValue()))
 						{
 							attr.getUnknownAttributes().put(new QName("http://bsi.bund.de/eID/", "RequiredAttribute", "eid"), "true");
@@ -617,9 +639,9 @@ public class StepHandlerSAML extends StepHandler
 				logger.debug("Encrypting AuthnRequestExtension");
 
 				// build encryption elements
-				EncryptionParameters encryptionParameters = buildEncryptionParameters();
+				DataEncryptionParameters dataEncryptionParameters = buildEncryptionParameters();
 				KeyEncryptionParameters keyEncryptionParameters = buildKeyEncryptionParameters(encKey);
-				Encrypter samlEncrypter = new Encrypter(encryptionParameters, keyEncryptionParameters);
+				Encrypter samlEncrypter = new Encrypter(dataEncryptionParameters, keyEncryptionParameters);
 				samlEncrypter.setKeyPlacement(KeyPlacement.INLINE);
 
 				// a marshaller has to be created before encrypting the extension
@@ -628,7 +650,7 @@ public class StepHandlerSAML extends StepHandler
 				String authnRequest = prettyPrintNode(are, false);
 				additionalOutboundData = "Generated AuthnRequestExtension:" + System.getProperty("line.separator") + authnRequest;
 
-				EncryptedData encryptedData = samlEncrypter.encryptElement(authnRequestExtension, encryptionParameters, keyEncryptionParameters);
+				EncryptedData encryptedData = samlEncrypter.encryptElement(authnRequestExtension, dataEncryptionParameters, keyEncryptionParameters);
 				encrytpedAuthnRequestExtention.getUnknownXMLObjects().add(encryptedData);
 				ext.getUnknownXMLObjects().add(encrytpedAuthnRequestExtention);
 			}
@@ -650,8 +672,7 @@ public class StepHandlerSAML extends StepHandler
 	 */
 	private KeyEncryptionParameters buildKeyEncryptionParameters(PublicKey encKey)
 	{
-		BasicCredential encCreadentials = new BasicCredential();
-		encCreadentials.setPublicKey(encKey);
+		BasicCredential encCreadentials = new BasicCredential(encKey);
 		encCreadentials.setUsageType(UsageType.ENCRYPTION);
 		KeyEncryptionParameters keyEncryptionParams = new KeyEncryptionParameters();
 		keyEncryptionParams.setEncryptionCredential(encCreadentials);
@@ -680,19 +701,20 @@ public class StepHandlerSAML extends StepHandler
 		{
 			keyEncryptionParams.setAlgorithm(EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSA15);
 		}
-		KeyInfoGeneratorFactory kigf = Configuration.getGlobalSecurityConfiguration().getKeyInfoGeneratorManager().getDefaultManager().getFactory(encCreadentials);
+		// TODO
+		KeyInfoGeneratorFactory kigf = new BasicKeyInfoGeneratorFactory();
 		keyEncryptionParams.setKeyInfoGenerator(kigf.newInstance());
 		return keyEncryptionParams;
 	}
 
 	/**
-	 * Creates a new instance of {@link EncryptionParameters} using the values provided during the initialization of this step handler instance
+	 * Creates a new instance of {@link DataEncryptionParameters} using the values provided during the initialization of this step handler instance
 	 * 
-	 * @return The {@link EncryptionParameters}
+	 * @return The {@link DataEncryptionParameters}
 	 */
-	private EncryptionParameters buildEncryptionParameters()
+	private DataEncryptionParameters buildEncryptionParameters()
 	{
-		EncryptionParameters encParams = new EncryptionParameters();
+		DataEncryptionParameters encParams = new DataEncryptionParameters();
 		if (knownValues.containsElement(GeneralConstants.SAML_ENCRYPTION_BLOCK_CIPHER))
 		{
 			String blockVariable = knownValues.get(GeneralConstants.SAML_ENCRYPTION_BLOCK_CIPHER).getValue();
@@ -730,7 +752,6 @@ public class StepHandlerSAML extends StepHandler
 		{
 			encParams.setAlgorithm(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128);
 		}
-		encParams.setAlgorithm(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128);
 		return encParams;
 	}
 

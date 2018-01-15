@@ -5,7 +5,7 @@
 	<p:TargetInterface>SAML</p:TargetInterface>
     <p:HttpStepToken>
         <p:name>message</p:name>
-        <p:value>GET [REFRESHADDRESS] HTTP/1.1
+        <p:value>GET [[REFRESHADDRESS_PATH]] HTTP/1.1
 Host: [SAML_PROCESSOR_HOSTNAME]
 User-Agent: [USER_AGENT]
 Content-Type: text/xml;charset=utf-8</p:value>

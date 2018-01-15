@@ -42,6 +42,11 @@ requestid: [SESSIONIDENTIFIER]]]></p:value>
     &lt;ResultMajor&gt;http://www.bsi.bund.de/ecard/api/1.1/resultmajor#error&lt;/ResultMajor&gt;
     &lt;ResultMinor&gt;http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#internalError&lt;/ResultMinor&gt;
    &lt;/Result&gt;
+   &lt;AuthenticationProtocolData Protocol=&quot;urn:oid:1.3.162.15480.3.0.14.2&quot; xsi:type=&quot;iso:EAC1OutputType&quot;&gt;
+    &lt;EFCardAccess&gt;01010101&lt;/EFCardAccess&gt;
+    &lt;IDPICC&gt;01010101&lt;/IDPICC&gt;
+    &lt;Challenge&gt;01010101&lt;/Challenge&gt;
+   &lt;/AuthenticationProtocolData&gt;
   &lt;/DIDAuthenticateResponse&gt;
  &lt;/soap:Body&gt;
 &lt;/soap:Envelope&gt;]]></p:value>

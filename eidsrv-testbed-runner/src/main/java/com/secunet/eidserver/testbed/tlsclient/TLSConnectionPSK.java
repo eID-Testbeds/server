@@ -9,22 +9,21 @@ import java.util.Vector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.tls.AlertLevel;
 import org.bouncycastle.crypto.tls.Certificate;
-import org.bouncycastle.crypto.tls.CertificateRequest;
 import org.bouncycastle.crypto.tls.CipherSuite;
 import org.bouncycastle.crypto.tls.CompressionMethod;
-import org.bouncycastle.crypto.tls.DefaultTlsSignerCredentials;
 import org.bouncycastle.crypto.tls.HashAlgorithm;
+import org.bouncycastle.crypto.tls.NameType;
 import org.bouncycastle.crypto.tls.NamedCurve;
 import org.bouncycastle.crypto.tls.PSKTlsClient;
 import org.bouncycastle.crypto.tls.ProtocolVersion;
+import org.bouncycastle.crypto.tls.ServerName;
+import org.bouncycastle.crypto.tls.ServerNameList;
 import org.bouncycastle.crypto.tls.ServerOnlyTlsAuthentication;
 import org.bouncycastle.crypto.tls.SignatureAlgorithm;
 import org.bouncycastle.crypto.tls.SignatureAndHashAlgorithm;
 import org.bouncycastle.crypto.tls.TlsAuthentication;
-import org.bouncycastle.crypto.tls.TlsCredentials;
 import org.bouncycastle.crypto.tls.TlsECCUtils;
 import org.bouncycastle.crypto.tls.TlsExtensionsUtils;
 import org.bouncycastle.crypto.tls.TlsUtils;
@@ -34,12 +33,8 @@ public class TLSConnectionPSK extends PSKTlsClient
 	private static final Logger logger = LogManager.getLogger(TLSConnectionPSK.class);
 
 	private int[] supported_suites, namedCurves;
-	private final Certificate client_cert;
-	private final AsymmetricKeyParameter client_key;
-	private final boolean clientAuthentication;
 	private short[] hashAlgorithms, signatureAlgorithms;
-	private String compressionMethod, cipherSuite, serverVersion;
-	private final TLSConnectionClient connectionClient;
+	private String compressionMethod, cipherSuite, serverVersion, host;
 
 	/**
 	 * Create a TLS PSK client without a client certificate using the given
@@ -49,34 +44,11 @@ public class TLSConnectionPSK extends PSKTlsClient
 	 * @param PSKID
 	 * @param PSK
 	 */
-	TLSConnectionPSK(TLSConnectionClient connectionClient, byte[] PSKID, byte[] PSK)
+	TLSConnectionPSK(String host, byte[] PSKID, byte[] PSK)
 	{
 		super(new TLSPSKClientIdentity(PSKID, PSK));
-		this.connectionClient = connectionClient;
-		client_cert = null;
-		client_key = null;
-		clientAuthentication = false;
 		setDefaultCryptography();
-	}
-
-	/**
-	 * Create a TLS PSK client with a client certificate using the given
-	 * parameters
-	 * 
-	 * @param connectionClient
-	 * @param cert
-	 * @param keys
-	 * @param PSKID
-	 * @param PSK
-	 */
-	TLSConnectionPSK(TLSConnectionClient connectionClient, Certificate cert, AsymmetricKeyParameter keys, byte[] PSKID, byte[] PSK)
-	{
-		super(new TLSPSKClientIdentity(PSKID, PSK));
-		this.connectionClient = connectionClient;
-		client_cert = cert;
-		client_key = keys;
-		clientAuthentication = true;
-		setDefaultCryptography();
+		this.host = host;
 	}
 
 	// set default crypto params
@@ -102,7 +74,6 @@ public class TLSConnectionPSK extends PSKTlsClient
 		return supported_suites;
 	}
 
-	// We support only TLS1.2
 	@Override
 	public ProtocolVersion getMinimumVersion()
 	{
@@ -143,6 +114,10 @@ public class TLSConnectionPSK extends PSKTlsClient
 		clientExtensions = TlsExtensionsUtils.ensureExtensionsInitialised(clientExtensions);
 		TlsUtils.addSignatureAlgorithmsExtension(clientExtensions, supportedSignatureAlgorithms);
 
+		Vector serverNames = new Vector(1);
+		serverNames.addElement(new ServerName(NameType.host_name, host));
+		TlsExtensionsUtils.addServerNameExtension(clientExtensions, new ServerNameList(serverNames));
+
 		return clientExtensions;
 	}
 
@@ -174,45 +149,6 @@ public class TLSConnectionPSK extends PSKTlsClient
 			logger.debug("TLS warning during reading: " + AlertLevel.getName(description) + System.getProperty("line.separator") + AlertLevel.getText(description));
 		}
 		super.notifyAlertReceived(level, description);
-	}
-
-	// This function is called when establishing the connection to verify/supply
-	// certificates
-	@Override
-	public TlsAuthentication getAuthentication() throws IOException
-	{
-		if (clientAuthentication)
-		{
-			logger.debug("Using client and server certificates");
-			return new TlsAuthentication() {
-
-				@Override
-				public void notifyServerCertificate(Certificate arg0) throws IOException
-				{
-					connectionClient.verifyTLSServerCerts(arg0);
-				}
-
-				@Override
-				public TlsCredentials getClientCredentials(CertificateRequest certificateRequest) throws IOException
-				{
-					logger.debug("Answering request for client certificates");
-					return new DefaultTlsSignerCredentials(context, client_cert, client_key);
-				}
-
-			};
-
-		}
-		else
-		{
-			logger.debug("Using only server certificates");
-			return new ServerOnlyTlsAuthentication() {
-				@Override
-				public void notifyServerCertificate(Certificate arg0) throws IOException
-				{
-					connectionClient.verifyTLSServerCerts(arg0);
-				}
-			};
-		}
 	}
 
 	/**
@@ -308,18 +244,6 @@ public class TLSConnectionPSK extends PSKTlsClient
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.secunet.bouncycastle.crypto.tls.AbstractTlsPeer#notifyHandshakeComplete()
-	 */
-	@Override
-	public void notifyHandshakeComplete() throws IOException
-	{
-		connectionClient.setHandshakeData("Protocol version: " + serverVersion + ", Ciphersuite: " + cipherSuite + " Compression method: " + compressionMethod);
-		super.notifyHandshakeComplete();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see com.secunet.bouncycastle.crypto.tls.AbstractTlsClient#notifySelectedCipherSuite(int)
 	 */
 	@Override
@@ -342,6 +266,20 @@ public class TLSConnectionPSK extends PSKTlsClient
 			}
 		}
 		super.notifySelectedCipherSuite(selectedCipherSuite);
+	}
+
+	@Override
+	public TlsAuthentication getAuthentication() throws IOException
+	{
+		logger.debug("Using only server certificates");
+		return new ServerOnlyTlsAuthentication() {
+
+			@Override
+			public void notifyServerCertificate(Certificate arg0) throws IOException
+			{
+				System.out.println(arg0.getCertificateList()[0].toString());
+			}
+		};
 	}
 
 }

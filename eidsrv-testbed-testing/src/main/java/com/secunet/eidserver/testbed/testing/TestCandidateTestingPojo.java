@@ -86,6 +86,8 @@ public class TestCandidateTestingPojo extends BaseTestingPojo implements Seriali
 
 	private boolean multiClientCapable;
 
+	private String eidasMetadata;
+
 	public TestCandidateTestingPojo()
 	{
 	}
@@ -466,15 +468,25 @@ public class TestCandidateTestingPojo extends BaseTestingPojo implements Seriali
 	@Override
 	public boolean isMultiClientCapable()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return this.multiClientCapable;
 	}
 
 	@Override
 	public void setMultiClientCapable(boolean multiClientCapable)
 	{
-		// TODO Auto-generated method stub
+		this.multiClientCapable = multiClientCapable;
+	}
 
+	@Override
+	public void setEidasMetadata(String eidasMetadataXml)
+	{
+		this.eidasMetadata = eidasMetadataXml;
+	}
+
+	@Override
+	public String getEidasMetadata()
+	{
+		return this.eidasMetadata;
 	}
 
 }

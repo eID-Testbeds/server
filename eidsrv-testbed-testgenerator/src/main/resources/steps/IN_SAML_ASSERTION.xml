@@ -2,7 +2,7 @@
 <p:Step xmlns:p="http://www.secunet.com"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd" >
-	<p:TargetInterface>SAML</p:TargetInterface>
+	<p:TargetInterface>Attached</p:TargetInterface>
 	<!-- Schema name -->
 	<!-- <p:Schema>PROVIDE SCHEMA</p:Schema> -->
 	<!-- HTTP Tokens -->

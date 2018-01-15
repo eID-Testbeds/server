@@ -240,7 +240,8 @@ public class TlsEntity extends BaseEntity implements Serializable, Tls
 		String suites = new String();
 		for (IcsTlsCiphersuite suite : this.getTlsCiphersuites())
 		{
-			suites += suite.value() + ", ";
+			if (suite != null)
+				suites += suite.value() + ", ";
 		}
 		stringRep += "Ciphersuites: " + ((suites.length() > 0) ? suites.substring(0, suites.length() - 2) : "") + System.getProperty("line.separator");
 		String sigAlgs = new String();

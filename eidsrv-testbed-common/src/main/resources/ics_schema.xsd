@@ -746,6 +746,9 @@
 			<xs:enumeration value="TLS_RSA_PSK_WITH_AES_256_CBC_SHA384" />
 			<xs:enumeration value="TLS_RSA_PSK_WITH_AES_128_GCM_SHA256" />
 			<xs:enumeration value="TLS_RSA_PSK_WITH_AES_256_GCM_SHA384" />
+			<xs:enumeration value="TLS_DHE_RSA_WITH_AES_256_GCM_SHA384" />
+			<xs:enumeration value="TLS_DHE_RSA_WITH_AES_128_GCM_SHA256" />
+			<xs:enumeration value="TLS_DHE_RSA_WITH_AES_128_CBC_SHA256" />
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -874,6 +877,7 @@
 			<xs:enumeration value="ALL_LINK" />
 			<xs:enumeration value="CONF_MAX_SE" />
 			<xs:enumeration value="CONF_TM_OUT" />
+			<xs:enumeration value="EIDAS_MW" />
 		</xs:restriction>
 	</xs:simpleType>
 

@@ -20,7 +20,7 @@
 	<p:steps>
 		<p:step>OUT_USEID_REQUEST_SET1</p:step>
 		<p:step>IN_USEID_RESPONSE</p:step>
-		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_13</p:reference>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_16</p:reference>
 		<p:step>OUT_GETRESULT_REQUEST_TWO_REQUESTCOUNTERS</p:step>
 		<p:step>IN_GETRESULT_RESPONSE_ERROR</p:step>
 		<p:step>OUT_GETRESULT_REQUEST_REQUESTCOUNTER</p:step>
@@ -33,7 +33,7 @@
 		<p:variable name="REQUESTCOUNTER_1">3</p:variable>
 		
 		<!-- The element "Result" contains the parameter "ResultMajor" which equals /resultmajor#error and the parameter "ResultMinor" which equals /getResult#schemaViolation. -->
-		<p:variable name="RES_MIN_IN_GETRESULT_RESPONSE_ERROR">http://www.bsi.bund.de/eid/server/2.0/resultminor/getResult#schemaViolation</p:variable>
+		<p:variable name="RES_MIN_IN_GETRESULT_RESPONSE_ERROR">http://www.bsi.bund.de/eid/server/2.0/resultminor/common#schemaViolation</p:variable>
 		
 		<!-- The element "Result" contains the parameter "ResultMajor" which equals /resultmajor#error and the parameter "ResultMinor" which equals /getResult#invalidSession. -->
 		<p:variable name="RES_MIN_IN_GETRESULT_RESPONSE_ERROR_2">http://www.bsi.bund.de/eid/server/2.0/resultminor/getResult#invalidSession</p:variable>

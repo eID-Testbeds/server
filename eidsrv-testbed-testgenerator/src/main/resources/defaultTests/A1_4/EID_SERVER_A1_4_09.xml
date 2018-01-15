@@ -20,13 +20,13 @@
 	<p:steps>
 		<p:step>OUT_USEID_REQUEST_SET1</p:step>
 		<p:step>IN_USEID_RESPONSE</p:step>
-		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_13</p:reference>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_16</p:reference>
 		<p:step>OUT_GETRESULT_REQUEST_SID</p:step>
 		<p:step>IN_GETRESULT_RESPONSE_ERROR</p:step>
 	</p:steps>
 	<p:variables>
 		<!-- The element "Session" contains a manipulated [SID] previously assigned by the eID-Server. -->
-		<p:variable name="ESERVICE_SESSION_INV">ABCDEF</p:variable>
+		<p:variable name="ESERVICE_SESSION_INV">111111111111111111111111111111111111111111111111111111111111111111111111</p:variable>
 		
 		<p:variable name="RES_MIN_IN_GETRESULT_RESPONSE_ERROR">http://www.bsi.bund.de/eid/server/2.0/resultminor/getResult#invalidSession</p:variable>
 	</p:variables>

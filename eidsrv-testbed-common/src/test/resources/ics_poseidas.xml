@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://trdoccheck.bsi.bund.de/server/ics ../../main/resources/ics_schema.xsd ">
 
 	<Metadata>
-		<eCardApiUrl>https://192.168.56.12:8445/POSeIDAS/paosreceiver</eCardApiUrl>
-		<eIdInterfaceiUrl>https://192.168.56.12:8443/POSeIDAS</eIdInterfaceiUrl>
-		<SamlUrl></SamlUrl>
-		<AttachedTcTokenUrl></AttachedTcTokenUrl>
+		<eCardApiUrl>https://192.168.56.101:8445/POSeIDAS/paosreceiver</eCardApiUrl>
+		<eIdInterfaceiUrl>https://192.168.56.101:8444/POSeIDAS/eID</eIdInterfaceiUrl>
+		<SamlUrl>https://192.168.56.101:8443/POSeIDAS/SAML</SamlUrl>
+		<AttachedTcTokenUrl>https://192.168.56.101:8443/POSeIDAS/attached</AttachedTcTokenUrl>
 		<Vendor>Governikus</Vendor>
 		<Name>POSeIDAS</Name>
 		<VersionMajor>1</VersionMajor>
@@ -31,7 +31,6 @@
 		<MandatoryProfile>DG_VARIATIONS</MandatoryProfile>
 		<OptionalProfile>SOAP</OptionalProfile>
 		<OptionalProfile>SOAP_TLS</OptionalProfile>
-		<OptionalProfile>SAML</OptionalProfile>
 		<OptionalProfile>TLS_PSK</OptionalProfile>
 	</Profiles>
 
@@ -42,8 +41,11 @@
 				<TLS version="TLSv12">
 					<Ciphersuites>
 						<Ciphersuite>TLS_RSA_PSK_WITH_AES_256_CBC_SHA</Ciphersuite>
-						<Ciphersuite>TLS_RSA_PSK_WITH_AES_128_CBC_SHA256</Ciphersuite>
-						<Ciphersuite>TLS_RSA_PSK_WITH_AES_256_CBC_SHA384</Ciphersuite>
+					</Ciphersuites>
+				</TLS>
+				<TLS version="TLSv11">
+					<Ciphersuites>
+						<Ciphersuite>TLS_RSA_PSK_WITH_AES_256_CBC_SHA</Ciphersuite>
 					</Ciphersuites>
 				</TLS>
 			</PskChannel>

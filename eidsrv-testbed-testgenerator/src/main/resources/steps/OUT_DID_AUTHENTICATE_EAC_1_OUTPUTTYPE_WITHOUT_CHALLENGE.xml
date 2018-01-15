@@ -42,7 +42,6 @@ requestid: [SESSIONIDENTIFIER]]]></p:value>
     &lt;ResultMajor&gt;http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok&lt;/ResultMajor&gt;
    &lt;/Result&gt;
    &lt;AuthenticationProtocolData Protocol=&quot;urn:oid:1.3.162.15480.3.0.14.2&quot; xsi:type=&quot;iso:EAC1OutputType&quot;&gt;
-    &lt;CertificateHolderAuthorizationTemplate&gt;7F4C12060904007F0007030102025305[[CHAT]]&lt;/CertificateHolderAuthorizationTemplate&gt;
     &lt;EFCardAccess&gt;[EFCARDACCESS]&lt;/EFCardAccess&gt;
     &lt;IDPICC&gt;[IDPICC]&lt;/IDPICC&gt;
    &lt;/AuthenticationProtocolData&gt;

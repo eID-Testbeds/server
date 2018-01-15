@@ -44,7 +44,7 @@ import com.secunet.eidserver.testbed.common.interfaces.entities.TestCaseStep;
 import com.secunet.eidserver.testbed.common.interfaces.entities.Tls;
 import com.secunet.eidserver.testbed.common.types.testcase.EService;
 import com.secunet.eidserver.testbed.common.types.testcase.TargetInterfaceType;
-import com.secunet.eidserver.testbed.common.types.testcase.TestStepType;
+import com.secunet.eidserver.testbed.runner.eidas.StepHandlerEidas;
 import com.secunet.eidserver.testbed.tlsclient.TLSConnectionClient;
 
 @Stateless
@@ -133,6 +133,22 @@ public class RunnerBean implements Runner
 					logger.fatal("No SAML URL has been provided for the given profile, aborting.");
 				}
 			}
+			// eIDAS middleware tests
+			else if (testCase.getOptionalProfiles().contains(IcsOptionalprofile.EIDAS_MW))
+			{
+				if (null != candidate.getAttachedTcTokenUrl())
+				{
+					runEidas(result, candidate, testCase, values, x509Certificates, clientAuthCertificate, clientAuthKey);
+				}
+				else
+				{
+					LogMessage failMsg = logMessageDAO.createNew();
+					failMsg.setSuccess(false);
+					failMsg.setMessage("No eIDAS middleware URL has been provided for the given profile.");
+					result.add(failMsg);
+					logger.fatal("No eIDAS middleware URL has been provided for the given profile, aborting.");
+				}
+			}
 			// it is a SOAP or SOAP attached test case
 			else if (testCase.getOptionalProfiles().contains(IcsOptionalprofile.SOAP) || testCase.getOptionalProfiles().contains(IcsOptionalprofile.ESER_ATTACHED))
 			{
@@ -196,9 +212,28 @@ public class RunnerBean implements Runner
 		}
 		catch (Exception e)
 		{
+			logger.error(e);
 			throw new TestrunException(result, e);
 		}
 		return result;
+	}
+
+
+	private int runEidas(List<LogMessage> result, TestCandidate candidate, TestCase testCase, KnownValues values, Map<String, X509Certificate> x509Certificates, Certificate clientAuthCertificate,
+			AsymmetricKeyParameter clientAuthKey)
+	{
+		logger.debug("Starting eIDAS middleware testcase");
+
+		// create the handler
+		StepHandler handler = new StepHandlerEidas(candidate.getCandidateName(), candidate.getEcardapiUrl(), values, logMessageDAO, testCase.getEservice(), testCase.getCard(),
+				getNumberOfCvCertificates(testCase.getEservice()), candidate.getAttachedTcTokenUrl());
+
+		int lastProcessedStepIndex = processSteps(result, candidate, testCase, values, false, handler, x509Certificates, clientAuthCertificate, clientAuthKey);
+
+		logger.debug("eIDAS middleware testcase completed");
+
+		return lastProcessedStepIndex;
+
 	}
 
 
@@ -220,44 +255,27 @@ public class RunnerBean implements Runner
 	}
 
 	// Open a TLS connection to the SOAP interface
-	private TLSConnectionClient establishConnectionToSOAPInterface(List<LogMessage> result, TestCandidate candidate, X509Certificate cert, Certificate clientAuthCertificate,
-			AsymmetricKeyParameter clientAuthKey)
+	private TLSConnectionClient establishConnectionToSOAPInterface(List<LogMessage> result, TestCandidate candidate, Certificate clientAuthCertificate, AsymmetricKeyParameter clientAuthKey)
 	{
 		TLSConnectionClient soapConnection = null;
 
-		LogMessage tlsFailure = logMessageDAO.createNew();
-		tlsFailure.setTestStepName("TLS SOAP initialization");
 		try
 		{
 			// TLSConnectionClient connection = new TLSConnectionClient(cert, candidate.getEidinterfaceUrl().getHost(), candidate.getEidinterfaceUrl().getPort());
-			TLSConnectionClient connection = new TLSConnectionClient(cert, candidate.getEidinterfaceUrl().getHost(), candidate.getEidinterfaceUrl().getPort(), clientAuthCertificate, clientAuthKey);
-			int[] ciphersuites = getCipherSuites(candidate.getTlsEidInterface());
-			connection.setCipherSuites(ciphersuites);
-			connection.connect();
-			Result certificateResult = connection.getResult();
-			String message = "Established TLS connection to " + candidate.getEidinterfaceUrl().getHost() + ", TLS handshake: " + connection.getHandshakeData() + ". " + certificateResult.getMessage();
-			tlsFailure.setMessage(message);
-			if (!GeneralConstants.DEBUG_MODE)
-			{
-				tlsFailure.setSuccess(certificateResult.wasSuccessful());
-			}
-			else
-			{
-				tlsFailure.setSuccess(true);
-			}
-			soapConnection = connection;
+			soapConnection = new TLSConnectionClient(candidate.getEidinterfaceUrl().getHost(), candidate.getEidinterfaceUrl().getPort(), clientAuthCertificate, clientAuthKey);
+			soapConnection.setCipherSuites(getCipherSuites(candidate.getTlsEidInterface()));
+			soapConnection.connect();
 		}
 		catch (Exception e)
 		{
 			StringWriter trace = new StringWriter();
 			e.printStackTrace(new PrintWriter(trace));
 			logger.error("Could not establish TLS connection to " + candidate.getEidinterfaceUrl().getHost() + ": " + e.getClass().getName() + System.getProperty("line.separator") + trace.toString());
+			LogMessage tlsFailure = logMessageDAO.createNew();
+			tlsFailure.setTestStepName("TLS SOAP initialization");
 			tlsFailure.setSuccess(false);
 			tlsFailure.setMessage("Could not establish TLS connection to " + candidate.getEidinterfaceUrl().getHost() + ": " + e.getClass().getName() + " - " + e.getMessage()
 					+ ". See technical log for stacktrace");
-		}
-		finally
-		{
 			result.add(tlsFailure);
 		}
 
@@ -265,28 +283,15 @@ public class RunnerBean implements Runner
 	}
 
 	// Open a TLS connection to the attached server
-	private TLSConnectionClient establishConnectionToAttachedServer(List<LogMessage> result, TestCandidate candidate, X509Certificate cert)
+	private TLSConnectionClient establishConnectionToAttachedServer(List<LogMessage> result, TestCandidate candidate)
 	{
 		TLSConnectionClient attachedServerConnection = null;
 
-		LogMessage tlsFailure = logMessageDAO.createNew();
-		tlsFailure.setTestStepName("TLS attached initialization");
 		try
 		{
-			attachedServerConnection = new TLSConnectionClient(cert, candidate.getAttachedTcTokenUrl().getHost(), candidate.getAttachedTcTokenUrl().getPort());
+			attachedServerConnection = new TLSConnectionClient(candidate.getAttachedTcTokenUrl().getHost(), candidate.getAttachedTcTokenUrl().getPort());
+			attachedServerConnection.setCipherSuites(getCipherSuites(candidate.getTlsEcardApiAttached()));
 			attachedServerConnection.connect();
-			Result certificateResult = attachedServerConnection.getResult();
-			String message = "Established TLS connection to " + candidate.getAttachedTcTokenUrl().getHost() + ", TLS handshake: " + attachedServerConnection.getHandshakeData() + ". "
-					+ certificateResult.getMessage();
-			tlsFailure.setMessage(message);
-			if (!GeneralConstants.DEBUG_MODE)
-			{
-				tlsFailure.setSuccess(certificateResult.wasSuccessful());
-			}
-			else
-			{
-				tlsFailure.setSuccess(true);
-			}
 		}
 		catch (Exception e)
 		{
@@ -294,12 +299,11 @@ public class RunnerBean implements Runner
 			e.printStackTrace(new PrintWriter(trace));
 			logger.error(
 					"Could not establish TLS connection to " + candidate.getAttachedTcTokenUrl().getHost() + ": " + e.getClass().getName() + System.getProperty("line.separator") + trace.toString());
+			LogMessage tlsFailure = logMessageDAO.createNew();
+			tlsFailure.setTestStepName("TLS attached initialization");
 			tlsFailure.setSuccess(false);
 			tlsFailure.setMessage("Could not establish TLS connection to " + candidate.getAttachedTcTokenUrl().getHost() + ": " + e.getClass().getName() + " - " + e.getMessage()
 					+ ". See technical log for stacktrace");
-		}
-		finally
-		{
 			result.add(tlsFailure);
 		}
 
@@ -307,29 +311,16 @@ public class RunnerBean implements Runner
 	}
 
 	// Open a TLS connection to the SAML interface
-	private TLSConnectionClient establishConnectionToSAMLProcessor(List<LogMessage> result, TestCandidate candidate, X509Certificate cert)
+	private TLSConnectionClient establishConnectionToSAMLProcessor(List<LogMessage> result, TestCandidate candidate)
 	{
 		TLSConnectionClient samlConnection = null;
 
-		LogMessage tlsFailure = logMessageDAO.createNew();
-		tlsFailure.setTestStepName("TLS SAML initialization");
 		try
 		{
-			TLSConnectionClient connection = new TLSConnectionClient(cert, candidate.getSamlUrl().getHost(), candidate.getSamlUrl().getPort());
+			TLSConnectionClient connection = new TLSConnectionClient(candidate.getSamlUrl().getHost(), candidate.getSamlUrl().getPort());
 			int[] ciphersuites = getCipherSuites(candidate.getTlsSaml());
 			connection.setCipherSuites(ciphersuites);
 			connection.connect();
-			Result certificateResult = connection.getResult();
-			String message = "Established TLS connection to " + candidate.getSamlUrl().getHost() + ", TLS handshake: " + connection.getHandshakeData() + ". " + certificateResult.getMessage();
-			tlsFailure.setMessage(message);
-			if (!GeneralConstants.DEBUG_MODE)
-			{
-				tlsFailure.setSuccess(certificateResult.wasSuccessful());
-			}
-			else
-			{
-				tlsFailure.setSuccess(true);
-			}
 			samlConnection = connection;
 		}
 		catch (Exception e)
@@ -337,46 +328,31 @@ public class RunnerBean implements Runner
 			StringWriter trace = new StringWriter();
 			e.printStackTrace(new PrintWriter(trace));
 			logger.error("Could not establish TLS connection to " + candidate.getSamlUrl().getHost() + ": " + e.getClass().getName() + System.getProperty("line.separator") + trace.toString());
+			LogMessage tlsFailure = logMessageDAO.createNew();
+			tlsFailure.setTestStepName("TLS SAML initialization");
 			tlsFailure.setSuccess(false);
 			tlsFailure.setMessage(
 					"Could not establish TLS connection to " + candidate.getSamlUrl().getHost() + ": " + e.getClass().getName() + " - " + e.getMessage() + ". See technical log for stacktrace");
-		}
-		finally
-		{
-			result.add(tlsFailure);
 		}
 
 		return samlConnection;
 	}
 
-	private TLSConnectionClient establishConnectionToEcardApiInterface(List<LogMessage> result, TestCandidate candidate, StepHandler handler, X509Certificate cert)
+	private TLSConnectionClient establishConnectionToEcardApiInterface(List<LogMessage> result, TestCandidate candidate, StepHandler handler)
 	{
 		TLSConnectionClient eCardApiConnection = null;
 
 		// check required KnownValues
 		if (handler.getKnownValues().containsElement(Replaceable.PSK.toString()) && handler.getKnownValues().containsElement(Replaceable.SESSIONIDENTIFIER.toString()))
 		{
-			LogMessage tlsFailure = logMessageDAO.createNew();
-			tlsFailure.setTestStepName("TLS eCardAPI initialization");
 			try
 			{
 				// Open a TLS connection to the eCardAPI interface
 				byte[] pskBytes = Hex.decodeHex(handler.getKnownValues().get(Replaceable.PSK.toString()).getValue().toCharArray());
-				TLSConnectionClient connection = new TLSConnectionClient(cert, candidate.getEcardapiUrl().getHost(), candidate.getEcardapiUrl().getPort(),
+				TLSConnectionClient connection = new TLSConnectionClient(candidate.getEcardapiUrl().getHost(), candidate.getEcardapiUrl().getPort(),
 						handler.getKnownValues().get(Replaceable.SESSIONIDENTIFIER.toString()).getValue().getBytes(), pskBytes);
 				connection.setCipherSuites(getCipherSuites(candidate.getTlsEcardApiPsk()));
 				connection.connect();
-				Result certificateResult = connection.getResult();
-				String message = "Established TLS connection to " + candidate.getEcardapiUrl().getHost() + ", TLS handshake: " + connection.getHandshakeData() + ". " + certificateResult.getMessage();
-				tlsFailure.setMessage(message);
-				if (!GeneralConstants.DEBUG_MODE)
-				{
-					tlsFailure.setSuccess(certificateResult.wasSuccessful());
-				}
-				else
-				{
-					tlsFailure.setSuccess(true);
-				}
 				eCardApiConnection = connection;
 			}
 			catch (Exception e)
@@ -384,13 +360,11 @@ public class RunnerBean implements Runner
 				StringWriter trace = new StringWriter();
 				e.printStackTrace(new PrintWriter(trace));
 				logger.error("Could not establish TLS connection to " + candidate.getEcardapiUrl().getHost() + ": " + e.getClass().getName() + System.getProperty("line.separator") + trace.toString());
+				LogMessage tlsFailure = logMessageDAO.createNew();
+				tlsFailure.setTestStepName("TLS eCardAPI initialization");
 				tlsFailure.setSuccess(false);
 				tlsFailure.setMessage("Could not establish TLS connection to " + candidate.getEcardapiUrl().getHost() + ": " + e.getClass().getName() + " - " + e.getMessage()
 						+ ". See technical log for stacktrace");
-			}
-			finally
-			{
-				result.add(tlsFailure);
 			}
 		}
 
@@ -465,7 +439,7 @@ public class RunnerBean implements Runner
 				prefix = "CERT_ECARD_TLS_SAMLPROCESSOR_1_";
 				break;
 			case ATTACHED:
-				prefix = "CERT_ECARD_TLS_EIDSERVER_1_ATTACHED_";
+				prefix = "CERT_ECARD_TLS_EIDSERVER_ATTACHED_1_";
 				break;
 			default:
 				prefix = null;
@@ -507,25 +481,35 @@ public class RunnerBean implements Runner
 			lastProcessedStepIndex = i;
 
 			// get the connection to the correct endpoint
-			X509Certificate cert = findTlsServerCertificateForInterface(currentStep.getTarget(), x509Certificates);
 			if (currentStep.getTarget() == TargetInterfaceType.E_ID_INTERFACE)
 			{
 				if (soapConnection == null || soapConnection.isClosed())
 				{
-					soapConnection = establishConnectionToSOAPInterface(result, candidate, cert, clientAuthCertificate, clientAuthKey);
+					soapConnection = establishConnectionToSOAPInterface(result, candidate, clientAuthCertificate, clientAuthKey);
 				}
 				connection = soapConnection;
+			}
+			else if (currentStep.getTarget() == TargetInterfaceType.ATTACHED)
+			{
+				// note: in attached mode, the server also simulates a browser during the first step. therefore, after the response is received,
+				// we need to reconnect to the server in order to simulate the usage of an eID-Client
+				if (attachedConnection == null || attachedConnection.isClosed() || lastProcessedStepIndex < 1)
+				{
+					attachedConnection = establishConnectionToAttachedServer(result, candidate);
+				}
+				connection = attachedConnection;
 			}
 			else if (currentStep.getTarget() == TargetInterfaceType.E_CARD_API)
 			{
 				// check if are are running an attached test case
-				if (testCase.getOptionalProfiles().contains(IcsOptionalprofile.ESER_ATTACHED))
+				if (testCase.getOptionalProfiles().contains(IcsOptionalprofile.ESER_ATTACHED) || testCase.getOptionalProfiles().contains(IcsOptionalprofile.EIDAS_MW))
 				{
 					// note: in attached mode, the server also simulates a browser during the first step. therefore, after the response is received,
 					// we need to reconnect to the server in order to simulate the usage of an eID-Client
-					if (attachedConnection.isClosed() || lastProcessedStepIndex < 1)
+					if (attachedConnection == null || attachedConnection.isClosed())
 					{
-						attachedConnection = establishConnectionToAttachedServer(result, candidate, cert);
+						attachedConnection = establishConnectionToAttachedServer(result, candidate);
+						// TODO the attached connection may only be resumed, never reestablished according to TR-03130
 					}
 					connection = attachedConnection;
 				}
@@ -533,7 +517,7 @@ public class RunnerBean implements Runner
 				{
 					if (samlConnection == null || samlConnection.isClosed())
 					{
-						samlConnection = establishConnectionToSAMLProcessor(result, candidate, cert);
+						samlConnection = establishConnectionToSAMLProcessor(result, candidate);
 					}
 					connection = samlConnection;
 				}
@@ -542,7 +526,7 @@ public class RunnerBean implements Runner
 				{
 					if (eCardApiConnection == null || eCardApiConnection.isClosed())
 					{
-						eCardApiConnection = establishConnectionToEcardApiInterface(result, candidate, handler, cert);
+						eCardApiConnection = establishConnectionToEcardApiInterface(result, candidate, handler);
 					}
 					connection = eCardApiConnection;
 				}
@@ -551,14 +535,9 @@ public class RunnerBean implements Runner
 			{
 				if (samlConnection == null || samlConnection.isClosed())
 				{
-					samlConnection = establishConnectionToSAMLProcessor(result, candidate, cert);
+					samlConnection = establishConnectionToSAMLProcessor(result, candidate);
 				}
 				connection = samlConnection;
-			}
-			else if (testCase.getOptionalProfiles().contains(IcsOptionalprofile.ESER_ATTACHED))
-			{
-				// note: this block is reached only once - for the very first connection to the website which is used to fetch the tc token url
-				connection = establishConnectionToAttachedServer(result, candidate, cert);
 			}
 			else
 			{
@@ -588,43 +567,16 @@ public class RunnerBean implements Runner
 				try
 				{
 					fromServer = connection.read();
-					if (currentStep.getName().toUpperCase().startsWith(TestStepType.IN_SAML_ASSERTION.value().toUpperCase()))
+					fromServer = followRedirects(connection, result, fromServer, currentStep.getName());
+					// check if the response was ok
+					if (fromServer.length() == 0)
 					{
-						if (fromServer != null && fromServer.length() > 0)
-						{
-							LogMessage acValidateMessage = ((StepHandlerSAML) handler).validateAssertion(fromServer, currentStep.getName());
-							result.add(acValidateMessage);
-						}
-						else
-						{
-							LogMessage readFailure = logMessageDAO.createNew();
-							readFailure.setTestStepName("SAML assertion readout");
-							readFailure.setSuccess(false);
-							if (fromServer.length() > 0)
-							{
-								readFailure.setMessage("Did not receive a valid assertion:" + System.getProperty("line.separator") + fromServer);
-							}
-							else
-							{
-								readFailure.setMessage("The server did not respond.");
-							}
-							result.add(readFailure);
-						}
+						LogMessage readFailure = logMessageDAO.createNew();
+						readFailure.setTestStepName("HTTP read");
+						readFailure.setSuccess(false);
+						readFailure.setMessage("The server did not respond.");
+						result.add(readFailure);
 						break;
-					}
-					else
-					{
-						fromServer = followRedirects(connection, result, fromServer, currentStep.getName());
-						// check if the response was ok
-						if (fromServer.length() == 0)
-						{
-							LogMessage readFailure = logMessageDAO.createNew();
-							readFailure.setTestStepName("HTTP read");
-							readFailure.setSuccess(false);
-							readFailure.setMessage("The server did not respond.");
-							result.add(readFailure);
-							break;
-						}
 					}
 				}
 				catch (IOException e)
@@ -698,7 +650,7 @@ public class RunnerBean implements Runner
 				if (connection.write(outBoundMsg) == 0)
 				{
 					sendMsg.setSuccess(true);
-					String msg = "Sent to Server: " + outBoundMsg;
+					String msg = "Sent to Server(" + connection.getTargetInfo() + "): " + outBoundMsg;
 					String additional;
 					if (null != (additional = handler.getAdditionalOutboundInfo()))
 					{
@@ -711,7 +663,7 @@ public class RunnerBean implements Runner
 				else
 				{
 					sendMsg.setSuccess(false);
-					sendMsg.setMessage("Failure while sending to Server: " + outBoundMsg);
+					sendMsg.setMessage("Failure while sending to Server(" + connection.getTargetInfo() + "): " + outBoundMsg);
 					logger.warn("Sending via TLS Connection failed: " + outBoundMsg);
 				}
 				result.add(sendMsg);
@@ -776,7 +728,7 @@ public class RunnerBean implements Runner
 	private String followRedirects(TLSConnectionClient client, List<LogMessage> result, String message, String stepName) throws IOException
 	{
 		// is it a redirect? if not just return the message itself
-		if (message.startsWith("HTTP/1.1 302"))
+		if (message.startsWith("HTTP/1.1 302") || message.startsWith("HTTP/1.1 307"))
 		{
 			// log the message
 			LogMessage receivedToken = logMessageDAO.createNew();
@@ -814,9 +766,9 @@ public class RunnerBean implements Runner
 		switch (service)
 		{
 			case A_2:
-				return 4;
-			default:
 				return 3;
+			default:
+				return 2;
 		}
 	}
 
@@ -888,14 +840,21 @@ public class RunnerBean implements Runner
 		{
 			CryptoHelper.Protocol port = CryptoHelper.Protocol.SOAP_PROT_ID;
 			EService service = candidate.isMultiClientCapable() ? testCase.getEservice() : GeneralConstants.DEFAULT_ESERVICE;
+			// TODO ECDSA does not work for the EU Middleware, remove this workaround once it is fixed
+			if (service == EService.F || service == EService.EECDSA)
+			{
+				service = EService.A;
+			}
 			CryptoHelper.Algorithm alg = CryptoHelper.getAlgorithmFromService(service);
-			X509Certificate x509Cert = CryptoHelper.loadSignatureCertificate(port, alg, service);
+			X509Certificate x509Cert = CryptoHelper.loadCertificate(port, alg, service.toString() + "_clientauth");
 			org.bouncycastle.asn1.x509.Certificate bcCert = org.bouncycastle.asn1.x509.Certificate.getInstance(x509Cert.getEncoded());
 			cert = new Certificate(new org.bouncycastle.asn1.x509.Certificate[] { bcCert });
 		}
 		catch (CertificateEncodingException ignore)
 		{
-
+			StringWriter trace = new StringWriter();
+			ignore.printStackTrace(new PrintWriter(trace));
+			logger.error("Error while loading the client authentication certificate: " + System.getProperty("line.separator") + trace.toString());
 		}
 		return cert;
 	}
@@ -907,15 +866,20 @@ public class RunnerBean implements Runner
 		{
 			CryptoHelper.Protocol prot = CryptoHelper.Protocol.SOAP_PROT_ID;
 			EService service = candidate.isMultiClientCapable() ? testCase.getEservice() : GeneralConstants.DEFAULT_ESERVICE;
+			// TODO ECDSA does not work for the EU Middleware, remove this workaround once it is fixed
+			if (service == EService.F || service == EService.EECDSA)
+			{
+				service = EService.A;
+			}
 			CryptoHelper.Algorithm alg = CryptoHelper.getAlgorithmFromService(service);
-			PrivateKey privateKey = CryptoHelper.loadSignatureKey(prot, alg, service);
+			PrivateKey privateKey = CryptoHelper.loadKey(prot, alg, service.toString() + "_clientauth");
 			keyParam = PrivateKeyFactory.createKey(privateKey.getEncoded());
 		}
 		catch (IOException ignore)
 		{
 			StringWriter trace = new StringWriter();
 			ignore.printStackTrace(new PrintWriter(trace));
-			logger.error("Error while loading the client authentication certificate: " + System.getProperty("line.separator") + trace.toString());
+			logger.error("Error while loading the client authentication key: " + System.getProperty("line.separator") + trace.toString());
 		}
 		return keyParam;
 	}
@@ -934,16 +898,21 @@ public class RunnerBean implements Runner
 		insertFiles("certificates/RSA", certificatesAndKeys);
 		insertFiles("certificates/DSA", certificatesAndKeys);
 		insertFiles("certificates/ECDSA", certificatesAndKeys);
+		insertFiles("certificates", certificatesAndKeys);
 
 		// x509 keys
 		insertFiles("keys/RSA", certificatesAndKeys);
 		insertFiles("keys/DSA", certificatesAndKeys);
 		insertFiles("keys/ECDSA", certificatesAndKeys);
+		insertFiles("keys", certificatesAndKeys);
 
 		// CV
 		insertFiles("CVCertificates/certs", certificatesAndKeys);
 		insertFiles("CVCertificates/desc", certificatesAndKeys);
 		insertFiles("CVCertificates/keys", certificatesAndKeys);
+
+		// eIDAS metadata
+		insertFiles("eIDAS", certificatesAndKeys);
 
 		// x509 keys
 		return certificatesAndKeys;

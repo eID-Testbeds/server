@@ -373,19 +373,7 @@ public class CryptoHelper
 				return factory.generatePrivate(spec);
 			}
 		}
-		catch (InvalidKeySpecException e)
-		{
-			StringWriter trace = new StringWriter();
-			e.printStackTrace(new PrintWriter(trace));
-			logger.error("Could not load " + protocol.getProtocolName() + " key " + name + " due to: " + e.getMessage() + System.getProperty("line.separator") + trace.toString());
-		}
-		catch (NoSuchAlgorithmException e)
-		{
-			StringWriter trace = new StringWriter();
-			e.printStackTrace(new PrintWriter(trace));
-			logger.error("Could not load " + protocol.getProtocolName() + " key " + name + " due to: " + e.getMessage() + System.getProperty("line.separator") + trace.toString());
-		}
-		catch (IOException e)
+		catch (InvalidKeySpecException | NoSuchAlgorithmException | IOException e)
 		{
 			StringWriter trace = new StringWriter();
 			e.printStackTrace(new PrintWriter(trace));

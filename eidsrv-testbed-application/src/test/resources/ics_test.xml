@@ -3,10 +3,10 @@
 <ics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://trdoccheck.bsi.bund.de/server/ics"
 	xsi:schemaLocation="http://trdoccheck.bsi.bund.de/server/ics">
 	<metadata>
-		<url>guidance.governikus-eid.de:8445/ecardpaos/paosreceiver</url>
-		<samlUrl>guidance.governikus-eid.de:8443/gov_autent/async</samlUrl>
-		<vendor>Governikus KG</vendor>
-		<name>Governikus Autent</name>
+		<url>eid.secunet.de:8445/ecardpaos/paosreceiver</url>
+		<samlUrl>eid.secunet.de:8443/gov_autent/async</samlUrl>
+		<vendor>secunet AG</vendor>
+		<name>eID Dummy</name>
 		<versionMajor>3</versionMajor>
 		<versionMinor>9</versionMinor>
 	</metadata>

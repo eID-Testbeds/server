@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2016.09.27 um 03:45:45 PM CEST 
+// Generiert: 2017.11.30 um 03:44:07 PM CET 
 //
 
 
@@ -65,6 +65,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="TLS_RSA_PSK_WITH_AES_256_CBC_SHA384"/>
  *     &lt;enumeration value="TLS_RSA_PSK_WITH_AES_128_GCM_SHA256"/>
  *     &lt;enumeration value="TLS_RSA_PSK_WITH_AES_256_GCM_SHA384"/>
+ *     &lt;enumeration value="TLS_DHE_RSA_WITH_AES_256_GCM_SHA384"/>
+ *     &lt;enumeration value="TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"/>
+ *     &lt;enumeration value="TLS_DHE_RSA_WITH_AES_128_CBC_SHA256"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -149,7 +152,13 @@ public enum IcsTlsCiphersuite {
     @XmlEnumValue("TLS_RSA_PSK_WITH_AES_128_GCM_SHA256")
     TLS_RSA_PSK_WITH_AES_128_GCM_SHA_256("TLS_RSA_PSK_WITH_AES_128_GCM_SHA256"),
     @XmlEnumValue("TLS_RSA_PSK_WITH_AES_256_GCM_SHA384")
-    TLS_RSA_PSK_WITH_AES_256_GCM_SHA_384("TLS_RSA_PSK_WITH_AES_256_GCM_SHA384");
+    TLS_RSA_PSK_WITH_AES_256_GCM_SHA_384("TLS_RSA_PSK_WITH_AES_256_GCM_SHA384"),
+    @XmlEnumValue("TLS_DHE_RSA_WITH_AES_256_GCM_SHA384")
+    TLS_DHE_RSA_WITH_AES_256_GCM_SHA_384("TLS_DHE_RSA_WITH_AES_256_GCM_SHA384"),
+    @XmlEnumValue("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256")
+    TLS_DHE_RSA_WITH_AES_128_GCM_SHA_256("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"),
+    @XmlEnumValue("TLS_DHE_RSA_WITH_AES_128_CBC_SHA256")
+    TLS_DHE_RSA_WITH_AES_128_CBC_SHA_256("TLS_DHE_RSA_WITH_AES_128_CBC_SHA256");
     private final String value;
 
     IcsTlsCiphersuite(String v) {

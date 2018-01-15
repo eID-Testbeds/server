@@ -1,5 +1,9 @@
 package com.secunet.eidserver.testbed.controller;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -701,6 +705,29 @@ public class RunControllerBean implements RunController
 				log.setSuccess(wasSuccessful(testCase, logMessages));
 				logDAO.persist(log);
 				model.getLogs().add(log);
+
+				// dump the logs to HDD if the system property is set
+				String dumpPath = System.getProperty("LOG_DUMP_DIR");
+				if (dumpPath != null && !dumpPath.isEmpty())
+				{
+					File dumpFolder = new File(dumpPath);
+					boolean folderExists = false;
+					if (!(folderExists = dumpFolder.exists()))
+					{
+						folderExists = dumpFolder.mkdirs();
+					}
+					if (folderExists)
+					{
+						Path testcasePath = Paths.get(dumpFolder.getAbsolutePath(), log.getTestCase() + ".txt");
+						PrintWriter writer = new PrintWriter(testcasePath.toString(), "UTF-8");
+						log.getLogMessages().forEach(logMessage -> writer.println(logMessage.toString()));
+						writer.close();
+					}
+					else
+					{
+						logger.warn("The dump folder " + dumpPath + " did not exist and could not be created");
+					}
+				}
 			}
 			catch (TestrunException e)
 			{

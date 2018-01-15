@@ -11,9 +11,4 @@
 		<p:value>HTTP/1.1 200 OK</p:value>
 		<p:isMandatory>true</p:isMandatory>
 	</p:HttpStepToken>
-	<p:HttpStepToken>
-		<p:name>Content-Type</p:name>
-		<p:value>text/xml;charset=utf-8</p:value>
-		<p:isMandatory>true</p:isMandatory>
-	</p:HttpStepToken>
 </p:Step>

@@ -11,7 +11,7 @@
 	</p:modulePath>
 	<p:profiles>
 		<p:profile>EAC</p:profile>
-		<p:profile>PAOS</p:profile>
+		<p:profile>PAOS</p:profile><p:profile>SOAP</p:profile>
 		<p:profile>EID_ACCESS</p:profile>
 	</p:profiles>
 	<p:eservice>A</p:eservice>

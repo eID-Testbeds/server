@@ -74,6 +74,11 @@ public interface GeneralConstants
 	public final static String ALLOWED_BY_USER_PREFIX = "OABU_";
 	public final static String PERSONAL_PREFIX = "PERSONAL_";
 
+	// eIDAS data prefixes
+	public final static String EIDAS_REQUESTED_PREFIX = "EIDAS_ATTR_";
+	public final static String EIDAS_ERROR_PREFIX = "EIDAS_ERROR_";
+	public final static String EIDAS_ERROR_SAMLSTATUS = "EIDAS_ERROR_SAMLSTATUS";
+
 	// SAML authnrequest variables
 	public final static String SAML_AUTHNREQUEST_ISSUER = "SAML_AUTHNREQUEST_ISSUER";
 	public final static String SAML_AUTHNREQUEST_ASSERTION_CONSUMER_SERVICE_URL = "SAML_AUTHNREQUEST_ASSERTION_CONSUMER_SERVICE_URL";

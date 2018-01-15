@@ -13,6 +13,7 @@
 		<p:profile>EAC</p:profile>
 		<p:profile>PAOS</p:profile>
 		<p:profile>EID_ACCESS</p:profile>
+		<p:profile>SOAP</p:profile>
 	</p:profiles>
 	<p:eservice>B</p:eservice><p:clientExplanation>Configure the server to accept the certificate chain for client B. This includes the TLS, XML signature and the CV certificate.</p:clientExplanation>
 	<p:eidcard>EIDCARD_1</p:eidcard>

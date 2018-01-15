@@ -6,11 +6,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
@@ -19,7 +17,6 @@ import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -63,7 +60,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.opensaml.xml.util.Base64;
+import org.bouncycastle.util.encoders.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -235,33 +232,7 @@ public class StepHandlerSOAP extends StepHandler
 	@Override
 	public List<LogMessage> validateStep(String receivedMessage, List<TestCaseStep> alternatives)
 	{
-		// check if we operate in attached mode
-		if (TestStepType.IN_ATTACHED_WEBPAGE.toString().equals(alternatives.get(0).getName()))
-		{
-			LogMessage result = logMessageDAO.createNew();
-			result.setTestStepName(alternatives.get(0).getName());
-			String endResult = "Processing step " + alternatives.get(0).getName() + ". Message was:" + System.getProperty("line.separator");
-
-			URL tcTokenUrl = parseTcTokenUrl(receivedMessage);
-			if (tcTokenUrl != null)
-			{
-				knownValues.add(new KnownValue(Replaceable.ATTACHED_TCTOKEN.toString(), tcTokenUrl.toString()));
-				knownValues.add(new KnownValue(Replaceable.ATTACHED_TCTOKEN_HOSTNAME.toString(), tcTokenUrl.getHost()));
-				knownValues.add(new KnownValue(Replaceable.ATTACHED_TCTOKEN_PATH.toString(), getNonEmptyPath(tcTokenUrl)));
-				result.setSuccess(true);
-				endResult += "Received TC Token URL: " + tcTokenUrl.toString();
-			}
-			else
-			{
-				endResult += "Could not parse a valid TC Token URL from the received message";
-				result.setSuccess(false);
-			}
-			result.setMessage(endResult);
-			List<LogMessage> messages = new ArrayList<>();
-			messages.add(result);
-			return messages;
-		}
-		else if (TestStepType.IN_TC_TOKEN_ATTACHED.toString().equals(alternatives.get(0).getName()))
+		if (TestStepType.IN_TC_TOKEN_ATTACHED.toString().equals(alternatives.get(0).getName()))
 		{
 			List<LogMessage> messages = super.validateStep(receivedMessage, alternatives);
 			// we just need the path here, but parse the entire URL anyway for convenience reasons
@@ -525,7 +496,7 @@ public class StepHandlerSOAP extends StepHandler
 						else
 							decoded[byteToChange] = 0x01;
 					}
-					String base64ValueMod = Base64.encodeBytes(decoded);
+					String base64ValueMod = Base64.toBase64String(decoded);
 					if (base64Value.equals(base64ValueMod))
 					{
 						logger.error("Could not manipulate SignatureValue");
@@ -665,41 +636,6 @@ public class StepHandlerSOAP extends StepHandler
 		TransformerFactory transFactory = TransformerFactory.newInstance();
 		Transformer transformer = transFactory.newTransformer();
 		transformer.transform(source, result);
-	}
-
-	/**
-	 * Parses the TC Token Url from a HTML webpage. The result will be stored in the ATTACHED_TC_TOKEN
-	 * 
-	 * TODO JavaScript support
-	 * 
-	 * @param message
-	 *            {@link String}
-	 * 
-	 * @return
-	 */
-	protected URL parseTcTokenUrl(String message)
-	{
-		Pattern p = Pattern.compile("(<a href=\"http://127.0.0.1:24727/eID-Client\\?tcTokenURL=)(.*)(\">)");
-		Matcher m = p.matcher(message);
-		String tcTokenUrl = null;
-		while (m.find()) // find last occurrence of given pattern
-		{
-			tcTokenUrl = m.group(2);
-		}
-		if (tcTokenUrl != null)
-		{
-			try
-			{
-				return new URL(URLDecoder.decode(tcTokenUrl, "UTF-8"));
-			}
-			catch (UnsupportedEncodingException | MalformedURLException e)
-			{
-				StringWriter trace = new StringWriter();
-				e.printStackTrace(new PrintWriter(trace));
-				logger.error("Could not decode TCToken URL from received message due to: " + e.getMessage() + System.getProperty("line.separator") + trace.toString());
-			}
-		}
-		return null;
 	}
 
 }

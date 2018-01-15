@@ -42,6 +42,7 @@
 			<xs:enumeration value="EDSA" />
 			<xs:enumeration value="ERSA" />
 			<xs:enumeration value="EECDSA" />
+			<xs:enumeration value="F" />
 			<!-- using cert set 2 -->
 			<xs:enumeration value="A2" />
 		</xs:restriction>
@@ -120,6 +121,9 @@
 			<xs:enumeration value="IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE" />
 			<xs:enumeration value="IN_DIDLIST" />
 			<xs:enumeration value="IN_DISCONNECT" />
+			<xs:enumeration value="IN_EIDAS_BAD_REQUEST" />
+			<xs:enumeration value="IN_EIDAS_RESPONSE" />
+			<xs:enumeration value="IN_EIDAS_RESPONSE_POST" />
 			<xs:enumeration value="IN_GETRESULT_RESPONSE" />
 			<xs:enumeration value="IN_GETRESULT_RESPONSE_AGEPLACE" />
 			<xs:enumeration value="IN_GETRESULT_RESPONSE_EIDCARD_2" />
@@ -185,6 +189,11 @@
 			<xs:enumeration value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_B_MANDATORY" />
 			<xs:enumeration value="OUT_DIDLIST" />
 			<xs:enumeration value="OUT_DISCONNECT" />
+			<xs:enumeration value="OUT_EIDAS_REQUEST" />
+			<xs:enumeration value="OUT_EIDAS_REQUEST_POST" />
+			<xs:enumeration value="OUT_EIDAS_REQUEST_NO_SIGALG_NO_SIGNATURE" />
+			<xs:enumeration value="OUT_EIDAS_REQUEST_NO_SIGNATURE" />
+			<xs:enumeration value="OUT_EIDAS_RESPONSE" />
 			<xs:enumeration value="OUT_GET_TCTOKEN" />		<!-- The request for the TC Token (only attached SOAP) -->
 			<xs:enumeration value="OUT_GET_ATTACHED_WEBPAGE" />		<!-- The request for the webpage containing the link to the TC Token (only attached SOAP) -->
 			<xs:enumeration value="OUT_GETRESULT_REQUEST" />
@@ -248,6 +257,7 @@
 			<xs:enumeration value="ALL_LINK" />
 			<xs:enumeration value="CONF_MAX_SE" />
 			<xs:enumeration value="CONF_TM_OUT" />
+			<xs:enumeration value="EIDAS_MW" />
 		</xs:restriction>
 	</xs:simpleType>
 

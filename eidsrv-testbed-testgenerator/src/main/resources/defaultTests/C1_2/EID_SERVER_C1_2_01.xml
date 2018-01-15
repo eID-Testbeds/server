@@ -11,7 +11,7 @@
 	</p:modulePath>
 	<p:profiles>
 		<p:profile>EAC</p:profile>
-		<p:profile>PAOS</p:profile>
+		<p:profile>PAOS</p:profile><p:profile>SOAP</p:profile>
 		<p:profile>NONAUTH_CARD</p:profile>
 	</p:profiles>
 	<p:eservice>B</p:eservice><p:clientExplanation>Configure the server to accept the certificate chain for client B. This includes the TLS, XML signature and the CV certificate.</p:clientExplanation>
@@ -33,6 +33,9 @@
 		<p:step>OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_B</p:step>
 		<p:step>IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE</p:step>
 		<p:step>OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A</p:step>
-		<p:step>IN_START_PAOS_RESPONSE_INTERNAL_ERROR</p:step>
+		<p:step>IN_START_PAOS_RESPONSE_CUSTOM_ERROR</p:step>
 	</p:steps>
+	<p:variables>
+		<p:variable name="RES_MIN_IN_START_PAOS_RESPONSE_CUSTOM_ERROR">http://www.bsi.bund.de/ecard/api/1.1/resultminor/sal#securityConditionNotSatisfied</p:variable>
+	</p:variables>
 </p:testcaseDefinition>

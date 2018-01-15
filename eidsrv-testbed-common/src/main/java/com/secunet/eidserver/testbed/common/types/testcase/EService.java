@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.03.02 um 01:01:12 PM CET 
+// Generiert: 2017.08.14 um 02:18:00 PM CEST 
 //
 
 
@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="EDSA"/>
  *     &lt;enumeration value="ERSA"/>
  *     &lt;enumeration value="EECDSA"/>
+ *     &lt;enumeration value="F"/>
  *     &lt;enumeration value="A2"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
@@ -45,6 +46,7 @@ public enum EService {
     EDSA("EDSA"),
     ERSA("ERSA"),
     EECDSA("EECDSA"),
+    F("F"),
     @XmlEnumValue("A2")
     A_2("A2");
     private final String value;

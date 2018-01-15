@@ -50,7 +50,7 @@
 		<p:value>http://www.bsi.bund.de/ecard/api/1.1/resultmajor#ok</p:value>
 		<p:isMandatory>true</p:isMandatory>
 	</p:ProtocolStepToken>
-	<p:ToSave parentName="Session" placeholder="ID">ID</p:ToSave>
+	<p:ToSave parentName="Session" placeholder="ESERVICE_SESSION">ID</p:ToSave>
 	<p:ToSave placeholder="PSK">Key</p:ToSave>
 	<p:ToSave parentName="PSK" placeholder="SESSIONIDENTIFIER">ID</p:ToSave>
 </p:Step>

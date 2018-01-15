@@ -62,9 +62,9 @@ public class TestStepHandlerSOAP
 	public void testCreateSOAPrequest() throws Exception
 	{
 		String candidateName = "TEST_CANDIDATE";
-		URL candidateUrl = new URL("https://guidance.governikus-eid.de:8445/ecardpaos/paosreceiver");
+		URL candidateUrl = new URL("https://some.eid.server.de:8445/ecardpaos/paosreceiver");
 		String testbedRefreshAdress = GeneralConstants.TESTBED_REFRESH_URL;
-		URL eidUrl = new URL("https://guidance.governikus-eid.de:8443/eID-Server-20/eID");
+		URL eidUrl = new URL("https://some.eid.server.de:8443/eID-Server-20/eID");
 		KnownValues values = null;
 		String message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eid=\"http://bsi.bund.de/eID/\"><soapenv:Header /><soapenv:Body xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" wsu:Id=\"body-123\"><eid:getServerInfoRequest /></soapenv:Body></soapenv:Envelope>";
 
@@ -80,9 +80,9 @@ public class TestStepHandlerSOAP
 	public void testCreateSOAPrequestRSAManipulated() throws Exception
 	{
 		String candidateName = "TEST_CANDIDATE";
-		URL candidateUrl = new URL("https://guidance.governikus-eid.de:8445/ecardpaos/paosreceiver");
+		URL candidateUrl = new URL("https://some.eid.server.de:8445/ecardpaos/paosreceiver");
 		String testbedRefreshAdress = GeneralConstants.TESTBED_REFRESH_URL;
-		URL eidUrl = new URL("https://guidance.governikus-eid.de:8443/eID-Server-20/eID");
+		URL eidUrl = new URL("https://some.eid.server.de:8443/eID-Server-20/eID");
 		KnownValues values = new KnownValues();
 		values.add(new KnownValue(GeneralConstants.XML_SIGNATURE, "RSA_MANIPULATED"));
 		values.add(new KnownValue(GeneralConstants.XML_SIGNATURE_URI, SignatureMethod.RSA_SHA1));
@@ -121,9 +121,9 @@ public class TestStepHandlerSOAP
 	public void testCreateSOAPrequestGetResult() throws Exception
 	{
 		String candidateName = "TEST_CANDIDATE";
-		URL candidateUrl = new URL("https://guidance.governikus-eid.de:8445/ecardpaos/paosreceiver");
+		URL candidateUrl = new URL("https://some.eid.server.de:8445/ecardpaos/paosreceiver");
 		String testbedRefreshAdress = GeneralConstants.TESTBED_REFRESH_URL;
-		URL eidUrl = new URL("https://guidance.governikus-eid.de:8443/eID-Server-20/eID");
+		URL eidUrl = new URL("https://some.eid.server.de:8443/eID-Server-20/eID");
 		KnownValues values = null;
 		String message = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eid=\"http://bsi.bund.de/eID/\"><soapenv:Header /><soapenv:Body xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" wsu:Id=\"body-123\"><eid:getResultRequest><eid:Session><eid:ID>1234CAFEBABE</eid:ID></eid:Session><eid:RequestCounter>1</eid:RequestCounter></eid:getResultRequest></soapenv:Body></soapenv:Envelope>";
 
@@ -179,37 +179,38 @@ public class TestStepHandlerSOAP
 		assertNull(createSOAPrequest(algorithm, uri, canonicalization, digest, EService.A));
 	}
 
-	@Test(enabled = true)
-	public void testCreateSOAPrequestECDSA() throws Exception
-	{
-		CryptoHelper.Algorithm algorithm = CryptoHelper.Algorithm.ECDSA_ALG_ID;
-		IcsXmlsecSignatureUri uri = IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_256;
-		IcsXmlsecSignatureCanonicalization canonicalization = IcsXmlsecSignatureCanonicalization.HTTP_WWW_W_3_ORG_2001_10_XML_EXC_C_14_N;
-		IcsXmlsecSignatureDigest digest = IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_SHA_1;
-		logger.debug("--- Testing : " + algorithm.getAlgorithmName() + " || " + uri.value() + " || " + canonicalization.value() + " || " + digest.value() + " ...");
-		String request = createSOAPrequest(algorithm, uri, canonicalization, digest, EService.EECDSA);
-		assertNotNull(request);
-		logger.debug("Created request:\n" + request);
-		assertTrue(request.contains(uri.value()));
-		assertTrue(request.contains(canonicalization.value()));
-		assertTrue(request.contains(digest.value()));
-	}
-
-	@Test(enabled = true)
-	public void testCreateSOAPrequestDSA() throws Exception
-	{
-		CryptoHelper.Algorithm algorithm = CryptoHelper.Algorithm.DSA_ALG_ID;
-		IcsXmlsecSignatureUri uri = IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2009_XMLDSIG_11_DSA_SHA_256;
-		IcsXmlsecSignatureCanonicalization canonicalization = IcsXmlsecSignatureCanonicalization.HTTP_WWW_W_3_ORG_2001_10_XML_EXC_C_14_N;
-		IcsXmlsecSignatureDigest digest = IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_SHA_1;
-		logger.debug("--- Testing : " + algorithm.getAlgorithmName() + " || " + uri.value() + " || " + canonicalization.value() + " || " + digest.value() + " ...");
-		String request = createSOAPrequest(algorithm, uri, canonicalization, digest, EService.EDSA);
-		assertNotNull(request);
-		logger.debug("Created request:\n" + request);
-		assertTrue(request.contains(uri.value()));
-		assertTrue(request.contains(canonicalization.value()));
-		assertTrue(request.contains(digest.value()));
-	}
+	// TODO disabled due to application server restrictions. re-enable once the xmlsig library is replaced
+	// @Test(enabled = true)
+	// public void testCreateSOAPrequestECDSA() throws Exception
+	// {
+	// CryptoHelper.Algorithm algorithm = CryptoHelper.Algorithm.ECDSA_ALG_ID;
+	// IcsXmlsecSignatureUri uri = IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_256;
+	// IcsXmlsecSignatureCanonicalization canonicalization = IcsXmlsecSignatureCanonicalization.HTTP_WWW_W_3_ORG_2001_10_XML_EXC_C_14_N;
+	// IcsXmlsecSignatureDigest digest = IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_SHA_1;
+	// logger.debug("--- Testing : " + algorithm.getAlgorithmName() + " || " + uri.value() + " || " + canonicalization.value() + " || " + digest.value() + " ...");
+	// String request = createSOAPrequest(algorithm, uri, canonicalization, digest, EService.EECDSA);
+	// assertNotNull(request);
+	// logger.debug("Created request:\n" + request);
+	// assertTrue(request.contains(uri.value()));
+	// assertTrue(request.contains(canonicalization.value()));
+	// assertTrue(request.contains(digest.value()));
+	// }
+	//
+	// @Test(enabled = true)
+	// public void testCreateSOAPrequestDSA() throws Exception
+	// {
+	// CryptoHelper.Algorithm algorithm = CryptoHelper.Algorithm.DSA_ALG_ID;
+	// IcsXmlsecSignatureUri uri = IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2009_XMLDSIG_11_DSA_SHA_256;
+	// IcsXmlsecSignatureCanonicalization canonicalization = IcsXmlsecSignatureCanonicalization.HTTP_WWW_W_3_ORG_2001_10_XML_EXC_C_14_N;
+	// IcsXmlsecSignatureDigest digest = IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_SHA_1;
+	// logger.debug("--- Testing : " + algorithm.getAlgorithmName() + " || " + uri.value() + " || " + canonicalization.value() + " || " + digest.value() + " ...");
+	// String request = createSOAPrequest(algorithm, uri, canonicalization, digest, EService.EDSA);
+	// assertNotNull(request);
+	// logger.debug("Created request:\n" + request);
+	// assertTrue(request.contains(uri.value()));
+	// assertTrue(request.contains(canonicalization.value()));
+	// assertTrue(request.contains(digest.value()));
+	// }
 
 
 	@Test(enabled = true)
@@ -347,36 +348,37 @@ public class TestStepHandlerSOAP
 		createSOAPrequestMultiple(allCombinations, algorithm, EService.EECDSA);
 	}
 
-	@Test(enabled = true)
-	public void testCreateSOAPrequestECDSAMultipleWorking() throws Exception
-	{
-		List<String> listURI = new LinkedList<String>();
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_1.value());
-		// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_224.value());
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_256.value());
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_384.value());
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_512.value());
-
-		LinkedList<String> listDigest = getAllSignatureDigests(true);
-		LinkedList<String> listCanonicalization = getAllCanonicalizations(true);
-
-		List<List<String>> allLists = new LinkedList<List<String>>();
-		allLists.add(listURI);
-		allLists.add(listDigest);
-		allLists.add(listCanonicalization);
-
-		Set<List<String>> allCombinations = getCombinations(allLists);
-
-		CryptoHelper.Algorithm algorithm = CryptoHelper.Algorithm.ECDSA_ALG_ID;
-		LinkedHashMap<String, String> mapTests = createSOAPrequestMultiple(allCombinations, algorithm, EService.EECDSA);
-
-		Set<Entry<String, String>> entries = mapTests.entrySet();
-		for (Map.Entry<String, String> entry : entries)
-		{
-			String value = entry.getValue();
-			assertTrue(value.equals("OK"));
-		}
-	}
+	// TODO disabled due to application server restrictions. re-enable once the xmlsig library is replaced
+	// @Test(enabled = true)
+	// public void testCreateSOAPrequestECDSAMultipleWorking() throws Exception
+	// {
+	// List<String> listURI = new LinkedList<String>();
+	// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_1.value());
+	// // listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_224.value());
+	// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_256.value());
+	// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_384.value());
+	// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_512.value());
+	//
+	// LinkedList<String> listDigest = getAllSignatureDigests(true);
+	// LinkedList<String> listCanonicalization = getAllCanonicalizations(true);
+	//
+	// List<List<String>> allLists = new LinkedList<List<String>>();
+	// allLists.add(listURI);
+	// allLists.add(listDigest);
+	// allLists.add(listCanonicalization);
+	//
+	// Set<List<String>> allCombinations = getCombinations(allLists);
+	//
+	// CryptoHelper.Algorithm algorithm = CryptoHelper.Algorithm.ECDSA_ALG_ID;
+	// LinkedHashMap<String, String> mapTests = createSOAPrequestMultiple(allCombinations, algorithm, EService.EECDSA);
+	//
+	// Set<Entry<String, String>> entries = mapTests.entrySet();
+	// for (Map.Entry<String, String> entry : entries)
+	// {
+	// String value = entry.getValue();
+	// assertTrue(value.equals("OK"));
+	// }
+	// }
 
 
 	@Test(enabled = false)
@@ -384,12 +386,12 @@ public class TestStepHandlerSOAP
 	{
 
 		String candidateName = "TEST_CANDIDATE";
-		URL candidateUrl = new URL("https://guidance.governikus-eid.de:8445/ecardpaos/paosreceiver");
+		URL candidateUrl = new URL("https://some.eid.server.de:8445/ecardpaos/paosreceiver");
 		String testbedRefreshAdress = GeneralConstants.TESTBED_REFRESH_URL;
-		URL eidUrl = new URL("https://guidance.governikus-eid.de:8443/eID-Server-20/eID");
+		URL eidUrl = new URL("https://some.eid.server.de:8443/eID-Server-20/eID");
 		KnownValues values = null;
 
-		String useIdAll = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><p:Step xmlns:p=\"http://www.secunet.com\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"	xsi:schemaLocation=\"http://www.secunet.com ../xmlScheme/sn_step.xsd\">	<p:HttpStepToken>		<p:name>header</p:name>		<p:value><![CDATA[POST [EID_INTERFACE_PATH] HTTP/1.1Accept-Encoding: gzip,deflateContent-Type: text/xml;charset=UTF-8SOAPAction: \"http://bsi.bund.de/eID/useID\"Content-Length: [[CHARLENGTH]]Host: [EID_INTERFACE_HOSTNAME]Connection: Keep-AliveUser-Agent: [TESTBED_USER_AGENT_NAME]/[TESTBED_USER_AGENT_MAJOR].[TESTBED_USER_AGENT_MINOR].[TESTBED_USER_AGENT_SUBMINOR]]]></p:value>		<p:isMandatory>true</p:isMandatory>	</p:HttpStepToken>	<p:ProtocolStepToken>		<p:name>message</p:name>		<p:value><![CDATA[[[CREATE_SOAP_SECURITY_HEADER]]&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:eid=&quot;http://bsi.bund.de/eID/&quot;&gt;&lt;soapenv:Header /&gt;&lt;soapenv:Body xmlns:wsu=&quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd&quot; wsu:Id=&quot;body-123&quot;&gt;&lt;eid:useIDRequest&gt;&lt;eid:UseOperations&gt;&lt;eid:DocumentType&gt;REQUIRED&lt;/eid:DocumentType&gt;&lt;eid:IssuingState&gt;REQUIRED&lt;/eid:IssuingState&gt;&lt;eid:DateOfExpiry&gt;REQUIRED&lt;/eid:DateOfExpiry&gt;&lt;eid:GivenNames&gt;REQUIRED&lt;/eid:GivenNames&gt;&lt;eid:FamilyNames&gt;REQUIRED&lt;/eid:FamilyNames&gt;&lt;eid:ArtisticName&gt;REQUIRED&lt;/eid:ArtisticName&gt;&lt;eid:AcademicTitle&gt;REQUIRED&lt;/eid:AcademicTitle&gt;&lt;eid:DateOfBirth&gt;REQUIRED&lt;/eid:DateOfBirth&gt;&lt;eid:PlaceOfBirth&gt;REQUIRED&lt;/eid:PlaceOfBirth&gt;&lt;eid:Nationality&gt;REQUIRED&lt;/eid:Nationality&gt;&lt;eid:BirthName&gt;REQUIRED&lt;/eid:BirthName&gt;&lt;eid:PlaceOfResidence&gt;REQUIRED&lt;/eid:PlaceOfResidence&gt;&lt;eid:ResidencePermitI&gt;REQUIRED&lt;/eid:ResidencePermitI&gt;&lt;eid:RestrictedID&gt;REQUIRED&lt;/eid:RestrictedID&gt;&lt;eid:AgeVerification&gt;REQUIRED&lt;/eid:AgeVerification&gt;&lt;eid:PlaceVerification&gt;REQUIRED&lt;/eid:PlaceVerification&gt;&lt;/eid:UseOperations&gt;&lt;/eid:useIDRequest&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;]]></p:value>		<p:isMandatory>true</p:isMandatory>	</p:ProtocolStepToken></p:Step>";
+		String useIdAll = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><p:Step xmlns:p=\"http://www.secunet.com\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.secunet.com ../xmlScheme/sn_step.xsd\"> <p:HttpStepToken> <p:name>header</p:name> <p:value><![CDATA[POST [EID_INTERFACE_PATH] HTTP/1.1Accept-Encoding: gzip,deflateContent-Type: text/xml;charset=UTF-8SOAPAction: \"http://bsi.bund.de/eID/useID\"Content-Length: [[CHARLENGTH]]Host: [EID_INTERFACE_HOSTNAME]Connection: Keep-AliveUser-Agent: [TESTBED_USER_AGENT_NAME]/[TESTBED_USER_AGENT_MAJOR].[TESTBED_USER_AGENT_MINOR].[TESTBED_USER_AGENT_SUBMINOR]]]></p:value> <p:isMandatory>true</p:isMandatory> </p:HttpStepToken> <p:ProtocolStepToken> <p:name>message</p:name> <p:value><![CDATA[[[CREATE_SOAP_SECURITY_HEADER]]&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:eid=&quot;http://bsi.bund.de/eID/&quot;&gt;&lt;soapenv:Header /&gt;&lt;soapenv:Body xmlns:wsu=&quot;http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd&quot; wsu:Id=&quot;body-123&quot;&gt;&lt;eid:useIDRequest&gt;&lt;eid:UseOperations&gt;&lt;eid:DocumentType&gt;REQUIRED&lt;/eid:DocumentType&gt;&lt;eid:IssuingState&gt;REQUIRED&lt;/eid:IssuingState&gt;&lt;eid:DateOfExpiry&gt;REQUIRED&lt;/eid:DateOfExpiry&gt;&lt;eid:GivenNames&gt;REQUIRED&lt;/eid:GivenNames&gt;&lt;eid:FamilyNames&gt;REQUIRED&lt;/eid:FamilyNames&gt;&lt;eid:ArtisticName&gt;REQUIRED&lt;/eid:ArtisticName&gt;&lt;eid:AcademicTitle&gt;REQUIRED&lt;/eid:AcademicTitle&gt;&lt;eid:DateOfBirth&gt;REQUIRED&lt;/eid:DateOfBirth&gt;&lt;eid:PlaceOfBirth&gt;REQUIRED&lt;/eid:PlaceOfBirth&gt;&lt;eid:Nationality&gt;REQUIRED&lt;/eid:Nationality&gt;&lt;eid:BirthName&gt;REQUIRED&lt;/eid:BirthName&gt;&lt;eid:PlaceOfResidence&gt;REQUIRED&lt;/eid:PlaceOfResidence&gt;&lt;eid:ResidencePermitI&gt;REQUIRED&lt;/eid:ResidencePermitI&gt;&lt;eid:RestrictedID&gt;REQUIRED&lt;/eid:RestrictedID&gt;&lt;eid:AgeVerification&gt;REQUIRED&lt;/eid:AgeVerification&gt;&lt;eid:PlaceVerification&gt;REQUIRED&lt;/eid:PlaceVerification&gt;&lt;/eid:UseOperations&gt;&lt;/eid:useIDRequest&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;]]></p:value> <p:isMandatory>true</p:isMandatory> </p:ProtocolStepToken></p:Step>";
 
 		List<String> certificateNames = new ArrayList<>();
 		certificateNames.add("CERT_EID_XMLSIG_ESERVICE_1_A");
@@ -405,9 +407,9 @@ public class TestStepHandlerSOAP
 			EService service) throws Exception
 	{
 		String candidateName = "TEST_CANDIDATE";
-		URL candidateUrl = new URL("https://guidance.governikus-eid.de:8445/ecardpaos/paosreceiver");
+		URL candidateUrl = new URL("https://some.eid.server.de:8445/ecardpaos/paosreceiver");
 		String testbedRefreshAdress = GeneralConstants.TESTBED_REFRESH_URL;
-		URL eidUrl = new URL("https://guidance.governikus-eid.de:8443/eID-Server-20/eID");
+		URL eidUrl = new URL("https://some.eid.server.de:8443/eID-Server-20/eID");
 		// String message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eid=\"http://bsi.bund.de/eID/\"><soapenv:Header /><soapenv:Body
 		// xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" wsu:Id=\"body-123\"><eid:getServerInfoRequest /></soapenv:Body></soapenv:Envelope>";
 		String message = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eid=\"http://bsi.bund.de/eID/\"><soapenv:Header /><soapenv:Body xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" wsu:Id=\"body-123\"><eid:getServerInfoRequest /></soapenv:Body></soapenv:Envelope>";
@@ -497,7 +499,7 @@ public class TestStepHandlerSOAP
 		{
 			String value = entry.getValue();
 			if (value.equals("OK"))
-				logger.debug("OK    : " + entry.getKey());
+				logger.debug("OK : " + entry.getKey());
 			else
 				logger.error("ERROR : " + entry.getKey());
 		}

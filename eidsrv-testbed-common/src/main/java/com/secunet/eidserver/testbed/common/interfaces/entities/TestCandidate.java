@@ -362,4 +362,16 @@ public interface TestCandidate
 	 *            {@link boolean}
 	 */
 	public void setMultiClientCapable(boolean multiClientCapable);
+
+	/**
+	 * Set the eIDAS metadata XMl for eService F
+	 * 
+	 * @param eidasMetadataXml
+	 */
+	public void setEidasMetadata(String eidasMetadataXml);
+
+	/**
+	 * Get the eIDAS metadata XMl for eService F
+	 */
+	public String getEidasMetadata();
 }

@@ -25,6 +25,6 @@
 		<p:step>IN_GETRESULT_RESPONSE_ERROR</p:step>
 	</p:steps>
 	<p:variables>
-		<p:variable name="RES_MIN_IN_GETRESULT_RESPONSE_ERROR">http://www.bsi.bund.de/eid/server/2.0/resultminor/getResult#internalError</p:variable>
+		<p:variable name="RES_MIN_IN_GETRESULT_RESPONSE_ERROR">http://www.bsi.bund.de/eid/server/2.0/resultminor/common#internalError</p:variable>
 	</p:variables>
 </p:testcaseDefinition>

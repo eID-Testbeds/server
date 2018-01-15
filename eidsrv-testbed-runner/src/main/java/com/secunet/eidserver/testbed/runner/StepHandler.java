@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -239,6 +243,11 @@ public abstract class StepHandler
 			returnMsg = httpHeader + GeneralConstants.HTTP_LINE_ENDING + GeneralConstants.HTTP_LINE_ENDING;
 		}
 
+		// generate path of RefreshAddress for HTTP GET messages
+		if (returnMsg.contains(Functional.REFRESHADDRESS_PATH.getTextMark()))
+		{
+			returnMsg = returnMsg.replace(Functional.REFRESHADDRESS_PATH.getTextMark(), getRefreshAddressPath());
+		}
 		// generate uuids
 		if (returnMsg.contains(Functional.UUID.getTextMark()))
 		{
@@ -367,159 +376,181 @@ public abstract class StepHandler
 		// create XML object out of the receivedMessage string
 		if (httpHeaders.get("HTTP_STATUS_CODE").equals("HTTP/1.1 200 OK") && messageComponents.length > 1 && messageComponents[1].length() != 0)
 		{
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(true);
-			DocumentBuilder builder;
-			try
+			// check if we operate in attached mode
+			if (alternatives.get(0).getName().startsWith(TestStepType.IN_ATTACHED_WEBPAGE.value()))
 			{
-				// load schema file to validate against, if provided
-				boolean schemaValidated = false;
-				if (step.getSchema() != null && step.getSchema().length() > 0)
+				logger.debug("IN_ATTACHED_WEBPAGE");
+
+				URL tcTokenUrl = parseTcTokenUrl(receivedMessage);
+				if (tcTokenUrl != null)
 				{
-					InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("schema/" + step.getSchema());
-					if (input != null)
-					{
-						SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-						Schema schema = sf.newSchema(new StreamSource(input));
-						factory.setSchema(schema);
-						schemaValidated = true;
-					}
-					else
-					{
-						resultMessage += "The schema specified schema file named " + step.getSchema() + " could not be loaded." + System.getProperty("line.separator");
-					}
+					knownValues.add(new KnownValue(Replaceable.ATTACHED_TCTOKEN.toString(), tcTokenUrl.toString()));
+					knownValues.add(new KnownValue(Replaceable.ATTACHED_TCTOKEN_HOSTNAME.toString(), tcTokenUrl.getHost()));
+					knownValues.add(new KnownValue(Replaceable.ATTACHED_TCTOKEN_PATH.toString(), getNonEmptyPath(tcTokenUrl)));
+					resultMessage += "Received TC Token URL: " + tcTokenUrl.toString();
 				}
-
-				builder = factory.newDocumentBuilder();
-				builder.setErrorHandler(new ErrorHandler() {
-					@Override
-					public void warning(SAXParseException exception) throws SAXException
-					{
-						schemaParsingResult += ("[Warning] " + exception.getMessage() + System.getProperty("line.separator"));
-					}
-
-					@Override
-					public void fatalError(SAXParseException exception) throws SAXException
-					{
-						schemaParsingResult += ("[Fatal error] " + exception.getMessage() + System.getProperty("line.separator"));
-					}
-
-					@Override
-					public void error(SAXParseException exception) throws SAXException
-					{
-						schemaParsingResult += ("[Error] " + exception.getMessage() + System.getProperty("line.separator"));
-					}
-				});
-				Document document = builder.parse(new InputSource(new StringReader(messageComponents[1])));
-
-				// save parsing error message, if we have got any
-				if (schemaValidated)
+				else
 				{
-					if (schemaParsingResult.length() > 0)
-					{
-						resultMessage += "Validation results against the schema " + step.getSchema() + ":" + System.getProperty("line.separator");
-						resultMessage += schemaParsingResult;
-						schemaParsingResult = "";
-					}
-					else
-					{
-						resultMessage += "Successfully validated the message against the schema " + step.getSchema() + "." + System.getProperty("line.separator");
-					}
+					resultMessage += "Could not parse a valid TC Token URL from the received message";
+					result.setSuccess(false);
 				}
-
-				// validate protocol tokens
-				Result res = checkTokens(step.getProtocolStepToken(), document);
-				if (result.getSuccess())
+			}
+			else
+			{
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				factory.setNamespaceAware(true);
+				DocumentBuilder builder;
+				try
 				{
-					result.setSuccess(res.wasSuccessful());
-				}
-				resultMessage += res.getMessage();
-
-				// save the data necessary to compute future steps
-				resultMessage += saveData(step, document, messageComponents[1]);
-
-				// check if this is a EAC1 InputType message
-				if (alternatives.get(0).getName().startsWith(TestStepType.IN_DID_AUTHENTICATE_EAC_1_INPUTTYPE.value()))
-				{
-					logger.debug("IN_DID_AUTHENTICATE_EAC_1_INPUTTYPE");
-					String savingResult = saveCVcertificates(document);
-					if (savingResult != null)
+					// load schema file to validate against, if provided
+					boolean schemaValidated = false;
+					if (step.getSchema() != null && step.getSchema().length() > 0)
 					{
-						resultMessage += savingResult + System.getProperty("line.separator");
+						InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("schema/" + step.getSchema());
+						if (input != null)
+						{
+							SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+							Schema schema = sf.newSchema(new StreamSource(input));
+							factory.setSchema(schema);
+							schemaValidated = true;
+						}
+						else
+						{
+							resultMessage += "The schema specified schema file named " + step.getSchema() + " could not be loaded." + System.getProperty("line.separator");
+						}
 					}
-					computationHelper = new ComputationHelper(knownValues.get(Replaceable.EFCARDACCESS.toString()).getValue(), knownValues.get(Replaceable.NONCE.toString()).getValue(),
-							knownValues.get(Replaceable.CA_PRIVATE.toString()).getValue());
-					Result cvValidationResult = computationHelper.validateCVcertificates(knownCvCertificates, expectedNumOfCv, service);
+
+					builder = factory.newDocumentBuilder();
+					builder.setErrorHandler(new ErrorHandler() {
+						@Override
+						public void warning(SAXParseException exception) throws SAXException
+						{
+							schemaParsingResult += ("[Warning] " + exception.getMessage() + System.getProperty("line.separator"));
+						}
+
+						@Override
+						public void fatalError(SAXParseException exception) throws SAXException
+						{
+							schemaParsingResult += ("[Fatal error] " + exception.getMessage() + System.getProperty("line.separator"));
+						}
+
+						@Override
+						public void error(SAXParseException exception) throws SAXException
+						{
+							schemaParsingResult += ("[Error] " + exception.getMessage() + System.getProperty("line.separator"));
+						}
+					});
+					Document document = builder.parse(new InputSource(new StringReader(messageComponents[1])));
+
+					// save parsing error message, if we have got any
+					if (schemaValidated)
+					{
+						if (schemaParsingResult.length() > 0)
+						{
+							resultMessage += "Validation results against the schema " + step.getSchema() + ":" + System.getProperty("line.separator");
+							resultMessage += schemaParsingResult;
+							schemaParsingResult = "";
+						}
+						else
+						{
+							resultMessage += "Successfully validated the message against the schema " + step.getSchema() + "." + System.getProperty("line.separator");
+						}
+					}
+
+					// validate protocol tokens
+					Result res = checkTokens(step.getProtocolStepToken(), document);
 					if (result.getSuccess())
 					{
-						result.setSuccess(cvValidationResult.wasSuccessful());
+						result.setSuccess(res.wasSuccessful());
 					}
-					resultMessage += cvValidationResult.getMessage() + System.getProperty("line.separator");
-					Result descriptionResult = validateCertificateDescription(document);
-					if (result.getSuccess())
+					resultMessage += res.getMessage();
+
+					// save the data necessary to compute future steps
+					resultMessage += saveData(step, document, messageComponents[1]);
+
+					// check if this is a EAC1 InputType message
+					if (alternatives.get(0).getName().startsWith(TestStepType.IN_DID_AUTHENTICATE_EAC_1_INPUTTYPE.value()))
 					{
-						result.setSuccess(descriptionResult.wasSuccessful());
+						logger.debug("IN_DID_AUTHENTICATE_EAC_1_INPUTTYPE");
+						String savingResult = saveCVcertificates(document);
+						if (savingResult != null)
+						{
+							resultMessage += savingResult + System.getProperty("line.separator");
+						}
+						computationHelper = new ComputationHelper(knownValues.get(Replaceable.EFCARDACCESS.toString()).getValue(), knownValues.get(Replaceable.NONCE.toString()).getValue(),
+								knownValues.get(Replaceable.CA_PRIVATE.toString()).getValue());
+						Result cvValidationResult = computationHelper.validateCVcertificates(knownCvCertificates, expectedNumOfCv, service);
+						if (result.getSuccess())
+						{
+							result.setSuccess(cvValidationResult.wasSuccessful());
+						}
+						resultMessage += cvValidationResult.getMessage() + System.getProperty("line.separator");
+						Result descriptionResult = validateCertificateDescription(document);
+						if (result.getSuccess())
+						{
+							result.setSuccess(descriptionResult.wasSuccessful());
+						}
+						resultMessage += descriptionResult.getMessage() + System.getProperty("line.separator");
 					}
-					resultMessage += descriptionResult.getMessage() + System.getProperty("line.separator");
-				}
-				// check if this is a EAC2 InputType message
-				else if (alternatives.get(0).getName().startsWith(TestStepType.IN_DID_AUTHENTICATE_EAC_2_INPUTTYPE.value()))
-				{
-					logger.debug("IN_DID_AUTHENTICATE_EAC_2_INPUTTYPE");
-					NodeList nodes = getElementsByLocalTagName(document, "Signature");
-					if (nodes.getLength() > 0)
+					// check if this is a EAC2 InputType message
+					else if (alternatives.get(0).getName().startsWith(TestStepType.IN_DID_AUTHENTICATE_EAC_2_INPUTTYPE.value()))
 					{
-						Result signatureResult = validateSignature(nodes);
+						logger.debug("IN_DID_AUTHENTICATE_EAC_2_INPUTTYPE");
+						NodeList nodes = getElementsByLocalTagName(document, "Signature");
+						if (nodes.getLength() > 0)
+						{
+							Result signatureResult = validateSignature(nodes);
+							if (result.getSuccess())
+							{
+								result.setSuccess(signatureResult.wasSuccessful());
+							}
+							resultMessage += signatureResult.getMessage();
+							// skip additionalinputtype
+							this.stepsToSkip = 1;
+						}
+					}
+					// check if this is a EAC AdditionalInputType message
+					else if (alternatives.get(0).getName().startsWith(TestStepType.IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE.value()))
+					{
+						logger.debug("IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE");
+						Result signatureResult = validateSignature(getElementsByLocalTagName(document, "Signature"));
 						if (result.getSuccess())
 						{
 							result.setSuccess(signatureResult.wasSuccessful());
 						}
 						resultMessage += signatureResult.getMessage();
-						// skip additionalinputtype
-						this.stepsToSkip = 1;
 					}
-				}
-				// check if this is a EAC AdditionalInputType message
-				else if (alternatives.get(0).getName().startsWith(TestStepType.IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE.value()))
-				{
-					logger.debug("IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE");
-					Result signatureResult = validateSignature(getElementsByLocalTagName(document, "Signature"));
-					if (result.getSuccess())
+					// check if this is a Transmit message
+					else if (alternatives.get(0).getName().startsWith(TestStepType.IN_TRANSMIT.value()))
 					{
-						result.setSuccess(signatureResult.wasSuccessful());
+						logger.debug("IN_TRANSMIT");
+						NodeList nodes = getElementsByLocalTagName(document, "InputAPDU");
+						List<String> inputAPDUvalues = new ArrayList<String>();
+						for (int i = 0; i < nodes.getLength(); i++)
+						{
+							inputAPDUvalues.add(nodes.item(i).getTextContent());
+						}
+						resultMessage += computationHelper.handleApduList(inputAPDUvalues, card, knownValues.get(Replaceable.AGE_COMPARISON_VALUE.toString()).getValue(),
+								knownValues.get(Replaceable.PLACE_COMPARISON_VALUE.toString()).getValue());
 					}
-					resultMessage += signatureResult.getMessage();
-				}
-				// check if this is a Transmit message
-				else if (alternatives.get(0).getName().startsWith(TestStepType.IN_TRANSMIT.value()))
-				{
-					logger.debug("IN_TRANSMIT");
-					NodeList nodes = getElementsByLocalTagName(document, "InputAPDU");
-					List<String> inputAPDUvalues = new ArrayList<String>();
-					for (int i = 0; i < nodes.getLength(); i++)
+					// check if this is a StartPAOSResponse without an error. if so, check the apdus
+					else if (alternatives.get(0).equals((TestStepType.IN_START_PAOS_RESPONSE)))
 					{
-						inputAPDUvalues.add(nodes.item(i).getTextContent());
+						logger.debug("IN_START_PAOS_RESPONSE");
+						Result apduResult = checkReceivedApdus();
+						result.setSuccess(apduResult.wasSuccessful());
+						resultMessage += apduResult.getMessage();
 					}
-					resultMessage += computationHelper.handleApduList(inputAPDUvalues, card, knownValues.get(Replaceable.AGE_COMPARISON_VALUE.toString()).getValue(),
-							knownValues.get(Replaceable.PLACE_COMPARISON_VALUE.toString()).getValue());
 				}
-				// check if this is a StartPAOSResponse without an error. if so, check the apdus
-				else if (alternatives.get(0).equals((TestStepType.IN_START_PAOS_RESPONSE)))
+				catch (Exception e)
 				{
-					logger.debug("IN_START_PAOS_RESPONSE");
-					Result apduResult = checkReceivedApdus();
-					result.setSuccess(apduResult.wasSuccessful());
-					resultMessage += apduResult.getMessage();
+					result.setSuccess(false);
+					this.abort = true;
+					resultMessage += "Internal testbed error - unable to parse the received message. See technical log for details.";
+					StringWriter trace = new StringWriter();
+					e.printStackTrace(new PrintWriter(trace));
+					logger.warn("Could not parse received message: " + System.getProperty("line.separator") + trace.toString());
 				}
-			}
-			catch (Exception e)
-			{
-				result.setSuccess(false);
-				this.abort = true;
-				resultMessage += "Internal testbed error - unable to parse the received message. See technical log for details.";
-				StringWriter trace = new StringWriter();
-				e.printStackTrace(new PrintWriter(trace));
-				logger.warn("Could not parse received message: " + System.getProperty("line.separator") + trace.toString());
 			}
 		}
 		else
@@ -689,7 +720,7 @@ public abstract class StepHandler
 				success = (computationHelper.isValidSignature(signatureNodes.item(0).getTextContent(), knownValues.get(Replaceable.IDPICC.toString()).getValue(),
 						knownValues.get(Replaceable.CHALLENGE.toString()).getValue(), knownValues.get(Replaceable.EPHEMERALPUBLICKEY.toString()).getValue()));
 			}
-			resultMessage += "Signature validation was " + ((success) ? "successful" : "unsucessful");
+			resultMessage += "Signature validation " + ((success) ? "was successful" : "failed");
 		}
 		resultMessage += System.getProperty("line.separator");
 		return new Result(success, resultMessage);
@@ -910,7 +941,8 @@ public abstract class StepHandler
 					result = false;
 				}
 				resultMessage += ((token.isIsMandatory() || ((null != token.getParentName()) && token.getParentName().equals("PersonalData") && !token.getValue().startsWith("[PERSONAL_")))
-						? "Mandatory" : "Optional") + " protocol token " + token.getName();
+						? "Mandatory"
+						: "Optional") + " protocol token " + token.getName();
 				if (null != token.getParentName())
 				{
 					resultMessage += " with parent " + token.getParentName();
@@ -1150,7 +1182,33 @@ public abstract class StepHandler
 		{
 			path = "/";
 		}
+		if (url.getQuery() != null && !url.getQuery().isEmpty())
+		{
+			path += ("?" + url.getQuery());
+		}
 		return path;
+	}
+
+	/**
+	 * Extracts the path from the refresh address
+	 * 
+	 * @return
+	 */
+	protected String getRefreshAddressPath()
+	{
+		String refreshPath = "/";
+		try
+		{
+			URL refreshUrl = new URL(knownValues.get(Replaceable.REFRESHADDRESS.toString()).getValue());
+			refreshPath = getNonEmptyPath(refreshUrl);
+		}
+		catch (MalformedURLException e)
+		{
+			StringWriter trace = new StringWriter();
+			e.printStackTrace(new PrintWriter(trace));
+			logger.error("Getting pathof the refresh URL failed: " + System.getProperty("line.separator") + trace.toString());
+		}
+		return refreshPath;
 	}
 
 	/**
@@ -1175,6 +1233,54 @@ public abstract class StepHandler
 		additionalOutboundData = null;
 		return local;
 	};
+
+	/**
+	 * Parses the TC Token Url from a HTML webpage. The result will be stored in the ATTACHED_TC_TOKEN
+	 * 
+	 * TODO JavaScript support
+	 * 
+	 * @param message
+	 *            {@link String}
+	 * 
+	 * @return
+	 */
+	protected URL parseTcTokenUrl(String message)
+	{
+		Pattern p = Pattern.compile("(<a [^<>]*href=\"http://127.0.0.1:24727/eID-Client\\?tcTokenURL=)([^\"]*)(\"[^<>]*>)");
+		Matcher m = p.matcher(message);
+		String tcTokenUrl = null;
+		while (m.find()) // find last occurrence of given pattern
+		{
+			tcTokenUrl = m.group(2);
+		}
+		if (tcTokenUrl != null)
+		{
+			try
+			{
+				return new URL(URLDecoder.decode(tcTokenUrl, "UTF-8"));
+			}
+			catch (UnsupportedEncodingException | MalformedURLException e)
+			{
+				StringWriter trace = new StringWriter();
+				e.printStackTrace(new PrintWriter(trace));
+				logger.error("Could not decode TCToken URL from received message due to: " + e.getMessage() + System.getProperty("line.separator") + trace.toString());
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the {@link KnownValues} for which the user has restricted the access
+	 * 
+	 * @return
+	 */
+	protected Set<String> getRestrictedByUser()
+	{
+		KnownValues allowedValues = knownValues.getStartingWith(GeneralConstants.ALLOWED_BY_USER_PREFIX);
+		Set<String> restrictedAttributes = allowedValues.stream().filter(kv -> kv.getValue().equals(GeneralConstants.PERMISSION_PROHIBITED))
+				.map(kv -> kv.getName().substring(GeneralConstants.ALLOWED_BY_USER_PREFIX.length(), kv.getName().length())).collect(Collectors.toSet());
+		return restrictedAttributes;
+	}
 
 
 }

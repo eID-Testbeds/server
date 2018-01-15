@@ -15,10 +15,14 @@ import org.bouncycastle.crypto.tls.CipherSuite;
 import org.bouncycastle.crypto.tls.CompressionMethod;
 import org.bouncycastle.crypto.tls.DefaultTlsClient;
 import org.bouncycastle.crypto.tls.DefaultTlsSignerCredentials;
+import org.bouncycastle.crypto.tls.HashAlgorithm;
 import org.bouncycastle.crypto.tls.ProtocolVersion;
 import org.bouncycastle.crypto.tls.ServerOnlyTlsAuthentication;
+import org.bouncycastle.crypto.tls.SignatureAlgorithm;
+import org.bouncycastle.crypto.tls.SignatureAndHashAlgorithm;
 import org.bouncycastle.crypto.tls.TlsAuthentication;
 import org.bouncycastle.crypto.tls.TlsCredentials;
+import org.bouncycastle.crypto.tls.TlsUtils;
 
 public class TLSConnection extends DefaultTlsClient
 {
@@ -28,14 +32,12 @@ public class TLSConnection extends DefaultTlsClient
 	private final Certificate client_cert;
 	private final AsymmetricKeyParameter client_key;
 	private final boolean clientAuthentication;
-	private final TLSConnectionClient connectionClient;
 	private String compressionMethod, cipherSuite, serverVersion;
 
 	// Assume that client authentication is required if a certificate with key
 	// is supplied
-	TLSConnection(TLSConnectionClient connectionClient, Certificate cert, AsymmetricKeyParameter keys, int[] supported_cipher_suites)
+	TLSConnection(Certificate cert, AsymmetricKeyParameter keys, int[] supported_cipher_suites)
 	{
-		this.connectionClient = connectionClient;
 		supported_suites = supported_cipher_suites;
 		client_cert = cert;
 		client_key = keys;
@@ -44,9 +46,8 @@ public class TLSConnection extends DefaultTlsClient
 
 	// Assume that client authentication is required if a certificate with key
 	// is supplied
-	TLSConnection(TLSConnectionClient connectionClient, Certificate cert, AsymmetricKeyParameter keys)
+	TLSConnection(Certificate cert, AsymmetricKeyParameter keys)
 	{
-		this.connectionClient = connectionClient;
 		supported_suites = new int[] { CipherSuite.TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA, CipherSuite.TLS_RSA_PSK_WITH_AES_128_CBC_SHA256,
 				CipherSuite.TLS_PSK_WITH_AES_256_CBC_SHA, CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 };
 		client_cert = cert;
@@ -56,9 +57,8 @@ public class TLSConnection extends DefaultTlsClient
 
 	// Perform a Server-Only Authentication if client certificate is not
 	// supplied
-	TLSConnection(TLSConnectionClient connectionClient, int[] supported_cipher_suites)
+	TLSConnection(int[] supported_cipher_suites)
 	{
-		this.connectionClient = connectionClient;
 		supported_suites = supported_cipher_suites;
 		client_cert = null;
 		client_key = null;
@@ -67,9 +67,8 @@ public class TLSConnection extends DefaultTlsClient
 
 	// Perform a Server-Only Authentication if client certificate is not
 	// supplied
-	TLSConnection(TLSConnectionClient connectionClient)
+	TLSConnection()
 	{
-		this.connectionClient = connectionClient;
 		supported_suites = new int[] { CipherSuite.TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA, CipherSuite.TLS_RSA_PSK_WITH_AES_128_CBC_SHA256,
 				CipherSuite.TLS_PSK_WITH_AES_256_CBC_SHA };
 		client_cert = null;
@@ -146,14 +145,22 @@ public class TLSConnection extends DefaultTlsClient
 				@Override
 				public void notifyServerCertificate(Certificate arg0) throws IOException
 				{
-					connectionClient.verifyTLSServerCerts(arg0);
+					// we do not need to perform any checks here
 				}
 
 				@Override
 				public TlsCredentials getClientCredentials(CertificateRequest certificateRequest) throws IOException
 				{
 					logger.debug("Answering request for client certificates");
-					return new DefaultTlsSignerCredentials(context, client_cert, client_key);
+
+					// for TLS 1.2 there MUST be this object
+					SignatureAndHashAlgorithm saha = null;
+					if (TlsUtils.isTLSv12(context))
+					{
+						// TODO replace static values
+						saha = new SignatureAndHashAlgorithm(HashAlgorithm.sha256, SignatureAlgorithm.rsa);
+					}
+					return new DefaultTlsSignerCredentials(context, client_cert, client_key, saha);
 				}
 
 			};
@@ -167,7 +174,7 @@ public class TLSConnection extends DefaultTlsClient
 				@Override
 				public void notifyServerCertificate(Certificate arg0) throws IOException
 				{
-					connectionClient.verifyTLSServerCerts(arg0);
+					// we do not need to perform any checks here
 				}
 			};
 		}
@@ -210,18 +217,6 @@ public class TLSConnection extends DefaultTlsClient
 			}
 		}
 		super.notifySelectedCompressionMethod(selectedCompressionMethod);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.secunet.bouncycastle.crypto.tls.AbstractTlsPeer#notifyHandshakeComplete()
-	 */
-	@Override
-	public void notifyHandshakeComplete() throws IOException
-	{
-		connectionClient.setHandshakeData("Protocol version: " + serverVersion + ", Ciphersuite: " + cipherSuite + " Compression method: " + compressionMethod);
-		super.notifyHandshakeComplete();
 	}
 
 	/*

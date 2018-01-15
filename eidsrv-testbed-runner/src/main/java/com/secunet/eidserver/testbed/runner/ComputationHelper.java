@@ -641,28 +641,28 @@ public class ComputationHelper
 				sm.nextAPDU();
 				CommandAPDU decrypted = sm.decrypt(cmdApdu);
 				String plainCommandApdu = DatatypeConverter.printHexBinary(decrypted.getBytes());
-				response += "Decrypted SM CommandAPDU " + apdu + " to plain CommandAPDU " + plainCommandApdu + System.getProperty("line.separator");
+				EidRequestApdu requestedApdu = EidRequestApdu.getFromRequest(plainCommandApdu.toUpperCase());
+				response += "Decrypted SM CommandAPDU " + apdu + " to plain CommandAPDU " + plainCommandApdu + " (" + requestedApdu.toString() + ")" + System.getProperty("line.separator");
 
 				// generate response
 				sm.nextAPDU();
 
 				boolean useDecreasedSSCForMAC = false;
-				if ((EidCard.EIDCARD_15.equals(card)) && (EidRequestApdu.READ_DG5.equals(EidRequestApdu.getFromRequest(plainCommandApdu))))
+				if ((EidCard.EIDCARD_15.equals(card)) && (EidRequestApdu.READ_DG5.equals(requestedApdu)))
 				{
 					useDecreasedSSCForMAC = true;
 				}
 
-				String plainResponseApdu = null;
-				plainResponseApdu = getPlainResponseApdu(plainCommandApdu, card, ageComparisonValue, placeComparisonValue);
-				if (plainResponseApdu != null)
+				EidResponseApdu responseApdu = getPlainResponseApdu(requestedApdu, card, ageComparisonValue, placeComparisonValue);
+				if (responseApdu != null)
 				{
 					ResponseAPDU finalResponse = null;
-					ResponseAPDU plainResponse = new ResponseAPDU(DatatypeConverter.parseHexBinary(plainResponseApdu));
+					ResponseAPDU plainResponse = new ResponseAPDU(DatatypeConverter.parseHexBinary(responseApdu.getResponseApdu()));
 
 					// status ok - don't encrypt, just compute checksum
-					if (EidResponseApdu.STATUS_OK.getResponseApdu().equals(plainResponseApdu))
+					if (EidResponseApdu.STATUS_OK.equals(responseApdu))
 					{
-						if ((EidCard.EIDCARD_14.equals(card)) && (EidRequestApdu.READ_DG5.equals(EidRequestApdu.getFromRequest(plainCommandApdu))))
+						if ((EidCard.EIDCARD_14.equals(card)) && (EidRequestApdu.READ_DG5.equals(requestedApdu)))
 						{
 							finalResponse = encryptAndOrMac(plainResponse, false, false, useDecreasedSSCForMAC);
 						}
@@ -679,7 +679,7 @@ public class ComputationHelper
 					else
 					{
 						// encrypt
-						if ((EidCard.EIDCARD_14.equals(card)) && (EidRequestApdu.READ_DG5.equals(EidRequestApdu.getFromRequest(plainCommandApdu))))
+						if ((EidCard.EIDCARD_14.equals(card)) && (EidRequestApdu.READ_DG5.equals(requestedApdu)))
 						{
 							finalResponse = encryptAndOrMac(plainResponse, true, false, useDecreasedSSCForMAC);
 						}
@@ -694,7 +694,7 @@ public class ComputationHelper
 						}
 					}
 					responseList.add(DatatypeConverter.printHexBinary(finalResponse.getBytes()));
-					response += "Created ResponseAPDU " + DatatypeConverter.printHexBinary(finalResponse.getBytes()) + System.getProperty("line.separator");
+					response += "Created ResponseAPDU " + DatatypeConverter.printHexBinary(finalResponse.getBytes()) + " (" + responseApdu.toString() + ")" + System.getProperty("line.separator");
 				}
 				// unknown
 				else
@@ -715,14 +715,13 @@ public class ComputationHelper
 
 
 	// returns the plain response apdu for the given command apdu
-	private String getPlainResponseApdu(String plainCommandApdu, EidCard card, String ageComparisonValue, String placeComparisonValue)
+	private EidResponseApdu getPlainResponseApdu(EidRequestApdu commandApdu, EidCard card, String ageComparisonValue, String placeComparisonValue)
 	{
 		Map<EidRequestApdu, EidResponseApdu> apdus = EidCards.apdus(card);
-		EidRequestApdu apdu = EidRequestApdu.getFromRequest(plainCommandApdu.toUpperCase());
-		if (null != apdu)
+		if (null != commandApdu)
 		{
 			// process the data
-			if (EidRequestApdu.AGE_VERIFICATION.equals(apdu))
+			if (EidRequestApdu.AGE_VERIFICATION.equals(commandApdu))
 			{
 				requestedFunctions.add(SpecialFunction.AgeVerification);
 				Integer minAge = Integer.valueOf(ageComparisonValue);
@@ -735,37 +734,37 @@ public class ComputationHelper
 				// now check if the card holder is old enough to fulfill the condition
 				if (p.getYears() < minAge)
 				{
-					return EidResponseApdu.VERIFICATION_FAILED.getResponseApdu();
+					return EidResponseApdu.VERIFICATION_FAILED;
 				}
 				else
 				{
-					return EidResponseApdu.STATUS_OK.getResponseApdu();
+					return EidResponseApdu.STATUS_OK;
 				}
 			}
-			else if (EidRequestApdu.PLACE_VERIFICATION.equals(apdu))
+			else if (EidRequestApdu.PLACE_VERIFICATION.equals(commandApdu))
 			{
 				requestedFunctions.add(SpecialFunction.PlaceVerification);
 				if (placeComparisonValue.equals(EidCards.communityId(card)))
 				{
-					return EidResponseApdu.STATUS_OK.getResponseApdu();
+					return EidResponseApdu.STATUS_OK;
 				}
 				else
 				{
-					return EidResponseApdu.VERIFICATION_FAILED.getResponseApdu();
+					return EidResponseApdu.VERIFICATION_FAILED;
 				}
 			}
 			else
 			{
-				if (EidRequestApdu.RESTRICTED_IDENTIFICATION.equals(apdu))
+				if (EidRequestApdu.RESTRICTED_IDENTIFICATION.equals(commandApdu))
 				{
 					requestedFunctions.add(SpecialFunction.RestrictedID);
 				}
-				RequestAttribute ra = RequestAttribute.getFromName(apdu.getOperationName(), false);
+				RequestAttribute ra = RequestAttribute.getFromName(commandApdu.getOperationName(), false);
 				if (ra != null)
 				{
 					requestedAttributes.add(ra);
 				}
-				return apdus.get(apdu).getResponseApdu();
+				return apdus.get(commandApdu);
 			}
 		}
 		return null;

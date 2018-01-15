@@ -8,8 +8,18 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.Future;
+
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -67,9 +77,9 @@ public class CandidateControllerTest
 	@Mock
 	private TestCaseStepDAO testcaseStepDAOMock;
 
-
 	@BeforeClass
-	private void initMocks()
+	private void initMocks() throws CertificateEncodingException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, NoSuchProviderException, IOException,
+			TransformerFactoryConfigurationError, TransformerException
 	{
 		// mocks themselves
 		MockitoAnnotations.initMocks(this);

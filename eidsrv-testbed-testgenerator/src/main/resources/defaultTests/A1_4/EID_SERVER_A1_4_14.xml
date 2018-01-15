@@ -20,7 +20,7 @@
 	<p:steps>
 		<p:step>OUT_USEID_REQUEST_SET1</p:step>
 		<p:step>IN_USEID_RESPONSE</p:step>
-		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_13</p:reference>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_16</p:reference>
 		<p:step>OUT_GETRESULT_REQUEST</p:step>
 		<p:step>IN_GETRESULT_RESPONSE_SET1</p:step>
 		<p:step>OUT_GETRESULT_REQUEST_REQUESTCOUNTER</p:step>

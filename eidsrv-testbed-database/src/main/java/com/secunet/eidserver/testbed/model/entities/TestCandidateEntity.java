@@ -165,6 +165,9 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	@Column(name = "MULTI_CLIENT_CAPABLE")
 	private boolean multiClientCapable;
 
+	@Column(name = "EIDAS_METADATA")
+	private String eidasMetadata;
+
 	public TestCandidateEntity()
 	{
 	}
@@ -270,7 +273,8 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	@Override
 	public void setSamlUrl(URL samlUrl)
 	{
-		this.samlUrl = samlUrl.toString();
+		if (samlUrl != null)
+			this.samlUrl = samlUrl.toString();
 	}
 
 	@Override
@@ -531,7 +535,8 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	@Override
 	public void setEcardapiUrl(URL ecardapiUrl)
 	{
-		this.ecardapiUrl = ecardapiUrl.toString();
+		if (ecardapiUrl != null)
+			this.ecardapiUrl = ecardapiUrl.toString();
 	}
 
 	@Override
@@ -551,7 +556,8 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	@Override
 	public void setEidinterfaceUrl(URL eidinterfaceUrl)
 	{
-		this.eidinterfaceUrl = eidinterfaceUrl.toString();
+		if (eidinterfaceUrl != null)
+			this.eidinterfaceUrl = eidinterfaceUrl.toString();
 	}
 
 	/*
@@ -803,7 +809,8 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	@Override
 	public void setAttachedTcTokenUrl(URL attachedTcTokenUrl)
 	{
-		this.attachedTcTokenUrl = attachedTcTokenUrl.toString();
+		if (attachedTcTokenUrl != null)
+			this.attachedTcTokenUrl = attachedTcTokenUrl.toString();
 	}
 
 	/**
@@ -823,6 +830,18 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	public void setMultiClientCapable(boolean multiClientCapable)
 	{
 		this.multiClientCapable = multiClientCapable;
+	}
+
+	@Override
+	public void setEidasMetadata(String eidasMetadataXml)
+	{
+		this.eidasMetadata = eidasMetadataXml;
+	}
+
+	@Override
+	public String getEidasMetadata()
+	{
+		return this.eidasMetadata;
 	}
 
 }

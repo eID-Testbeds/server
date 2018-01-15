@@ -105,6 +105,12 @@ public class RunnerTLS
 		return testCase.getOptionalProfiles().contains(IcsOptionalprofile.ESER_ATTACHED);
 	}
 
+	private boolean isEidasMW(TestCase testCase)
+	{
+		// Profil EIDAS_MW
+		return testCase.getOptionalProfiles().contains(IcsOptionalprofile.EIDAS_MW);
+	}
+
 	private URL determineTarget(TestCandidate testCandidate, TestCase testCase)
 	{
 		URL url = null;
@@ -128,6 +134,11 @@ public class RunnerTLS
 			else if (isAttached(testCase))
 			{
 				// Module C2_2 eCardAPI - Attached
+				url = testCandidate.getAttachedTcTokenUrl();
+			}
+			else if (isEidasMW(testCase))
+			{
+				// Module D3
 				url = testCandidate.getAttachedTcTokenUrl();
 			}
 		}

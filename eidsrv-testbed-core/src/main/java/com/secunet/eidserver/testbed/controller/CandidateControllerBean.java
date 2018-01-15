@@ -1,11 +1,17 @@
 package com.secunet.eidserver.testbed.controller;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,9 +27,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.secunet.eidserver.testbed.common.enumerations.Interface;
 import com.secunet.eidserver.testbed.common.exceptions.CandidateException;
@@ -54,6 +62,7 @@ import com.secunet.eidserver.testbed.common.ics.IcsXmlsignature;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsignatures;
 import com.secunet.eidserver.testbed.common.interfaces.beans.CandidateController;
 import com.secunet.eidserver.testbed.common.interfaces.beans.CertificateController;
+import com.secunet.eidserver.testbed.common.interfaces.beans.Runner;
 import com.secunet.eidserver.testbed.common.interfaces.beans.TestGenerator;
 import com.secunet.eidserver.testbed.common.interfaces.dao.DefaultTestCaseDAO;
 import com.secunet.eidserver.testbed.common.interfaces.dao.TestCandidateDAO;
@@ -76,7 +85,7 @@ import com.secunet.eidserver.testbed.common.interfaces.entities.XmlSignature;
 @Stateful
 public class CandidateControllerBean implements CandidateController
 {
-	private static final Logger logger = LogManager.getRootLogger();
+	private static final Logger logger = LoggerFactory.getLogger(CandidateControllerBean.class);
 
 	@EJB
 	private TestGenerator generator;
@@ -108,12 +117,16 @@ public class CandidateControllerBean implements CandidateController
 	@EJB
 	private TestCaseStepDAO testCaseStepDAO;
 
+	@EJB
+	private Runner runner;
+
 	/**
 	 * @see com.secunet.eidserver.testbed.common.interfaces.beans.CandidateController#createCandidate(String)
 	 */
 	@Asynchronous
 	@Override
-	public Future<TestCandidate> createCandidate(final String icsData) throws JAXBException, MalformedURLException
+	public Future<TestCandidate> createCandidate(final String icsData) throws JAXBException, IOException, TransformerFactoryConfigurationError, TransformerException, UnrecoverableKeyException,
+			KeyStoreException, NoSuchAlgorithmException, CertificateException, NoSuchProviderException
 	{
 		// strip CDATA
 		String local = icsData;
@@ -134,6 +147,15 @@ public class CandidateControllerBean implements CandidateController
 		setMetadataFromIcs(ics, testCandidate);
 		setProfilesFromIcs(ics, testCandidate);
 		setCryptographyFromIcs(ics, testCandidate);
+		// Optional<String> base64EidasMetadata = runner.createEidasMetadata(testCandidate.getEcardapiUrl().toString());
+		// if (base64EidasMetadata.isPresent())
+		// {
+		// testCandidate.setEidasMetadata(base64EidasMetadata.get());
+		// }
+		// else
+		// {
+		// logger.warn("Could not generate the eIDAS metadata XML.");
+		// }
 		return new AsyncResult<TestCandidate>(testCandidate);
 	}
 

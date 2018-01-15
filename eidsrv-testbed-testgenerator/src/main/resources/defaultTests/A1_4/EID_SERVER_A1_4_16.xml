@@ -22,7 +22,7 @@
 		<p:step>IN_USEID_RESPONSE</p:step>
 		<p:step>OUT_GETRESULT_REQUEST</p:step>
 		<p:step>IN_GETRESULT_RESPONSE_NORESULTYET</p:step>
-		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_13</p:reference>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_16</p:reference>
 		<p:step>OUT_GETRESULT_REQUEST</p:step>
 		<p:step>IN_GETRESULT_RESPONSE_ERROR</p:step>
 		<p:step>OUT_GETRESULT_REQUEST_REQUESTCOUNTER</p:step>
@@ -30,7 +30,7 @@
 	</p:steps>
 	<p:variables>
 		<!-- The element "RequestCounter" contains a valid value ([RC] + 1). -->
-		<p:variable name="REQUESTCOUNTER_2">2</p:variable>
+		<p:variable name="REQUESTCOUNTER_1">2</p:variable>
 		
 		<!-- The element "Result" contains the parameter "ResultMajor" which equals /resultmajor#error and the parameter "ResultMinor" which equals /getResult#invalidCounter. -->
 		<p:variable name="RES_MIN_IN_GETRESULT_RESPONSE_ERROR">http://www.bsi.bund.de/eid/server/2.0/resultminor/getResult#invalidCounter</p:variable>

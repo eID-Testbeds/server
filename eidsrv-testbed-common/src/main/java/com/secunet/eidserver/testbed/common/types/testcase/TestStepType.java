@@ -2,7 +2,7 @@
 // Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
 // Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2017.03.02 um 01:01:12 PM CET 
+// Generiert: 2017.08.14 um 02:18:00 PM CEST 
 //
 
 
@@ -29,6 +29,9 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE"/>
  *     &lt;enumeration value="IN_DIDLIST"/>
  *     &lt;enumeration value="IN_DISCONNECT"/>
+ *     &lt;enumeration value="IN_EIDAS_BAD_REQUEST"/>
+ *     &lt;enumeration value="IN_EIDAS_RESPONSE"/>
+ *     &lt;enumeration value="IN_EIDAS_RESPONSE_POST"/>
  *     &lt;enumeration value="IN_GETRESULT_RESPONSE"/>
  *     &lt;enumeration value="IN_GETRESULT_RESPONSE_AGEPLACE"/>
  *     &lt;enumeration value="IN_GETRESULT_RESPONSE_EIDCARD_2"/>
@@ -83,6 +86,11 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_B_MANDATORY"/>
  *     &lt;enumeration value="OUT_DIDLIST"/>
  *     &lt;enumeration value="OUT_DISCONNECT"/>
+ *     &lt;enumeration value="OUT_EIDAS_REQUEST"/>
+ *     &lt;enumeration value="OUT_EIDAS_REQUEST_POST"/>
+ *     &lt;enumeration value="OUT_EIDAS_REQUEST_NO_SIGALG_NO_SIGNATURE"/>
+ *     &lt;enumeration value="OUT_EIDAS_REQUEST_NO_SIGNATURE"/>
+ *     &lt;enumeration value="OUT_EIDAS_RESPONSE"/>
  *     &lt;enumeration value="OUT_GET_TCTOKEN"/>
  *     &lt;enumeration value="OUT_GET_ATTACHED_WEBPAGE"/>
  *     &lt;enumeration value="OUT_GETRESULT_REQUEST"/>
@@ -133,6 +141,9 @@ public enum TestStepType {
     IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE("IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE"),
     IN_DIDLIST("IN_DIDLIST"),
     IN_DISCONNECT("IN_DISCONNECT"),
+    IN_EIDAS_BAD_REQUEST("IN_EIDAS_BAD_REQUEST"),
+    IN_EIDAS_RESPONSE("IN_EIDAS_RESPONSE"),
+    IN_EIDAS_RESPONSE_POST("IN_EIDAS_RESPONSE_POST"),
     IN_GETRESULT_RESPONSE("IN_GETRESULT_RESPONSE"),
     IN_GETRESULT_RESPONSE_AGEPLACE("IN_GETRESULT_RESPONSE_AGEPLACE"),
     IN_GETRESULT_RESPONSE_EIDCARD_2("IN_GETRESULT_RESPONSE_EIDCARD_2"),
@@ -188,6 +199,11 @@ public enum TestStepType {
     OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_B_MANDATORY("OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_B_MANDATORY"),
     OUT_DIDLIST("OUT_DIDLIST"),
     OUT_DISCONNECT("OUT_DISCONNECT"),
+    OUT_EIDAS_REQUEST("OUT_EIDAS_REQUEST"),
+    OUT_EIDAS_REQUEST_POST("OUT_EIDAS_REQUEST_POST"),
+    OUT_EIDAS_REQUEST_NO_SIGALG_NO_SIGNATURE("OUT_EIDAS_REQUEST_NO_SIGALG_NO_SIGNATURE"),
+    OUT_EIDAS_REQUEST_NO_SIGNATURE("OUT_EIDAS_REQUEST_NO_SIGNATURE"),
+    OUT_EIDAS_RESPONSE("OUT_EIDAS_RESPONSE"),
     OUT_GET_TCTOKEN("OUT_GET_TCTOKEN"),
     OUT_GET_ATTACHED_WEBPAGE("OUT_GET_ATTACHED_WEBPAGE"),
     OUT_GETRESULT_REQUEST("OUT_GETRESULT_REQUEST"),

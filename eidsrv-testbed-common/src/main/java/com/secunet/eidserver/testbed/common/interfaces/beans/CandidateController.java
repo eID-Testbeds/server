@@ -1,6 +1,11 @@
 package com.secunet.eidserver.testbed.common.interfaces.beans;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -8,6 +13,8 @@ import javax.ejb.Local;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import com.secunet.eidserver.testbed.common.exceptions.CandidateException;
 import com.secunet.eidserver.testbed.common.exceptions.ComponentNotInitializedException;
@@ -40,7 +47,8 @@ public interface CandidateController
 	 * @return
 	 * @throws JAXBException
 	 */
-	public Future<TestCandidate> createCandidate(final String icsData) throws JAXBException, MalformedURLException;
+	public Future<TestCandidate> createCandidate(final String icsData) throws JAXBException, IOException, TransformerFactoryConfigurationError, TransformerException, UnrecoverableKeyException,
+			KeyStoreException, NoSuchAlgorithmException, CertificateException, NoSuchProviderException;
 
 	/**
 	 * Update the given profile in the database and simultaneously add the certificates

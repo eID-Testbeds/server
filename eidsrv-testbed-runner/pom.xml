@@ -13,17 +13,24 @@
 	<name>eID-Server Testbed TestRunner</name>
 	<packaging>ejb</packaging>
 
+	<repositories>
+		<repository>
+			<id>libs</id>
+			<url>file://${basedir}/src/lib</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<!-- Common utils -->
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>testbedutils-EAC2</artifactId>
-			<version>1.0</version>
+			<version>1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>testbedutils-CVC</artifactId>
-			<version>1.0</version>
+			<version>1.1</version>
 		</dependency>
 
 		<!-- Own libraries -->
@@ -40,20 +47,82 @@
 		</dependency>
 
 		<!-- 3rd party libraries -->
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-core -->
 		<dependency>
 			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml</artifactId>
-			<version>2.6.4</version>
+			<artifactId>opensaml-core</artifactId>
+			<version>3.3.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-saml-api -->
 		<dependency>
 			<groupId>org.opensaml</groupId>
-			<artifactId>xmltooling</artifactId>
-			<version>1.4.4</version>
+			<artifactId>opensaml-saml-api</artifactId>
+			<version>3.3.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-saml-impl -->
 		<dependency>
 			<groupId>org.opensaml</groupId>
-			<artifactId>openws</artifactId>
-			<version>1.5.4</version>
+			<artifactId>opensaml-saml-impl</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-security-api -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-security-api</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-security-impl -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-security-impl</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-soap-api -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-soap-api</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-soap-impl -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-soap-impl</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-xmlsec-api -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-xmlsec-api</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-xmlsec-impl -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-xmlsec-impl</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.santuario/xmlsec -->
+		<dependency>
+			<groupId>org.apache.santuario</groupId>
+			<artifactId>xmlsec</artifactId>
+			<version>2.0.8</version>
+		</dependency>
+
+		<!-- Governikus eIDAS Middleware Starterkit -->
+		<!-- THIS IS A PATCHED VERSION BY SECUNET -->
+		<dependency>
+			<groupId>com.governikus</groupId>
+			<artifactId>starterkit</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+		
+		
+		<!-- TO BE REMOVED - ONLY NECESSARY AS A WORKAROUND MEASURE -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.0</version>
 		</dependency>
 
 	</dependencies>
@@ -70,9 +139,18 @@
 							<addClasspath>true</addClasspath>
 						</manifest>
 						<manifestEntries>
-							<Class-Path>lib/opensaml-2.6.4.jar</Class-Path>
-							<Class-Path>lib/xmltooling-1.4.4.jar</Class-Path>
-							<Class-Path>lib/openws-1.5.4.jar</Class-Path>
+							<Class-Path>lib/opensaml-core-3.3.0.jar</Class-Path>
+							<Class-Path>lib/opensaml-saml-api-3.3.0.jar</Class-Path>
+							<Class-Path>lib/opensaml-saml-impl-3.3.0.jar</Class-Path>
+							<Class-Path>lib/opensaml-security-api-3.3.0.jar</Class-Path>
+							<Class-Path>lib/opensaml-security-impl-3.3.0.jar</Class-Path>
+							<Class-Path>lib/opensaml-soap-api-3.3.0.jar</Class-Path>
+							<Class-Path>lib/opensaml-soap-impl-3.3.0.jar</Class-Path>
+							<Class-Path>lib/opensaml-xmlsec-api-3.3.0.jar</Class-Path>
+							<Class-Path>lib/opensaml-xmlsec-impl-3.3.0.jar</Class-Path>
+							<Class-Path>lib/commons-logging-1.1.1.jar</Class-Path>
+							<Class-Path>lib/starterkit-1.0.1.jar</Class-Path>
+							<Class-Path>lib/xmlsec-2.0.8.jar</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>

@@ -7,6 +7,10 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -48,6 +52,7 @@ import com.secunet.testbedutils.bouncycertgen.xml.x509.AltNameType;
 import com.secunet.testbedutils.bouncycertgen.xml.x509.CertificateDefinition;
 import com.secunet.testbedutils.bouncycertgen.xml.x509.CertificateDefinitions;
 import com.secunet.testbedutils.bouncycertgen.xml.x509.DnType;
+import com.secunet.testbedutils.bouncycertgen.xml.x509.ExtendedKeyUsageType;
 import com.secunet.testbedutils.bouncycertgen.xml.x509.ExtensionsType;
 import com.secunet.testbedutils.bouncycertgen.xml.x509.GeneralNameTypeType;
 import com.secunet.testbedutils.bouncycertgen.xml.x509.GeneralNamesType.GeneralName;
@@ -144,10 +149,20 @@ public class CertificateControllerBean implements CertificateController
 				// private key, if existing
 				if (null != pair.getPrivate())
 				{
-					ZipEntry privk = new ZipEntry("candidate_tls/keys/" + x.getCertificateName() + ".cer");
-					zos.putNextEntry(privk);
-					zos.write(pair.getPrivate().getEncoded());
-					zos.closeEntry();
+					try
+					{
+						KeyStore ks = KeyStore.getInstance("JKS");
+						ks.load(null, null);
+						ks.setKeyEntry("alias", pair.getPrivate(), "123456".toCharArray(), new Certificate[] { x.getX509certificate() });
+						ZipEntry privk = new ZipEntry("candidate_tls/keys/" + x.getCertificateName() + ".jks");
+						zos.putNextEntry(privk);
+						ks.store(zos, "123456".toCharArray());
+						zos.closeEntry();
+					}
+					catch (KeyStoreException | CertificateException | NoSuchAlgorithmException e)
+					{
+						// nothing
+					}
 				}
 			}
 		}
@@ -224,7 +239,7 @@ public class CertificateControllerBean implements CertificateController
 			// attached
 			if (null != candidate.getTlsEcardApiAttached() && !candidate.getTlsEcardApiAttached().isEmpty())
 			{
-				Set<CertificateDefinition> definitions = createDefinitions(candidate.getTlsEcardApiAttached(), candidate.getAttachedTcTokenUrl(), "CERT_ECARD_TLS_EIDSERVER_1_ATTACHED_");
+				Set<CertificateDefinition> definitions = createDefinitions(candidate.getTlsEcardApiAttached(), candidate.getAttachedTcTokenUrl(), "CERT_ECARD_TLS_EIDSERVER_ATTACHED_1_");
 				for (CertificateDefinition cd : definitions)
 				{
 					cd.setIssuer(issuer);
@@ -305,20 +320,7 @@ public class CertificateControllerBean implements CertificateController
 								definition.setKeyAlgorithm(algorithmType);
 								definitions.add(definition);
 							}
-							else if (sigAlg.value().endsWith("DSA"))
-							{
-								CertificateDefinition definition = createDefinition(url);
-								definition.setName(name + "_" + sigAlg.value());
-								SignatureAlgorithmType sat = new SignatureAlgorithmType();
-								sat.setDSA(SignatureAlgorithmTypeDSA.fromValue(sigAlg.value()));
-								definition.setSignatureAlgorithm(sat);
-								AlgorithmType algorithmType = new AlgorithmType();
-								algorithmType.setDSA(2048);
-								definition.setKeyAlgorithm(algorithmType);
-								definitions.add(definition);
-							}
-							// ECDSA
-							else
+							else if (sigAlg.value().endsWith("ECDSA"))
 							{
 								for (IcsEllipticcurve curve : tls.getEllipticCurves())
 								{
@@ -333,6 +335,19 @@ public class CertificateControllerBean implements CertificateController
 									definitions.add(definition);
 									existingDefinitions.add(curve.value());
 								}
+							}
+							// DSA
+							else
+							{
+								CertificateDefinition definition = createDefinition(url);
+								definition.setName(name + "_" + sigAlg.value());
+								SignatureAlgorithmType sat = new SignatureAlgorithmType();
+								sat.setDSA(SignatureAlgorithmTypeDSA.fromValue(sigAlg.value()));
+								definition.setSignatureAlgorithm(sat);
+								AlgorithmType algorithmType = new AlgorithmType();
+								algorithmType.setDSA(2048);
+								definition.setKeyAlgorithm(algorithmType);
+								definitions.add(definition);
 							}
 
 							alreadyProcessedSignatureAlgorithms.add(sigAlg);
@@ -391,15 +406,21 @@ public class CertificateControllerBean implements CertificateController
 
 		// extensions
 		ExtensionsType extensions = new ExtensionsType();
-		// keyUsage
+		// keyUsage and extendedKeyUsage
 		KeyUsageType keyUsageType = new KeyUsageType();
 		keyUsageType.setKeyAgreement(true);
+		keyUsageType.setDigitalSignature(true);
+		keyUsageType.setKeyEncipherment(true);
 		extensions.setKeyUsage(keyUsageType);
+		ExtendedKeyUsageType extKeyUsage = new ExtendedKeyUsageType();
+		extKeyUsage.setServerAuth(true);
+		extKeyUsage.setClientAuth(true);
+		extensions.setExtendedKeyUsage(extKeyUsage);
 		// subjectAlternativeName
 		AltNameType subjectAltName = new AltNameType();
 		GeneralName name = new GeneralName();
 		name.setType(GeneralNameTypeType.D_NS_NAME);
-		name.setValue(url.toString());
+		name.setValue(url.getHost());
 		subjectAltName.getGeneralName().add(name);
 		extensions.setSubjectAltName(subjectAltName);
 		definition.setExtensions(extensions);

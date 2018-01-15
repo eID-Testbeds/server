@@ -22,7 +22,7 @@
 	<p:steps>
 		<p:step>OUT_CALL_SAML_INCL_AUTHNREQUEST</p:step>
 		<p:step>IN_TC_TOKEN</p:step>
-		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_13</p:reference>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_16</p:reference>
 	 	<p:step>OUT_SAML_ASSERTION</p:step>
 		<p:step>IN_SAML_ASSERTION</p:step>
 	</p:steps>

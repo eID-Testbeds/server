@@ -8,9 +8,6 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.security.SecureRandom;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +18,6 @@ import org.bouncycastle.crypto.tls.TlsClient;
 import org.bouncycastle.crypto.tls.TlsClientProtocol;
 
 import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
-import com.secunet.eidserver.testbed.runner.Result;
 
 public class TLSConnectionClient
 {
@@ -39,13 +35,10 @@ public class TLSConnectionClient
 	private int[] supported_suites;
 	private BufferedReader reader;
 	private String handshakeData;
-	private final X509Certificate expectedCertificate;
-	private Result connectionResult;
 
 	// Initialize the class to use client certificates
-	public TLSConnectionClient(X509Certificate expectedCertificate, String target_host, int target_port, Certificate client_cert, AsymmetricKeyParameter client_keys)
+	public TLSConnectionClient(String target_host, int target_port, Certificate client_cert, AsymmetricKeyParameter client_keys)
 	{
-		this.expectedCertificate = expectedCertificate;
 		host = target_host;
 		port = (target_port != -1) ? target_port : 443;
 		clientCert = client_cert;
@@ -56,9 +49,8 @@ public class TLSConnectionClient
 	}
 
 	// Initialize the class to use client certificates and PSK
-	public TLSConnectionClient(X509Certificate expectedCertificate, String target_host, int target_port, Certificate client_cert, AsymmetricKeyParameter client_keys, byte[] PSK_ID, byte[] PSK)
+	public TLSConnectionClient(String target_host, int target_port, Certificate client_cert, AsymmetricKeyParameter client_keys, byte[] PSK_ID, byte[] PSK)
 	{
-		this.expectedCertificate = expectedCertificate;
 		host = target_host;
 		port = (target_port != -1) ? target_port : 443;
 		clientCert = client_cert;
@@ -71,9 +63,8 @@ public class TLSConnectionClient
 	}
 
 	// Initialize the class to use sever certificates only
-	public TLSConnectionClient(X509Certificate expectedCertificate, String target_host, int target_port)
+	public TLSConnectionClient(String target_host, int target_port)
 	{
-		this.expectedCertificate = expectedCertificate;
 		host = target_host;
 		port = (target_port != -1) ? target_port : 443;
 		usePSK = false;
@@ -85,9 +76,8 @@ public class TLSConnectionClient
 	}
 
 	// Initialize the class to use server certificates and PSK
-	public TLSConnectionClient(X509Certificate expectedCertificate, String target_host, int target_port, byte[] PSK_ID, byte[] PSK)
+	public TLSConnectionClient(String target_host, int target_port, byte[] PSK_ID, byte[] PSK)
 	{
-		this.expectedCertificate = expectedCertificate;
 		host = target_host;
 		port = (target_port != -1) ? target_port : 443;
 		PSKIdentity = PSK_ID;
@@ -112,24 +102,17 @@ public class TLSConnectionClient
 		// Choose the connection class depending on the usage of PSK/Client certificate
 		if (usePSK)
 		{
-			if (clientAuth)
-			{
-				myTLSClient = new TLSConnectionPSK(this, clientCert, clientKey, PSKIdentity, PreSharedKey);
-			}
-			else
-			{
-				myTLSClient = new TLSConnectionPSK(this, PSKIdentity, PreSharedKey);
-			}
+			myTLSClient = new TLSConnectionPSK(host, PSKIdentity, PreSharedKey);
 		}
 		else
 		{
 			if (clientAuth)
 			{
-				myTLSClient = new TLSConnection(this, clientCert, clientKey, supported_suites);
+				myTLSClient = new TLSConnection(clientCert, clientKey, supported_suites);
 			}
 			else
 			{
-				myTLSClient = new TLSConnection(this, supported_suites);
+				myTLSClient = new TLSConnection(supported_suites);
 			}
 		}
 		// Open the connection
@@ -141,33 +124,6 @@ public class TLSConnectionClient
 		reader = new BufferedReader(new InputStreamReader(tlsClientProtocol.getInputStream()));
 		logger.debug("TLS connection established to " + host);
 		return 0;
-	}
-
-	// Function to verify the server certificate
-	protected void verifyTLSServerCerts(Certificate arg0) throws IOException
-	{
-		logger.debug("Verifying server certificate");
-		byte[] encoded = arg0.getCertificateList()[0].getEncoded();
-
-		try
-		{
-			Result certificateResult;
-			if (!Arrays.equals(encoded, expectedCertificate.getEncoded()))
-			{
-				certificateResult = new Result(false, "The certificate received from the server did not match the expected certificate.");
-			}
-			else
-			{
-				certificateResult = new Result(true, "Successfully validated the server certificate.");
-			}
-			this.connectionResult = certificateResult;
-		}
-		catch (CertificateEncodingException e)
-		{
-			StringWriter trace = new StringWriter();
-			e.printStackTrace(new PrintWriter(trace));
-			logger.error("Could not parse certificate: " + trace.toString());
-		}
 	}
 
 	// Send a String via the TLS Connection
@@ -200,6 +156,12 @@ public class TLSConnectionClient
 		return 0;
 	}
 
+	/**
+	 * Read from the socket of this client; use the regular transfer mode (= chunked mode disabled)
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public String read() throws IOException
 	{
 		// read the header
@@ -252,29 +214,62 @@ public class TLSConnectionClient
 		return (msg);
 	}
 
+	/**
+	 * Read from the socket of this client; use the chunked transfer mode
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	private String readChunked() throws IOException
 	{
-		String toRead = reader.readLine();
-		int readBytes = Integer.valueOf(toRead, 16);
+		// read the first chunk
+		String toReadString = reader.readLine();
+		int toRead = 0;
+		try
+		{
+			toRead = Integer.parseInt(toReadString, 16);
+		}
+		catch (NumberFormatException e)
+		{
+			logger.error("Chunked mode transfer was indicated, but the first line did not contain a length definition for the following chunk", e);
+			return "";
+		}
 		StringWriter bodyWriter = new StringWriter();
 
-		while (readBytes != 0)
+		// process the following chunks
+		while (toRead != 0)
 		{
-			char[] buffer = new char[readBytes];
-			reader.read(buffer);
-			String bodyPart = new String(buffer);
-			bodyWriter.append(bodyPart);
-
-			// skip one line break
-			toRead = reader.readLine();
-			try
+			// read the current chunk
+			char[] buffer = new char[toRead];
+			int read = 0;
+			while (read != toRead)
 			{
-				readBytes = Integer.parseInt(toRead, 16);
+				read += reader.read(buffer, read, toRead - read);
 			}
-			catch (NumberFormatException e)
+			bodyWriter.append(new String(buffer));
+
+			// check if there are more chunks to process
+			toReadString = reader.readLine();
+			if (toReadString.isEmpty())
 			{
-				toRead = reader.readLine();
-				readBytes = Integer.valueOf(toRead, 16);
+				// note: some implementations send one empty line between chunks
+				toReadString = reader.readLine();
+			}
+			if (toReadString == null)
+			{
+				break;
+			}
+			else
+			{
+				try
+				{
+					toRead = Integer.parseInt(toReadString, 16);
+				}
+				catch (NumberFormatException e)
+				{
+					logger.error("A chunk of the message did not contain the length of the data following it. Only the first part of the body will be returned - the message is incomplete!", e);
+					return bodyWriter.toString();
+				}
 			}
 		}
 
@@ -342,9 +337,14 @@ public class TLSConnectionClient
 		return this.tlsClientProtocol.isClosed();
 	}
 
-	public Result getResult()
+	/**
+	 * Get the some info about the target of this connection
+	 * 
+	 * @return
+	 */
+	public String getTargetInfo()
 	{
-		return connectionResult;
+		return host + ":" + port;
 	}
 
 }
