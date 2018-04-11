@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>com.secunet</groupId>
 		<artifactId>eidserver-testbed</artifactId>
-		<version>0.5</version>
+		<version>1.0-beta-3</version>
 	</parent>
 
 	<dependencies>

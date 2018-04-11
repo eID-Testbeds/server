@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:testcaseDefinition xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<p:name>EID_SERVER_D1_2_08_POST_BINDING</p:name>
+	<p:description>This test case checks the behavior of the eID-Server at the eIDAS-Interface in case the user denies access to required attributes.</p:description>
+	<p:modulePath>
+		<p:node>D</p:node>
+		<p:node>1</p:node>
+		<p:node>2</p:node>
+	</p:modulePath>
+	<p:profiles>
+		<p:profile>EID_ACCESS</p:profile>
+		<p:profile>EIDAS_MW</p:profile>
+	</p:profiles>
+	<p:eservice>F</p:eservice>
+	<p:clientExplanation>Configure the server to accept the certificate chain for client F. This includes the TLS, XML signature and the CV certificate.</p:clientExplanation>
+	<p:eidcard>EIDCARD_1</p:eidcard>
+	<p:steps>
+		<p:step>OUT_EIDAS_REQUEST_POST</p:step>
+		<p:step>IN_ATTACHED_WEBPAGE</p:step>
+		<p:step>OUT_GET_TCTOKEN</p:step>
+		<p:step>IN_TC_TOKEN_ATTACHED</p:step>
+		<p:reference targetInterface="eCard-API">EID_SERVER_C1_1_15</p:reference>
+		<p:step>OUT_EIDAS_RESPONSE</p:step>
+		<p:step>IN_EIDAS_RESPONSE_POST</p:step>
+	</p:steps>
+	<p:variables>
+		<!-- request the minimum dataset -->
+		<p:variable name="EIDAS_ATTR_FirstName">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_FirstName">ERIKA</p:variable>
+		<p:variable name="USEOP_GIVENNAMES">REQUIRED</p:variable>
+		<p:variable name="OABU_GIVENNAMES">PROHIBITED</p:variable>
+		
+		<p:variable name="EIDAS_ATTR_FamilyName">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_FamilyName">MUSTERMANN</p:variable>
+		<p:variable name="USEOP_FAMILYNAMES">REQUIRED</p:variable>
+		<p:variable name="OABU_FAMILYNAMES">PROHIBITED</p:variable>
+		
+		<p:variable name="EIDAS_ATTR_DateOfBirth">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_DateOfBirth">1964-08-12</p:variable>
+		<p:variable name="USEOP_DATEOFBIRTH">REQUIRED</p:variable>
+		<p:variable name="OABU_DATEOFBIRTH">PROHIBITED</p:variable>
+		
+		<p:variable name="EIDAS_ATTR_PersonIdentifier">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_PersonIdentifier">DE/DE/4242424242424242424242424242424242424242424242424242424242424242</p:variable>
+		<p:variable name="USEOP_RESTRICTEDID">REQUIRED</p:variable>
+		<p:variable name="OABU_RESTRICTEDID">PROHIBITED</p:variable>
+	</p:variables>
+</p:testcaseDefinition>

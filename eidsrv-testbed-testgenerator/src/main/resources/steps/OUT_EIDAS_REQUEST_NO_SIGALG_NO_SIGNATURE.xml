@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:Step xmlns:p="http://www.secunet.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd" >
+	<p:TargetInterface>Attached</p:TargetInterface>
+    <p:HttpStepToken>
+        <p:name>header</p:name>
+        <p:value>GET [ATTACHED_WEBPAGE_PATH]?SAMLRequest=[[CREATE_SAML_NO_SIGALG_NO_SIGNATURE]] HTTP/1.1
+Host: [ATTACHED_WEBPAGE_HOSTNAME]
+User-Agent: [TESTBED_USER_AGENT_NAME]/[TESTBED_USER_AGENT_MAJOR].[TESTBED_USER_AGENT_MINOR].[TESTBED_USER_AGENT_SUBMINOR]
+Content-Type: text/xml;charset=utf-8</p:value>
+		<p:isMandatory>true</p:isMandatory>
+	</p:HttpStepToken>
+</p:Step>

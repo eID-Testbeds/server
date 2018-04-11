@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Ics xmlns="http://trdoccheck.bsi.bund.de/server/ics" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://trdoccheck.bsi.bund.de/server/ics ../../main/resources/ics_schema.xsd ">
+
+	<Metadata>
+		<eCardApiUrl>https://192.168.56.10:8443/POSeIDAS/paosreceiver</eCardApiUrl>
+		<eIdInterfaceiUrl>https://192.168.56.10:8444/POSeIDAS/eID</eIdInterfaceiUrl>
+		<SamlUrl>https://192.168.56.10:8443/POSeIDAS/SAML</SamlUrl>
+		<AttachedTcTokenUrl>https://192.168.56.10:8443/eu-middleware/RequestReceiver</AttachedTcTokenUrl>
+		<Vendor>Governikus</Vendor>
+		<Name>eIDAS-Middleware (POSeIDAS-based)</Name>
+		<VersionMajor>1</VersionMajor>
+		<VersionMinor>0</VersionMinor>
+	</Metadata>
+
+	<API>
+		<ApiVersionMajor>2</ApiVersionMajor>
+		<ApiVersionMinor>0</ApiVersionMinor>
+		<ApiVersionSubminor>0</ApiVersionSubminor>
+	</API>
+
+	<Profiles>
+		<MandatoryProfile>CRYPTO</MandatoryProfile>
+		<MandatoryProfile>EAC</MandatoryProfile>
+		<MandatoryProfile>PAOS</MandatoryProfile>
+		<MandatoryProfile>EID_ACCESS</MandatoryProfile>
+		<MandatoryProfile>REVOKED_CARD</MandatoryProfile>
+		<MandatoryProfile>EXPIRED_CARD</MandatoryProfile>
+		<MandatoryProfile>NONAUTH_CARD</MandatoryProfile>
+		<MandatoryProfile>RI_MIGRATION</MandatoryProfile>
+		<MandatoryProfile>DG_VARIATIONS</MandatoryProfile>
+		<OptionalProfile>EIDAS_MW</OptionalProfile>
+	</Profiles>
+
+	<Cryptography>
+
+		<eCard-Api>
+			<PskChannel>
+				<TLS version="TLSv12">
+					<Ciphersuites>
+						<Ciphersuite>TLS_RSA_PSK_WITH_AES_256_CBC_SHA</Ciphersuite>
+						<Ciphersuite>TLS_RSA_PSK_WITH_AES_128_CBC_SHA256</Ciphersuite>
+						<Ciphersuite>TLS_RSA_PSK_WITH_AES_256_CBC_SHA384</Ciphersuite>
+						<Ciphersuite>TLS_RSA_PSK_WITH_AES_128_GCM_SHA256</Ciphersuite>
+						<Ciphersuite>TLS_RSA_PSK_WITH_AES_256_GCM_SHA384</Ciphersuite>
+					</Ciphersuites>
+				</TLS>
+			</PskChannel>
+			<AttachedServer>
+				<TLS version="TLSv12">
+					<Ciphersuites>
+						<Ciphersuite>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384</Ciphersuite>
+					</Ciphersuites>
+					<EllipticCurves>
+						<NamedCurve>secp256r1</NamedCurve>
+					</EllipticCurves>
+					<SignatureAlgorithms>
+						<Algorithm>SHA1withRSA</Algorithm>
+					</SignatureAlgorithms>
+				</TLS>
+			</AttachedServer>
+		</eCard-Api>
+
+		<eID-Interface>
+			<TLS version="TLSv12">
+				<Ciphersuites>
+					<Ciphersuite>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384</Ciphersuite>
+				</Ciphersuites>
+				<EllipticCurves>
+					<NamedCurve>secp256r1</NamedCurve>
+				</EllipticCurves>
+				<SignatureAlgorithms>
+					<Algorithm>SHA256withRSA</Algorithm>
+				</SignatureAlgorithms>
+				<ClientCertificates>
+					<ClientCertificate>
+						<Type>rsa_sign</Type>
+						<SignatureAlgorithm>SHA256withRSA</SignatureAlgorithm>
+					</ClientCertificate>
+				</ClientCertificates>
+			</TLS>
+			<XmlSignature>
+				<Signature URI="http://www.w3.org/2000/09/xmldsig#rsa-sha1">
+					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>
+					<Canonicalization>http://www.w3.org/2001/10/xml-exc-c14n#</Canonicalization>
+					<Parameters>
+						<BitLength>2048</BitLength>
+					</Parameters>
+				</Signature>
+				<Signature URI="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256">
+					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>
+					<Canonicalization>http://www.w3.org/2001/10/xml-exc-c14n#</Canonicalization>
+					<Parameters />
+				</Signature>
+				<Signature URI="http://www.w3.org/2001/04/xmldsig-more#rsa-sha384">
+					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>
+					<Canonicalization>http://www.w3.org/2001/10/xml-exc-c14n#</Canonicalization>
+					<Parameters>
+						<BitLength>2048</BitLength>
+					</Parameters>
+				</Signature>
+				<Signature URI="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512">
+					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>
+					<Canonicalization>http://www.w3.org/2001/10/xml-exc-c14n#</Canonicalization>
+					<Parameters />
+				</Signature>
+			</XmlSignature>
+		</eID-Interface>
+
+		<SAML>
+			<TransportSecurity>
+				<TLS version="TLSv12">
+					<Ciphersuites>
+						<Ciphersuite>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384</Ciphersuite>
+					</Ciphersuites>
+					<EllipticCurves>
+						<NamedCurve>secp256r1</NamedCurve>
+					</EllipticCurves>
+					<SignatureAlgorithms>
+						<Algorithm>SHA256withRSA</Algorithm>
+					</SignatureAlgorithms>
+				</TLS>
+			</TransportSecurity>
+			<XmlSignature>
+				<Signature URI="http://www.w3.org/2000/09/xmldsig#rsa-sha1">
+					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>
+					<Canonicalization>http://www.w3.org/2001/10/xml-exc-c14n#</Canonicalization>
+					<Parameters />
+				</Signature>
+				<Signature URI="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256">
+					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>
+					<Canonicalization>http://www.w3.org/2001/10/xml-exc-c14n#</Canonicalization>
+					<Parameters />
+				</Signature>
+			</XmlSignature>
+			<XmlEncryption>
+				<KeyTransportAlgorithms>
+					<TransportAlgorithm URI="http://www.w3.org/2001/04/xmlenc#rsa-1_5">
+						<Parameter>2048</Parameter>
+					</TransportAlgorithm>
+				</KeyTransportAlgorithms>
+				<KeyAgreementAlgorithms>
+					<AgreementAlgorithm URI="http://www.w3.org/2009/xmlenc11#ECDH-ES">
+						<Parameters>
+							<NamedCurve>secp224k1</NamedCurve>
+							<NamedCurve>sect193r1</NamedCurve>
+							<NamedCurve>secp192r1</NamedCurve>
+							<NamedCurve>secp256r1</NamedCurve>
+						</Parameters>
+						<KeyWrappingUri>http://www.w3.org/2001/04/xmlenc#kw-aes256</KeyWrappingUri>
+					</AgreementAlgorithm>
+				</KeyAgreementAlgorithms>
+				<ContentEncryptionAlgorithms>
+					<URI>http://www.w3.org/2001/04/xmlenc#aes256-cbc</URI>
+				</ContentEncryptionAlgorithms>
+			</XmlEncryption>
+		</SAML>
+
+		<ChipAuthentication>
+			<Algorithm>id-CA-DH-AES-CBC-CMAC-256</Algorithm>
+			<Algorithm>id-CA-ECDH-AES-CBC-CMAC-256</Algorithm>
+			<DomainParameter>modp2048_256</DomainParameter>
+			<DomainParameter>brainpoolp384r1</DomainParameter>
+		</ChipAuthentication>
+
+	</Cryptography>
+
+</Ics>
