@@ -8,5 +8,3 @@ the BSI specifies in conformity tests.
 
 The eID-Server-Testbed is a test tool that allows to perform conformity tests according to 
 BSI TR-03130-4 of eID-Servers based on BSI TR-03130-1.
-
-The eID-Server-Testbed will soon be available here...
