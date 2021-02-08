@@ -30,13 +30,13 @@
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>testbedutils-CVC</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>testbedutils-CommonUtilities</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 	</dependencies>
 
