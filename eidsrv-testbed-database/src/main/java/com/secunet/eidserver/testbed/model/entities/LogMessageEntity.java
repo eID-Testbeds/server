@@ -15,6 +15,8 @@ import com.secunet.eidserver.testbed.common.interfaces.entities.LogMessage;
 public class LogMessageEntity extends BaseEntity implements Serializable, LogMessage
 {
 	private static final long serialVersionUID = 1L;
+	@Column(name = "TEST_STEP_NUMBER")
+	private Long number;
 
 	@Column(name = "MESSAGE")
 	private String message;
@@ -71,6 +73,10 @@ public class LogMessageEntity extends BaseEntity implements Serializable, LogMes
 	{
 		this.name = name;
 	}
+
+	public Long getTestStepNumber() { return this.number; }
+
+	public void setTestStepNumber(Long number) { this.number = number; }
 
 	/*
 	 * (non-Javadoc)

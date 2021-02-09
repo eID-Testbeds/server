@@ -18,4 +18,8 @@ public interface LogMessage
 	public String getTestStepName();
 
 	public void setTestStepName(String name);
+
+	public Long getTestStepNumber();
+
+	public void setTestStepNumber(Long number);
 }
