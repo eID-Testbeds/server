@@ -112,11 +112,10 @@
 		<!-- Governikus eIDAS Middleware Starterkit -->
 		<!-- THIS IS A PATCHED VERSION BY SECUNET -->
 		<dependency>
-			<groupId>com.governikus</groupId>
-			<artifactId>starterkit</artifactId>
-			<version>1.0.1</version>
+			<groupId>com.secunet</groupId>
+			<artifactId>eidas-starterkit</artifactId>
+			<version>${project.version}</version>
 		</dependency>
-		
 		
 		<!-- TO BE REMOVED - ONLY NECESSARY AS A WORKAROUND MEASURE -->
 		<dependency>
@@ -149,7 +148,7 @@
 							<Class-Path>lib/opensaml-xmlsec-api-3.3.0.jar</Class-Path>
 							<Class-Path>lib/opensaml-xmlsec-impl-3.3.0.jar</Class-Path>
 							<Class-Path>lib/commons-logging-1.1.1.jar</Class-Path>
-							<Class-Path>lib/starterkit-1.0.1.jar</Class-Path>
+							<!-- <Class-Path>lib/starterkit-2.0.0.jar</Class-Path> -->
 							<Class-Path>lib/xmlsec-2.0.8.jar</Class-Path>
 						</manifestEntries>
 					</archive>
