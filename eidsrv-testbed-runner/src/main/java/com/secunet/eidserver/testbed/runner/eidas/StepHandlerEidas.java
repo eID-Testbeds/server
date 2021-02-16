@@ -87,18 +87,18 @@ import com.secunet.eidserver.testbed.runner.exceptions.InvalidTestCaseDescriptio
 import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyException;
 import com.secunet.testbedutils.utilities.JaxBUtil;
 
-import de.governikus.eidassaml.starterkit.EidasAttribute;
-import de.governikus.eidassaml.starterkit.EidasLoA;
-import de.governikus.eidassaml.starterkit.EidasNameIdType;
-import de.governikus.eidassaml.starterkit.EidasNaturalPersonAttributes;
-import de.governikus.eidassaml.starterkit.EidasRequestSectorType;
-import de.governikus.eidassaml.starterkit.EidasResponse;
-import de.governikus.eidassaml.starterkit.EidasSaml;
-import de.governikus.eidassaml.starterkit.EidasSigner;
-import de.governikus.eidassaml.starterkit.ErrorCodeException;
-import de.governikus.eidassaml.starterkit.Utils;
-import de.governikus.eidassaml.starterkit.Utils.X509KeyPair;
-import de.governikus.eidassaml.starterkit.natural_persons_attribute.AbstractNameAttribute;
+import de.governikus.eumw.eidascommon.ErrorCodeException;
+import de.governikus.eumw.eidascommon.Utils;
+import de.governikus.eumw.eidasstarterkit.EidasAttribute;
+import de.governikus.eumw.eidasstarterkit.EidasLoA;
+import de.governikus.eumw.eidasstarterkit.EidasNameIdType;
+import de.governikus.eumw.eidasstarterkit.EidasNaturalPersonAttributes;
+import de.governikus.eumw.eidasstarterkit.EidasRequestSectorType;
+import de.governikus.eumw.eidasstarterkit.EidasResponse;
+import de.governikus.eumw.eidasstarterkit.EidasSaml;
+import de.governikus.eumw.eidasstarterkit.EidasSigner;
+import de.governikus.eumw.eidasstarterkit.person_attributes.AbstractLatinScriptAttribute;
+import de.governikus.eumw.eidasstarterkit.person_attributes.EidasPersonAttributes;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
@@ -120,7 +120,7 @@ public class StepHandlerEidas extends StepHandler
 		// init santuario and the eidas starterkit
 		try
 		{
-			EidasSaml.Init();
+			EidasSaml.init();
 		}
 		catch (InitializationException e)
 		{
@@ -253,7 +253,7 @@ public class StepHandlerEidas extends StepHandler
 	{
 		// fetch the data we will be comparing against
 		KnownValues requestedValues = knownValues.getStartingWith(GeneralConstants.EIDAS_REQUESTED_PREFIX);
-		Map<EidasNaturalPersonAttributes, Boolean> allowed = getRequestAttributes(requestedValues);
+		Map<EidasPersonAttributes, Boolean> allowed = getRequestAttributes(requestedValues);
 		KnownValues expectedAttributeValues = knownValues.getStartingWith(GeneralConstants.PERSONAL_PREFIX);
 		Map<EidasNaturalPersonAttributes, String> expectedValues = new HashMap<>();
 		for (KnownValue knownValue : expectedAttributeValues)
@@ -272,25 +272,26 @@ public class StepHandlerEidas extends StepHandler
 
 			InputStream signatureInput = Thread.currentThread().getContextClassLoader()
 					.getResourceAsStream("keystores/" + Algorithm.ECDSA_ALG_ID.getAlgorithmName() + "/" + service.toString() + ".p12");
-			X509KeyPair signaturePair = Utils.ReadPKCS12(signatureInput, "123456".toCharArray(), "SIG");
+			// readPKCS12 is private and needs to be patched
+			Utils.X509KeyPair signaturePair = Utils.readPKCS12(signatureInput, "123456".toCharArray(), "SIG");
 			InputStream encryptionInput = Thread.currentThread().getContextClassLoader()
 					.getResourceAsStream("keystores/" + Algorithm.RSA_ALG_ID.getAlgorithmName() + "/" + service.toString() + GeneralConstants.ENCRYPTION_SUFFIX + ".p12");
-			X509KeyPair encryptionPair = Utils.ReadPKCS12(encryptionInput, "123456".toCharArray(), "ENC");
+			Utils.X509KeyPair encryptionPair = Utils.readPKCS12(encryptionInput, "123456".toCharArray(), "ENC");
 
 			// TODO the key pair is handled through array operations inside the eidas starterkit. validate the correct order once this method is reached
-			EidasResponse eidasResponse = EidasSaml.ParseResponse(is, new Utils.X509KeyPair[] { encryptionPair }, new X509Certificate[] { cert });
+			EidasResponse eidasResponse = EidasSaml.parseResponse(is, new Utils.X509KeyPair[] { encryptionPair }, new X509Certificate[] { cert });
 
 			// validate the results
 			LogMessage message = logMessageDAO.createNew();
 			message.setSuccess(true);
 			message.setTestStepName(testCaseName);
 			String resultString = "Validating the eIDAS response" + System.getProperty("line.separator");
-			for (EidasNaturalPersonAttributes allowedKey : allowed.keySet())
+			for (EidasPersonAttributes allowedKey : allowed.keySet())
 			{
 				boolean hadAttribute = false;
 				for (EidasAttribute attribute : eidasResponse.getAttributes())
 				{
-					if (attribute.getNaturalPersonAttributeType() == allowedKey)
+					if (attribute.getPersonAttributeType() == allowedKey)
 					{
 						hadAttribute = true;
 						resultString += "Found attribute " + allowedKey.getFriendlyName() + " in the response." + System.getProperty("line.separator");
@@ -299,15 +300,15 @@ public class StepHandlerEidas extends StepHandler
 						{
 							if (allowed.get(allowedKey))
 							{
-								AbstractNameAttribute attr = (AbstractNameAttribute) attribute;
-								if (attr.getValue().equals(expectedValues.get(allowedKey)))
+								AbstractLatinScriptAttribute attr = (AbstractLatinScriptAttribute)attribute;
+								if (attr.getPersonAttributeType().getValue().equals(expectedValues.get(allowedKey)))
 								{
 									resultString += "The attribute " + allowedKey.getFriendlyName() + " did contain the expected value " + expectedValues.get(allowedKey)
 											+ System.getProperty("line.separator");
 								}
 								else
 								{
-									resultString += "The attribute " + allowedKey.getFriendlyName() + " did contain the wrong value " + attr.getValue() + System.getProperty("line.separator");
+									resultString += "The attribute " + allowedKey.getFriendlyName() + " did contain the wrong value " + attr.getPersonAttributeType().getFriendlyName() + System.getProperty("line.separator");
 									message.setSuccess(false);
 								}
 							}
@@ -373,18 +374,25 @@ public class StepHandlerEidas extends StepHandler
 
 		String destination = knownValues.get(Replaceable.ATTACHED_WEBPAGE.toString()).getValue();
 		String issuer = "http://testbed.test";
+		String provider = "Testbed" + this.service.toString();
 		EidasSigner signer = new EidasSigner(true, signKey, signCertificate);
 		KnownValues requestAttributes = knownValues.getStartingWith(GeneralConstants.EIDAS_REQUESTED_PREFIX);
-		Map<EidasNaturalPersonAttributes, Boolean> requestedAttributesMap = getRequestAttributes(requestAttributes);
+
+		Map<EidasPersonAttributes, Boolean> requestedAttributesMap = getRequestAttributes(requestAttributes);
+		EidasRequestSectorType type = EidasRequestSectorType.PUBLIC;
+		if (!this.service.toString().endsWith("A")) {
+			type = EidasRequestSectorType.PRIVATE;
+		}
 
 		byte[] result = null;
 		if (knownValues.get("ADD_RANDOM_ATTRIBUTE") != null)
 		{
-			result = EidasSaml.CreateRequest(issuer, destination, signer, requestedAttributesMap, EidasRequestSectorType.Public, EidasNameIdType.Transient, EidasLoA.High, true);
+			// TODO: had additional parameter true - clarify
+			result = EidasSaml.createRequest(issuer, destination, provider, signer, requestedAttributesMap, type, EidasNameIdType.TRANSIENT, EidasLoA.HIGH);
 		}
 		else
 		{
-			result = EidasSaml.CreateRequest(issuer, destination, signer, requestedAttributesMap, EidasRequestSectorType.Public, EidasNameIdType.Transient, EidasLoA.High);
+			result = EidasSaml.createRequest(issuer, destination, provider, signer, requestedAttributesMap, type, EidasNameIdType.TRANSIENT, EidasLoA.HIGH);
 		}
 		LOGGER.debug("Created eIDAS request: " + new String(result, "UTF-8"));
 
@@ -444,9 +452,9 @@ public class StepHandlerEidas extends StepHandler
 		return token;
 	}
 
-	private Map<EidasNaturalPersonAttributes, Boolean> getRequestAttributes(KnownValues requestAttributes)
+	private Map<EidasPersonAttributes, Boolean> getRequestAttributes(KnownValues requestAttributes)
 	{
-		Map<EidasNaturalPersonAttributes, Boolean> requestedAttributesMap = new HashMap<>();
+		Map<EidasPersonAttributes, Boolean> requestedAttributesMap = new HashMap<>();
 		for (KnownValue requested : requestAttributes)
 		{
 			String plainEidasName = requested.getName().substring(GeneralConstants.EIDAS_REQUESTED_PREFIX.length(), requested.getName().length());
@@ -614,7 +622,7 @@ public class StepHandlerEidas extends StepHandler
 			{
 				// fetch the data we will be comparing against
 				KnownValues requestedValues = knownValues.getStartingWith(GeneralConstants.EIDAS_REQUESTED_PREFIX);
-				Map<EidasNaturalPersonAttributes, Boolean> requested = getRequestAttributes(requestedValues);
+				Map<EidasPersonAttributes, Boolean> requested = getRequestAttributes(requestedValues);
 				Set<String> restrictedEidValues = getRestrictedByUser();
 				final Set<String> uppercaseRestrictedEidValues = restrictedEidValues.stream().map(s -> s.toUpperCase()).collect(Collectors.toSet());
 				KnownValues expectedAttributeValues = knownValues.getStartingWith(GeneralConstants.PERSONAL_PREFIX);
@@ -627,7 +635,7 @@ public class StepHandlerEidas extends StepHandler
 
 				// validate the results
 				message.setSuccess(true);
-				for (EidasNaturalPersonAttributes requestedKey : requested.keySet())
+				for (EidasPersonAttributes requestedKey : requested.keySet())
 				{
 					boolean hadAttribute = false;
 					for (String receivedKey : receivedAttributes.keySet())

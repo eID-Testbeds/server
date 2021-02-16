@@ -10,7 +10,8 @@ import java.util.stream.Stream;
 import com.secunet.eidserver.testbed.common.enumerations.RequestAttribute;
 import com.secunet.eidserver.testbed.common.enumerations.SpecialFunction;
 
-import de.governikus.eidassaml.starterkit.EidasNaturalPersonAttributes;
+import de.governikus.eumw.eidasstarterkit.EidasNaturalPersonAttributes;
+import de.governikus.eumw.eidasstarterkit.person_attributes.EidasPersonAttributes;
 
 /**
  * A mapping of all attributes supported by eIDAS to the data groups and special funcitons of the german eID card.
@@ -24,14 +25,14 @@ public class EidEidasMapping
 	static
 	{
 		mapping = new HashMap<EidasNaturalPersonAttributes, Set<String>>();
-		mapping.put(EidasNaturalPersonAttributes.FirstName, Stream.of(RequestAttribute.GivenNames.toString()).collect(Collectors.toSet()));
-		mapping.put(EidasNaturalPersonAttributes.FamilyName, Stream.of(RequestAttribute.FamilyNames.toString()).collect(Collectors.toSet()));
-		mapping.put(EidasNaturalPersonAttributes.DateOfBirth, Stream.of(RequestAttribute.DateOfBirth.toString()).collect(Collectors.toSet()));
-		mapping.put(EidasNaturalPersonAttributes.PersonIdentifier, Stream.of(SpecialFunction.RestrictedID.toString()).collect(Collectors.toSet()));
-		mapping.put(EidasNaturalPersonAttributes.PlaceOfBirth, Stream.of(RequestAttribute.PlaceOfBirth.toString()).collect(Collectors.toSet()));
-		mapping.put(EidasNaturalPersonAttributes.BirthName,
-				Stream.of(RequestAttribute.GivenNames.toString(), RequestAttribute.BirthName.toString(), RequestAttribute.FamilyNames.toString()).collect(Collectors.toSet()));
-		mapping.put(EidasNaturalPersonAttributes.CurrentAddress, Stream.of(RequestAttribute.PlaceOfResidence.toString()).collect(Collectors.toSet()));
+		mapping.put(EidasNaturalPersonAttributes.FIRST_NAME, (Set<String>)Stream.<String>of(RequestAttribute.GivenNames.toString()).collect(Collectors.toSet()));
+		mapping.put(EidasNaturalPersonAttributes.FAMILY_NAME, (Set<String>)Stream.<String>of(RequestAttribute.FamilyNames.toString()).collect(Collectors.toSet()));
+		mapping.put(EidasNaturalPersonAttributes.DATE_OF_BIRTH, (Set<String>)Stream.<String>of(RequestAttribute.DateOfBirth.toString()).collect(Collectors.toSet()));
+		mapping.put(EidasNaturalPersonAttributes.PERSON_IDENTIFIER, (Set<String>)Stream.<String>of(SpecialFunction.RestrictedID.toString()).collect(Collectors.toSet()));
+		mapping.put(EidasNaturalPersonAttributes.PLACE_OF_BIRTH, (Set<String>)Stream.<String>of(RequestAttribute.PlaceOfBirth.toString()).collect(Collectors.toSet()));
+		mapping.put(EidasNaturalPersonAttributes.BIRTH_NAME,
+				(Set<String>)Stream.<String>of(new String[] { RequestAttribute.GivenNames.toString(), RequestAttribute.BirthName.toString(), RequestAttribute.FamilyNames.toString() }).collect(Collectors.toSet()));
+		mapping.put(EidasNaturalPersonAttributes.CURRENT_ADDRESS, (Set<String>)Stream.<String>of(RequestAttribute.PlaceOfResidence.toString()).collect(Collectors.toSet()));
 	}
 
 	/**
@@ -41,9 +42,9 @@ public class EidEidasMapping
 	 *            The requested {@link EidasNaturalPersonAttributes}
 	 * @return A set of names which represent either German eID data groups or special functions (e.g. Restricted ID)
 	 */
-	public static final Set<String> getCorrespondingEidAttributes(EidasNaturalPersonAttributes requestedEidasAttribute)
+	public static final Set<String> getCorrespondingEidAttributes(EidasPersonAttributes requestedEidasAttribute)
 	{
-		if (requestedEidasAttribute == EidasNaturalPersonAttributes.Gender)
+		if (requestedEidasAttribute == EidasNaturalPersonAttributes.GENDER)
 		{
 			return new HashSet<>();
 		}
