@@ -12,32 +12,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-				<groupId>com.secunet</groupId>
-				<artifactId>eidserver-testbed</artifactId>
-				<version>1.0-beta-3</version> <!-- why can't we just inherit the parent version? -->
+      <groupId>com.secunet</groupId>
+      <artifactId>eidserver-testbed</artifactId>
+      <version>${project.version}</version>
     </parent>
 
-		<groupId>com.secunet</groupId>
-		<artifactId>eidas-starterkit</artifactId>
+    <groupId>com.secunet</groupId>
+    <artifactId>eidas-starterkit</artifactId>
     <name>${project.artifactId}</name>
 
     <dependencies>
         <dependency>
-            <groupId>com.secunet</groupId>
-            <artifactId>eidas-common</artifactId>
-						<version>1.0-beta-3</version>
+          <groupId>com.secunet</groupId>
+          <artifactId>eidas-common</artifactId>
+          <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>se.swedenconnect.opensaml</groupId>
-            <artifactId>opensaml-security-ext</artifactId>
-						<version>1.0.7</version>
+          <groupId>se.swedenconnect.opensaml</groupId>
+          <artifactId>opensaml-security-ext</artifactId>
+          <version>1.0.7</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.santuario</groupId>
-            <artifactId>xmlsec</artifactId>
-						<version>2.2.0</version>
+          <groupId>org.apache.santuario</groupId>
+          <artifactId>xmlsec</artifactId>
+          <version>2.2.0</version>
         </dependency>
 
     </dependencies>

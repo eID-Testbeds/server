@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.secunet</groupId>
 		<artifactId>eidserver-testbed</artifactId>
-		<version>1.0-beta-3</version>
+		<version>${project.version}</version>
 	</parent>
 
 	<artifactId>eidsrv-testbed-tls</artifactId>
