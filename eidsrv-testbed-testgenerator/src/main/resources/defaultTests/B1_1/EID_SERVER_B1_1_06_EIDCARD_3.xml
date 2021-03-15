@@ -16,7 +16,7 @@
 		<p:profile>TLS_PSK</p:profile>
 	</p:profiles>
 	<p:eservice>A</p:eservice>
-	<p:eidcard>EIDCARD_2</p:eidcard>
+	<p:eidcard>EIDCARD_3</p:eidcard>
 	<p:certificateBaseNames>
 		<p:certificate>CERT_ECARD_TLS_EIDSERVER_1</p:certificate>
 	</p:certificateBaseNames>
