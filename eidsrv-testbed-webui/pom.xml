@@ -134,7 +134,7 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<scope>compile</scope>
-			<version>1.6.4</version>
+			<version>${slf4j.version}</version>
 		</dependency>
 		<!-- add commons logging to slf4j bridge to classpath -->
 		<!-- acts as jcl but routes commons-logging calls to slf4j -->
@@ -142,7 +142,7 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<scope>runtime</scope>
-			<version>1.6.4</version>
+			<version>${slf4j.version}</version>
 		</dependency>
 		<!-- add log4j binding to classpath -->
 		<!-- routes slf4j calls to log4j -->
@@ -150,36 +150,20 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<scope>runtime</scope>
-			<version>1.6.4</version>
+			<version>${slf4j.version}</version>
 		</dependency>
 		<!-- add log4j to classpath -->
 		<!-- does the logging -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
+			<version>${log4j.version}</version>
 		</dependency>
 
-		<!-- helpers, validate if we actualy use them -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
-		</dependency>
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
 			<version>3.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.6.2</version>
 		</dependency>
 
 	</dependencies>

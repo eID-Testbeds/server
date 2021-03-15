@@ -29,16 +29,80 @@
         </dependency>
 
         <dependency>
-          <groupId>se.swedenconnect.opensaml</groupId>
-          <artifactId>opensaml-security-ext</artifactId>
-          <version>1.0.7</version>
-        </dependency>
-
-        <dependency>
           <groupId>org.apache.santuario</groupId>
           <artifactId>xmlsec</artifactId>
           <version>2.2.0</version>
         </dependency>
 
+        <!--OpenSAML -->
+        <dependency>
+            <groupId>se.swedenconnect.opensaml</groupId>
+            <artifactId>opensaml-security-ext</artifactId>
+            <version>${opensaml-security-ext.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-core</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-saml-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-saml-impl</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-security-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-security-impl</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-xmlsec-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-xmlsec-impl</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+
+        <!-- only for tests -->
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>${junit.version}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter-engine</artifactId>
+          <version>5.7.0</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter-params</artifactId>
+          <version>5.7.0</version>
+          <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

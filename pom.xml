@@ -29,11 +29,16 @@
 	</modules>
 
 	<properties>
-		<project.version>1.0-beta-3</project.version>
-		<version.slf4j>1.5.9.RC1</version.slf4j>
-		<copyright>Copyright (c) 2013-2017 Federal Office for Information
-			Security</copyright>
-			
+		<project.version>1.0-beta-4</project.version>
+
+		<opensaml-security-ext.version>1.0.7</opensaml-security-ext.version>
+		<opensaml.version>3.4.5</opensaml.version>
+		<junit.version>4.13.1</junit.version>
+		<xmlsec.version>2.0.8</xmlsec.version>
+		<slf4j.version>1.7.10</slf4j.version>
+		<log4j.version>1.2.17</log4j.version>
+
+		<copyright>Copyright (c) 2013-2021 Federal Office for Information Security</copyright>
 		<!-- sonarqube and jacoco -->
 		<!-- The destination files for the code coverage report has to be set to
 			the same values in the parent pom and in each module pom. Then JaCoCo will
@@ -56,30 +61,12 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.4.191</version>
-		</dependency>
-
 		<!-- Basic -->
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>7.0</version>
 			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.5</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
 		</dependency>
 
 		<dependency>
@@ -93,13 +80,13 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
+			<version>${log4j.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.10</version>
+			<version>${slf4j.version}</version>
 		</dependency>
 
 		<!-- Unit-Testing -->
@@ -114,40 +101,6 @@
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>6.9.10</version>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- for eidas-common -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.12</version>
-		</dependency>
-
-		<dependency>
-			<groupId>net.shibboleth.utilities</groupId>
-			<artifactId>java-support</artifactId>
-			<version>7.5.1</version>
-		</dependency>
-
-		<!-- only for tests -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.7.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-params</artifactId>
-			<version>5.7.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

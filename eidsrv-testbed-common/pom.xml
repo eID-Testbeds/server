@@ -29,6 +29,11 @@
 			<artifactId>testbedutils-CommonUtilities</artifactId>
 			<version>1.2</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>
