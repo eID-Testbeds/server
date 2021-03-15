@@ -264,7 +264,7 @@ public class TestGeneratorBean implements TestGenerator
 					currentStep.setTarget(s.getTargetInterface());
 					currentStep.setDefault(true);
 					currentStep.setName(name);
-					currentStep.setMessage(JaxBUtil.marshallWithoutReplacing(s));
+					currentStep.setMessage(JaxBUtil.marshallWithoutReplacing(s).replaceAll("(\r)?\n", "\r\n"));
 					currentStep.setInbound(name.startsWith("IN"));
 					if (null == s.isOptional() || !s.isOptional())
 					{

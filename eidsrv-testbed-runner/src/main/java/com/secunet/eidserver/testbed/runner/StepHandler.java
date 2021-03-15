@@ -281,8 +281,8 @@ public abstract class StepHandler
 			// compute the apdus
 			returnMsg = returnMsg.replace(Functional.APDU.getTextMark(), computationHelper.getPreviousApdus());
 		}
-
 		// do we have to compute the charlength?
+		returnMsg = returnMsg.replaceAll("(\r)?\n", "\r\n");
 		if (returnMsg.contains(Functional.CHARLENGTH.getTextMark()))
 		{
 			returnMsg = returnMsg.replace(Functional.CHARLENGTH.getTextMark(), "" + getCharlength(returnMsg));
@@ -374,7 +374,7 @@ public abstract class StepHandler
 		}
 
 		// create XML object out of the receivedMessage string
-		if (httpHeaders.get("HTTP_STATUS_CODE").equals("HTTP/1.1 200 OK") && messageComponents.length > 1 && messageComponents[1].length() != 0)
+		if (((String)httpHeaders.get("HTTP_STATUS_CODE")).startsWith("HTTP/1.1 200") && messageComponents.length > 1 && messageComponents[1].length() != 0)
 		{
 			// check if we operate in attached mode
 			if (alternatives.get(0).getName().startsWith(TestStepType.IN_ATTACHED_WEBPAGE.value()))
@@ -1246,12 +1246,12 @@ public abstract class StepHandler
 	 */
 	protected URL parseTcTokenUrl(String message)
 	{
-		Pattern p = Pattern.compile("(<a [^<>]*href=\"http://127.0.0.1:24727/eID-Client\\?tcTokenURL=)([^\"]*)(\"[^<>]*>)");
+		Pattern p = Pattern.compile("(<a [^<>]*href=\"(http|eid)://127.0.0.1:24727/eID-Client\\?tcTokenURL=)([^\"]*)(\"[^<>]*>)");
 		Matcher m = p.matcher(message);
 		String tcTokenUrl = null;
 		while (m.find()) // find last occurrence of given pattern
 		{
-			tcTokenUrl = m.group(2);
+			tcTokenUrl = m.group(3);
 		}
 		if (tcTokenUrl != null)
 		{

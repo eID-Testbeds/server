@@ -373,7 +373,7 @@ public class StepHandlerEidas extends StepHandler
 		}
 
 		String destination = knownValues.get(Replaceable.ATTACHED_WEBPAGE.toString()).getValue();
-		String issuer = "http://testbed.test";
+		String issuer = "Testbed Connector";
 		String provider = "Testbed" + this.service.toString();
 		EidasSigner signer = new EidasSigner(true, signKey, signCertificate);
 		KnownValues requestAttributes = knownValues.getStartingWith(GeneralConstants.EIDAS_REQUESTED_PREFIX);
