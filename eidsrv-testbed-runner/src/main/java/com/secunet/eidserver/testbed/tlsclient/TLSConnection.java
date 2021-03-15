@@ -4,25 +4,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.util.Hashtable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.crypto.tls.AlertLevel;
-import org.bouncycastle.crypto.tls.Certificate;
-import org.bouncycastle.crypto.tls.CertificateRequest;
-import org.bouncycastle.crypto.tls.CipherSuite;
-import org.bouncycastle.crypto.tls.CompressionMethod;
-import org.bouncycastle.crypto.tls.DefaultTlsClient;
-import org.bouncycastle.crypto.tls.DefaultTlsSignerCredentials;
-import org.bouncycastle.crypto.tls.HashAlgorithm;
-import org.bouncycastle.crypto.tls.ProtocolVersion;
-import org.bouncycastle.crypto.tls.ServerOnlyTlsAuthentication;
-import org.bouncycastle.crypto.tls.SignatureAlgorithm;
-import org.bouncycastle.crypto.tls.SignatureAndHashAlgorithm;
-import org.bouncycastle.crypto.tls.TlsAuthentication;
-import org.bouncycastle.crypto.tls.TlsCredentials;
-import org.bouncycastle.crypto.tls.TlsUtils;
+import org.bouncycastle.crypto.tls.*;
 
 public class TLSConnection extends DefaultTlsClient
 {
@@ -190,6 +177,25 @@ public class TLSConnection extends DefaultTlsClient
 	{
 		this.serverVersion = serverVersion.toString();
 		super.notifyServerVersion(serverVersion);
+	}
+
+	public Hashtable getClientExtensions() throws IOException {
+		Hashtable clientExtensions = null;
+		ProtocolVersion clientVersion = this.context.getClientVersion();
+		if (TlsUtils.isSignatureAlgorithmsExtensionAllowed(clientVersion)) {
+			this.supportedSignatureAlgorithms = TlsUtils.getDefaultSupportedSignatureAlgorithms();
+			clientExtensions = TlsExtensionsUtils.ensureExtensionsInitialised(clientExtensions);
+			TlsUtils.addSignatureAlgorithmsExtension(clientExtensions, this.supportedSignatureAlgorithms);
+		}
+
+		if (TlsECCUtils.containsECCCipherSuites(getCipherSuites())) {
+			this.namedCurves = new int[] { 26, 27, 28, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 1, 2, 3, 6, 7, 8, 9, 10, 11, 13, 13, 14 };
+			this.clientECPointFormats = new short[] { 0, 1, 2 };
+			clientExtensions = TlsExtensionsUtils.ensureExtensionsInitialised(clientExtensions);
+			TlsECCUtils.addSupportedEllipticCurvesExtension(clientExtensions, this.namedCurves);
+			TlsECCUtils.addSupportedPointFormatsExtension(clientExtensions, this.clientECPointFormats);
+		}
+		return clientExtensions;
 	}
 
 	/*
