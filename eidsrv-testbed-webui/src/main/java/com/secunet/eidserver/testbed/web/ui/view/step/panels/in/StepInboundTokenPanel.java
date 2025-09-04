@@ -3,7 +3,7 @@ package com.secunet.eidserver.testbed.web.ui.view.step.panels.in;
 import java.util.Arrays;
 import java.util.List;
 
-import org.vaadin.viritin.ListContainer;
+import org.vaadin.viritinv7.ListContainer;
 
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCaseStep;
 import com.secunet.eidserver.testbed.common.types.testcase.Attributes;
@@ -11,17 +11,17 @@ import com.secunet.eidserver.testbed.common.types.testcase.StepToken;
 import com.secunet.eidserver.testbed.web.i18n.I18NHandler;
 import com.secunet.eidserver.testbed.web.i18n.I18NText;
 import com.secunet.eidserver.testbed.web.ui.comp.TogglePanelLayout;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.event.ItemClickEvent;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.event.ItemClickEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.Table;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.VerticalLayout;
 
 public class StepInboundTokenPanel extends TogglePanelLayout
 {

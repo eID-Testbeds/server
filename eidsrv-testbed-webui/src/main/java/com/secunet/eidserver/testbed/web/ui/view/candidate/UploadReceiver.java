@@ -3,9 +3,9 @@ package com.secunet.eidserver.testbed.web.ui.view.candidate;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
-import com.vaadin.ui.Upload.Receiver;
-import com.vaadin.ui.Upload.SucceededEvent;
-import com.vaadin.ui.Upload.SucceededListener;
+import com.vaadin.v7.ui.Upload.Receiver;
+import com.vaadin.v7.ui.Upload.SucceededEvent;
+import com.vaadin.v7.ui.Upload.SucceededListener;
 
 /**
  * Simplified Vaadin mechanic to upload files into the vaadin application.

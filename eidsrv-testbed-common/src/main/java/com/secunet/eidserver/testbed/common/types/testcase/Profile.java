@@ -35,7 +35,6 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="SAML_ATTACHED"/>
  *     &lt;enumeration value="ESER_ATTACHED"/>
  *     &lt;enumeration value="TLS_PSK"/>
- *     &lt;enumeration value="TLS_ETM"/>
  *     &lt;enumeration value="ALL_LINK"/>
  *     &lt;enumeration value="CONF_MAX_SE"/>
  *     &lt;enumeration value="CONF_TM_OUT"/>
@@ -64,7 +63,6 @@ public enum Profile {
     SAML_ATTACHED,
     ESER_ATTACHED,
     TLS_PSK,
-    TLS_ETM,
     ALL_LINK,
     CONF_MAX_SE,
     CONF_TM_OUT,

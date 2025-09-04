@@ -3,6 +3,7 @@ package com.secunet.eidserver.testbed.generator;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,7 +66,7 @@ public class TestGeneratorBean implements TestGenerator
 	{
 		// load known testcase definitions
 		testcaseDefinitions = new HashMap<>();
-		File testcaseFolder = new File(Thread.currentThread().getContextClassLoader().getResource("defaultTests").getFile());
+		File testcaseFolder = new File(Thread.currentThread().getContextClassLoader().getResource("defaultTests/A1_1/..").getFile());
 		processTestcaseFile(testcaseFolder);
 
 		// known testcase steps
@@ -264,7 +265,7 @@ public class TestGeneratorBean implements TestGenerator
 					currentStep.setTarget(s.getTargetInterface());
 					currentStep.setDefault(true);
 					currentStep.setName(name);
-					currentStep.setMessage(JaxBUtil.marshallWithoutReplacing(s));
+					currentStep.setMessage(JaxBUtil.marshallWithoutReplacing(s).replaceAll("(\r)?\n", "\r\n"));
 					currentStep.setInbound(name.startsWith("IN"));
 					if (null == s.isOptional() || !s.isOptional())
 					{

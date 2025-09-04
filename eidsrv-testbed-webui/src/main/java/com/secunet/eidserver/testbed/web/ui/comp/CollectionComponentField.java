@@ -9,12 +9,12 @@ import org.apache.logging.log4j.Logger;
 import com.secunet.eidserver.testbed.common.interfaces.dao.GenericDAO;
 import com.secunet.eidserver.testbed.web.i18n.I18NHandler;
 import com.secunet.eidserver.testbed.web.i18n.I18NText;
-import com.vaadin.data.Container.Sortable;
-import com.vaadin.data.Item;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.data.util.ItemSorter;
+import com.vaadin.v7.data.Container.Sortable;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.data.util.IndexedContainer;
+import com.vaadin.v7.data.util.ItemSorter;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import com.vaadin.server.UserError;
@@ -22,12 +22,12 @@ import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomField;
+import com.vaadin.v7.ui.CustomField;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.ListSelect;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.ListSelect;
+import com.vaadin.v7.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -249,7 +249,7 @@ public class CollectionComponentField<C extends Collection<W>, W> extends Custom
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void selectionChanged(com.vaadin.data.Property.ValueChangeEvent e)
+	protected void selectionChanged(com.vaadin.v7.data.Property.ValueChangeEvent e)
 	{
 		if (e.getProperty().getValue() != null && canEdit)
 		{
@@ -278,21 +278,21 @@ public class CollectionComponentField<C extends Collection<W>, W> extends Custom
 	{
 		if (canEdit)
 		{
-			editButton = new Button(null, e -> edit());
+			editButton = new Button(I18NHandler.getText(I18NText.Button_Edit), e -> edit());
 			editButton.setIcon(FontAwesome.COGS); // TODO icons should come from the ICONS enum
 			editButton.setDescription(I18NHandler.getText(I18NText.Button_Edit));
 			editButton.setWidth(100, Unit.PERCENTAGE);
 		}
 		if (canCreate)
 		{
-			createButton = new Button(null, e -> create());
+			createButton = new Button(I18NHandler.getText(I18NText.Button_Create), e -> create());
 			createButton.setIcon(FontAwesome.PLUS); // TODO icons should come from the ICONS enum
 			createButton.setDescription(I18NHandler.getText(I18NText.Button_Create));
 			createButton.setWidth(100, Unit.PERCENTAGE);
 		}
 		if (canDelete)
 		{
-			deleteButton = new Button(null, e -> delete());
+			deleteButton = new Button(I18NHandler.getText(I18NText.Button_Delete), e -> delete());
 			deleteButton.setIcon(FontAwesome.CLOSE); // TODO icons should come from the ICONS enum
 			deleteButton.setDescription(I18NHandler.getText(I18NText.Button_Delete));
 			deleteButton.setWidth(100, Unit.PERCENTAGE);

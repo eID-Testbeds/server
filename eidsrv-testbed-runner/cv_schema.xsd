@@ -5,13 +5,10 @@
 	<!-- types for the XML doc -->
 	<xs:simpleType name="algorithmtype">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="TA_RSA_v1_5_SHA_1" />
 			<xs:enumeration value="TA_RSA_v1_5_SHA_256" />
-			<xs:enumeration value="TA_RSA_PSS_SHA_1" />
 			<xs:enumeration value="TA_RSA_PSS_SHA_256" />
-			<xs:enumeration value="TA_ECDSA_SHA_1" />
-			<xs:enumeration value="TA_ECDSA_SHA_224" />
 			<xs:enumeration value="TA_ECDSA_SHA_256" />
+			<xs:enumeration value="TA_DSA_SHA_256" />
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -118,7 +115,6 @@
 			</xs:sequence>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required" />
-		<xs:attribute name="create" type="xs:boolean" /> <!-- default: false -->
 	</xs:complexType>
 	
 	<xs:complexType name="descriptiontype">
@@ -127,27 +123,22 @@
 			<xs:element name="issuerURL" type="xs:string" minOccurs="0" maxOccurs="1" />
 			<xs:element name="subjectName" type="xs:string" minOccurs="0" maxOccurs="1" />
 			<xs:element name="subjectURL" type="xs:string" minOccurs="0" maxOccurs="1" />
-			<xs:choice>
-				<xs:element name="fileTermsOfUsage" type="xs:string" minOccurs="0" maxOccurs="1" />
-				<xs:element name="termsOfUsage" type="xs:string" minOccurs="0" maxOccurs="1" />
-			</xs:choice>
+			<xs:element name="termsOfUsage" type="xs:string" minOccurs="0" maxOccurs="1" />
 			<xs:element name="redirectURL" type="xs:string" minOccurs="0" maxOccurs="1" />
 			<xs:element name="commCerts" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="fileCommCert" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="hashCommCert" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="fileDescription" type="xs:string" minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
-		<xs:attribute name="import" type="xs:boolean" /> <!-- default: false -->
 	</xs:complexType>
 	
 	<xs:complexType name="terminalsectortype">
 		<xs:sequence>
-			<xs:element name="fileSectorPublicKey" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="fileSectorPublicKey" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 
@@ -193,6 +184,7 @@
 			<xs:enumeration value="1536" />
 			<xs:enumeration value="2048" />
 			<xs:enumeration value="3072" />
+			<xs:enumeration value="4096" />
 		</xs:restriction>
 	</xs:simpleType>
 	

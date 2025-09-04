@@ -31,7 +31,7 @@ import com.secunet.eidserver.testbed.web.ui.view.testcase.panels.TestCaseDetails
 import com.secunet.eidserver.testbed.web.ui.view.testcase.panels.TestCaseSelectionPanel;
 import com.secunet.eidserver.testbed.web.ui.view.testcase.panels.TestCaseStepsSelectionPanel;
 import com.vaadin.cdi.CDIView;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;

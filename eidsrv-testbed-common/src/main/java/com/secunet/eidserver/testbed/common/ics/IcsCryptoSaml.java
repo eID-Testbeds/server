@@ -16,24 +16,23 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java-Klasse für ics.crypto.saml complex type.
- * 
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="ics.crypto.saml">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;all>
- *         &lt;element name="TransportSecurity" type="{http://trdoccheck.bsi.bund.de/server/ics}ics.crypto.tls"/>
  *         &lt;element name="XmlSignature" type="{http://trdoccheck.bsi.bund.de/server/ics}ics.xmlsignatures"/>
- *         &lt;element name="XmlEncryption" type="{http://trdoccheck.bsi.bund.de/server/ics}ics.crypto.saml.xmlencryption"/>
+ *         &lt;element name="XmlEncryption" type="{http://trdoccheck.bsi.bund.de/server/ics}ics.xmlencryption"/>
  *       &lt;/all>
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ics.crypto.saml", propOrder = {
@@ -41,36 +40,10 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class IcsCryptoSaml {
 
-    @XmlElement(name = "TransportSecurity", required = true)
-    protected IcsCryptoTls transportSecurity;
     @XmlElement(name = "XmlSignature", required = true)
     protected IcsXmlsignatures xmlSignature;
     @XmlElement(name = "XmlEncryption", required = true)
-    protected IcsCryptoSamlXmlencryption xmlEncryption;
-
-    /**
-     * Ruft den Wert der transportSecurity-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link IcsCryptoTls }
-     *     
-     */
-    public IcsCryptoTls getTransportSecurity() {
-        return transportSecurity;
-    }
-
-    /**
-     * Legt den Wert der transportSecurity-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link IcsCryptoTls }
-     *     
-     */
-    public void setTransportSecurity(IcsCryptoTls value) {
-        this.transportSecurity = value;
-    }
+    protected IcsXmlencryption xmlEncryption;
 
     /**
      * Ruft den Wert der xmlSignature-Eigenschaft ab.
@@ -101,10 +74,10 @@ public class IcsCryptoSaml {
      * 
      * @return
      *     possible object is
-     *     {@link IcsCryptoSamlXmlencryption }
+     *     {@link IcsXmlencryption }
      *     
      */
-    public IcsCryptoSamlXmlencryption getXmlEncryption() {
+    public IcsXmlencryption getXmlEncryption() {
         return xmlEncryption;
     }
 
@@ -113,10 +86,10 @@ public class IcsCryptoSaml {
      * 
      * @param value
      *     allowed object is
-     *     {@link IcsCryptoSamlXmlencryption }
+     *     {@link IcsXmlencryption }
      *     
      */
-    public void setXmlEncryption(IcsCryptoSamlXmlencryption value) {
+    public void setXmlEncryption(IcsXmlencryption value) {
         this.xmlEncryption = value;
     }
 

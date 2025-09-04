@@ -1,55 +1,33 @@
 package com.secunet.eidserver.testbed.tlsclient;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
+import java.security.SecureRandom;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.crypto.tls.AlertLevel;
-import org.bouncycastle.crypto.tls.Certificate;
-import org.bouncycastle.crypto.tls.CertificateRequest;
-import org.bouncycastle.crypto.tls.CipherSuite;
-import org.bouncycastle.crypto.tls.CompressionMethod;
-import org.bouncycastle.crypto.tls.DefaultTlsClient;
-import org.bouncycastle.crypto.tls.DefaultTlsSignerCredentials;
-import org.bouncycastle.crypto.tls.HashAlgorithm;
-import org.bouncycastle.crypto.tls.ProtocolVersion;
-import org.bouncycastle.crypto.tls.ServerOnlyTlsAuthentication;
-import org.bouncycastle.crypto.tls.SignatureAlgorithm;
-import org.bouncycastle.crypto.tls.SignatureAndHashAlgorithm;
-import org.bouncycastle.crypto.tls.TlsAuthentication;
-import org.bouncycastle.crypto.tls.TlsCredentials;
-import org.bouncycastle.crypto.tls.TlsUtils;
+import org.bouncycastle.tls.*;
+import org.bouncycastle.tls.crypto.impl.bc.BcTlsCrypto;
 
 public class TLSConnection extends DefaultTlsClient
 {
 	private static final Logger logger = LogManager.getLogger(TLSConnection.class);
 
-	private int[] supported_suites;
+	private final int[] supported_suites;
 	private final Certificate client_cert;
 	private final AsymmetricKeyParameter client_key;
 	private final boolean clientAuthentication;
-	private String compressionMethod, cipherSuite, serverVersion;
 
 	// Assume that client authentication is required if a certificate with key
 	// is supplied
 	TLSConnection(Certificate cert, AsymmetricKeyParameter keys, int[] supported_cipher_suites)
 	{
-		supported_suites = supported_cipher_suites;
-		client_cert = cert;
-		client_key = keys;
-		clientAuthentication = true;
-	}
-
-	// Assume that client authentication is required if a certificate with key
-	// is supplied
-	TLSConnection(Certificate cert, AsymmetricKeyParameter keys)
-	{
-		supported_suites = new int[] { CipherSuite.TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA, CipherSuite.TLS_RSA_PSK_WITH_AES_128_CBC_SHA256,
-				CipherSuite.TLS_PSK_WITH_AES_256_CBC_SHA, CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 };
+        super(new BcTlsCrypto(new SecureRandom()));
+        supported_suites = supported_cipher_suites;
 		client_cert = cert;
 		client_key = keys;
 		clientAuthentication = true;
@@ -59,27 +37,11 @@ public class TLSConnection extends DefaultTlsClient
 	// supplied
 	TLSConnection(int[] supported_cipher_suites)
 	{
+		super(new BcTlsCrypto(new SecureRandom()));
 		supported_suites = supported_cipher_suites;
 		client_cert = null;
 		client_key = null;
 		clientAuthentication = false;
-	}
-
-	// Perform a Server-Only Authentication if client certificate is not
-	// supplied
-	TLSConnection()
-	{
-		supported_suites = new int[] { CipherSuite.TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256, CipherSuite.TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA, CipherSuite.TLS_RSA_PSK_WITH_AES_128_CBC_SHA256,
-				CipherSuite.TLS_PSK_WITH_AES_256_CBC_SHA };
-		client_cert = null;
-		client_key = null;
-		clientAuthentication = false;
-	}
-
-	// Allows the manipulation cipher suites that can be used for the connection
-	public void setCipherSuites(int[] supported_cipher_suites)
-	{
-		supported_suites = supported_cipher_suites;
 	}
 
 	// Returns the cipher suites that can be used for the connection
@@ -87,13 +49,6 @@ public class TLSConnection extends DefaultTlsClient
 	public int[] getCipherSuites()
 	{
 		return supported_suites;
-	}
-
-	// We support only TLS1.2
-	@Override
-	public ProtocolVersion getMinimumVersion()
-	{
-		return ProtocolVersion.SSLv3;
 	}
 
 	@Override
@@ -107,12 +62,12 @@ public class TLSConnection extends DefaultTlsClient
 	{
 		if (level == AlertLevel.fatal)
 		{
-			logger.fatal("TLS error during sending: " + AlertLevel.getName(description) + System.getProperty("line.separator") + AlertLevel.getText(description) + System.getProperty("line.separator")
+			logger.fatal("TLS error during sending: " + AlertLevel.getName(description) + System.lineSeparator() + AlertLevel.getText(description) + System.lineSeparator()
 					+ message);
 		}
 		else
 		{
-			logger.warn("TLS warning during sending: " + AlertLevel.getName(description) + System.getProperty("line.separator") + AlertLevel.getText(description) + System.getProperty("line.separator")
+			logger.warn("TLS warning during sending: " + AlertLevel.getName(description) + System.lineSeparator() + AlertLevel.getText(description) + System.lineSeparator()
 					+ message);
 		}
 		super.notifyAlertRaised(level, description, message, cause);
@@ -123,11 +78,11 @@ public class TLSConnection extends DefaultTlsClient
 	{
 		if (level == AlertLevel.fatal)
 		{
-			logger.info("TLS error during reading: " + AlertLevel.getName(description) + System.getProperty("line.separator") + AlertLevel.getText(description));
+			logger.info("TLS error during reading: " + AlertLevel.getName(description) + System.lineSeparator() + AlertLevel.getText(description));
 		}
 		else
 		{
-			logger.debug("TLS warning during reading: " + AlertLevel.getName(description) + System.getProperty("line.separator") + AlertLevel.getText(description));
+			logger.debug("TLS warning during reading: " + AlertLevel.getName(description) + System.lineSeparator() + AlertLevel.getText(description));
 		}
 		super.notifyAlertReceived(level, description);
 	}
@@ -143,8 +98,7 @@ public class TLSConnection extends DefaultTlsClient
 			return new TlsAuthentication() {
 
 				@Override
-				public void notifyServerCertificate(Certificate arg0) throws IOException
-				{
+				public void notifyServerCertificate(TlsServerCertificate serverCertificate) throws IOException {
 					// we do not need to perform any checks here
 				}
 
@@ -160,7 +114,8 @@ public class TLSConnection extends DefaultTlsClient
 						// TODO replace static values
 						saha = new SignatureAndHashAlgorithm(HashAlgorithm.sha256, SignatureAlgorithm.rsa);
 					}
-					return new DefaultTlsSignerCredentials(context, client_cert, client_key, saha);
+					return new DefaultTlsSignerCredentials(context, client_cert, client_key, saha) {
+					};
 				}
 
 			};
@@ -172,78 +127,52 @@ public class TLSConnection extends DefaultTlsClient
 			return new ServerOnlyTlsAuthentication() {
 
 				@Override
-				public void notifyServerCertificate(Certificate arg0) throws IOException
-				{
+				public void notifyServerCertificate(TlsServerCertificate serverCertificate) throws IOException {
 					// we do not need to perform any checks here
 				}
 			};
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.secunet.bouncycastle.crypto.tls.AbstractTlsClient#notifyServerVersion(com.secunet.bouncycastle.crypto.tls.ProtocolVersion)
-	 */
-	@Override
-	public void notifyServerVersion(ProtocolVersion serverVersion) throws IOException
+	private boolean containsECCCipherSuites(int[] cipherSuites)
 	{
-		this.serverVersion = serverVersion.toString();
-		super.notifyServerVersion(serverVersion);
+        for (int cipherSuite : cipherSuites) {
+            if (TlsECCUtils.isECCCipherSuite(cipherSuite)) {
+                return true;
+            }
+        }
+		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.secunet.bouncycastle.crypto.tls.AbstractTlsClient#notifySelectedCompressionMethod(short)
-	 */
-	@Override
-	public void notifySelectedCompressionMethod(short selectedCompressionMethod)
-	{
-		for (Field f : CompressionMethod.class.getFields())
-		{
-			try
-			{
-				if (f.getShort(null) == selectedCompressionMethod)
-				{
-					this.compressionMethod = f.getName();
-				}
-			}
-			catch (IllegalArgumentException | IllegalAccessException e)
-			{
-				StringWriter trace = new StringWriter();
-				e.printStackTrace(new PrintWriter(trace));
-				logger.error("Could not decode compression method:" + System.getProperty("line.separator") + trace.toString());
-			}
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public Hashtable getClientExtensions() throws IOException {
+		Hashtable clientExtensions = null;
+		ProtocolVersion clientVersion = this.context.getClientVersion();
+		if (TlsUtils.isSignatureAlgorithmsExtensionAllowed(clientVersion)) {
+			this.supportedSignatureAlgorithms = TlsUtils.getDefaultSupportedSignatureAlgorithms(this.context);
+			clientExtensions = TlsExtensionsUtils.ensureExtensionsInitialised(clientExtensions);
+			TlsExtensionsUtils.addSignatureAlgorithmsExtension(clientExtensions, this.supportedSignatureAlgorithms);
 		}
-		super.notifySelectedCompressionMethod(selectedCompressionMethod);
+
+		if (containsECCCipherSuites(getCipherSuites())) {
+			Vector namedCurves = new Vector(List.of(26, 27, 28, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 1, 2, 3, 6, 7, 8, 9, 10, 11, 13, 13, 14));
+			short[] clientECPointFormats = new short[] { 0, 1, 2 };
+			clientExtensions = TlsExtensionsUtils.ensureExtensionsInitialised(clientExtensions);
+			TlsExtensionsUtils.addSupportedGroupsExtension(clientExtensions, namedCurves);
+			TlsExtensionsUtils.addSupportedPointFormatsExtension(clientExtensions, clientECPointFormats);
+		}
+		return clientExtensions;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.secunet.bouncycastle.crypto.tls.AbstractTlsClient#notifySelectedCipherSuite(int)
-	 */
 	@Override
-	public void notifySelectedCipherSuite(int selectedCipherSuite)
+	public ProtocolVersion[] getProtocolVersions() {
+		return ProtocolVersion.TLSv12.only();
+	}
+
+	@Override
+	public ProtocolVersion[] getSupportedVersions()
 	{
-		for (Field f : CipherSuite.class.getFields())
-		{
-			try
-			{
-				if (f.getInt(null) == selectedCipherSuite)
-				{
-					this.cipherSuite = f.getName();
-				}
-			}
-			catch (IllegalArgumentException | IllegalAccessException e)
-			{
-				StringWriter trace = new StringWriter();
-				e.printStackTrace(new PrintWriter(trace));
-				logger.error("Could not decode ciphersuite:" + System.getProperty("line.separator") + trace.toString());
-			}
-		}
-		super.notifySelectedCipherSuite(selectedCipherSuite);
+		return ProtocolVersion.TLSv12.only();
 	}
 
 }

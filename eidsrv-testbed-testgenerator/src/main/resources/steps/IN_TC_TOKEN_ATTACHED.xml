@@ -8,7 +8,7 @@
 	<!-- HTTP Tokens -->
 	<p:HttpStepToken>
 		<p:name>HTTP_STATUS_CODE</p:name>
-		<p:value>HTTP/1.1 200 OK</p:value>
+		<p:value>HTTP/1.1 200 </p:value>
 		<p:isMandatory>true</p:isMandatory>
 	</p:HttpStepToken>
 	<p:HttpStepToken>
@@ -36,6 +36,17 @@
 		<p:name>Binding</p:name>
 		<p:value>urn:liberty:paos:2006-08</p:value>
 		<p:isMandatory>true</p:isMandatory>
+	</p:ProtocolStepToken>
+	<!-- TR03130-3; 2.1.2 PathSecurity-Protocol and PathSecurity-Parameters MUST NOT be present since the attached communication model is used.-->
+	<p:ProtocolStepToken>
+		<p:name>PathSecurity-Protocol</p:name>
+		<p:maxNumberOfOccurences>0</p:maxNumberOfOccurences>
+		<p:isMandatory>false</p:isMandatory>
+	</p:ProtocolStepToken>
+	<p:ProtocolStepToken>
+		<p:name>PathSecurity-Parameters</p:name>
+		<p:maxNumberOfOccurences>0</p:maxNumberOfOccurences>
+		<p:isMandatory>false</p:isMandatory>
 	</p:ProtocolStepToken>
 	<!-- Values that have to be saved -->
 	<p:ToSave>SessionIdentifier</p:ToSave>

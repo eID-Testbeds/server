@@ -14,9 +14,6 @@ import com.secunet.eidserver.testbed.common.ics.IcsCaDomainparams;
 import com.secunet.eidserver.testbed.common.ics.IcsEllipticcurve;
 import com.secunet.eidserver.testbed.common.ics.IcsMandatoryprofile;
 import com.secunet.eidserver.testbed.common.ics.IcsOptionalprofile;
-import com.secunet.eidserver.testbed.common.ics.IcsTlsCiphersuite;
-import com.secunet.eidserver.testbed.common.ics.IcsTlsSignaturealgorithms;
-import com.secunet.eidserver.testbed.common.ics.IcsTlsVersion;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionContentUri;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionKeyAgreementUri;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionKeyAgreementWrappingUri;
@@ -123,22 +120,6 @@ public class I18NHandler
 
 		return p.value();
 	}
-
-	public static String getText(IcsTlsVersion algo)
-	{
-		if (algo == null)
-			return getLocalizedText("NULL", getLocale(), false);
-
-		return algo.value();
-	}
-
-	public static String getText(IcsTlsSignaturealgorithms algo)
-	{
-		if (algo == null)
-			return getLocalizedText("NULL", getLocale(), false);
-
-		return algo.value();
-	}
 	
 	public static String getText(IcsXmlsecSignatureUri algo)
 	{
@@ -149,14 +130,6 @@ public class I18NHandler
 	}
 	
 	public static String getText(IcsXmlsecSignatureCanonicalization algo)
-	{
-		if (algo == null)
-			return getLocalizedText("NULL", getLocale(), false);
-
-		return algo.value();
-	}
-
-	public static String getText(IcsTlsCiphersuite algo)
 	{
 		if (algo == null)
 			return getLocalizedText("NULL", getLocale(), false);

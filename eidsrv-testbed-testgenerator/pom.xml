@@ -5,11 +5,15 @@
 
 	<artifactId>eidsrv-testbed-testgenerator</artifactId>
 	<name>eID-Server Testbed TestGenerator</name>
-	<packaging>ejb</packaging>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+    <packaging>ejb</packaging>
 	<parent>
 		<groupId>com.secunet</groupId>
 		<artifactId>eidserver-testbed</artifactId>
-		<version>1.0-beta-3</version>
+		<version>${revision}</version>
 	</parent>
 
 	<dependencies>
@@ -17,19 +21,19 @@
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-common</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>testbedutils-CommonUtilities</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-testing</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -39,6 +43,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ejb-plugin</artifactId>
+				<version>3.2.1</version>
 				<configuration>
 					<ejbVersion>3.1</ejbVersion>
 				</configuration>

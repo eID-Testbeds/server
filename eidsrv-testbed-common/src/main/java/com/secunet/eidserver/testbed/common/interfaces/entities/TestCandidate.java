@@ -1,27 +1,23 @@
 package com.secunet.eidserver.testbed.common.interfaces.entities;
 
+import com.secunet.eidserver.testbed.common.ics.*;
+
 import java.net.URL;
 import java.util.Set;
-
-import com.secunet.eidserver.testbed.common.ics.IcsCa;
-import com.secunet.eidserver.testbed.common.ics.IcsCaDomainparams;
-import com.secunet.eidserver.testbed.common.ics.IcsMandatoryprofile;
-import com.secunet.eidserver.testbed.common.ics.IcsOptionalprofile;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionContentUri;
 
 public interface TestCandidate
 {
 
 	/**
 	 * Retrieve the UUID of the test candidate entity. This ID is only used for persisting purposes and has no influence on the tests.
-	 * 
+	 *
 	 * @return {@link String} The UUID
 	 */
 	public String getId();
 
 	/**
 	 * Set the UUID of the test candidate entity. This ID is only used for persisting purposes and has no influence on the tests.
-	 * 
+	 *
 	 * @param {@link
 	 * 			String} The UUID
 	 */
@@ -29,28 +25,28 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the profile name of the test candidate entity.
-	 * 
+	 *
 	 * @return {@link String} The profile name
 	 */
 	public String getProfileName();
 
 	/**
 	 * Set the profile name of the test candidate entity.
-	 * 
+	 *
 	 * @return {@link String} The profile name
 	 */
 	public void setProfileName(String profileName);
 
 	/**
 	 * Retrieve the name assigned to the test candidate.
-	 * 
+	 *
 	 * @return {@link String} The candidateName
 	 */
 	public String getCandidateName();
 
 	/**
 	 * Set the name of the test candidate.
-	 * 
+	 *
 	 * @param {@linkString}
 	 * 			candidateName
 	 */
@@ -58,14 +54,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the name of the vendor of the test candidate.
-	 * 
+	 *
 	 * @return {@link String} The vendor
 	 */
 	public String getVendor();
 
 	/**
 	 * Set the name of the vendor of the test candidate.
-	 * 
+	 *
 	 * @param {@linkString}
 	 * 			vendor
 	 */
@@ -73,14 +69,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the major version number of the test candidate.
-	 * 
+	 *
 	 * @return {@link int} versionMajor
 	 */
 	public int getVersionMajor();
 
 	/**
 	 * Set the major version number of the test candidate.
-	 * 
+	 *
 	 * @param {@link
 	 * 			int} versionMajor
 	 */
@@ -88,14 +84,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the minor version number of the test candidate.
-	 * 
+	 *
 	 * @return {@link int} versionMinor
 	 */
 	public int getVersionMinor();
 
 	/**
 	 * Set the minor version number of the test candidate.
-	 * 
+	 *
 	 * @param {@link
 	 * 			int} versionMinor
 	 */
@@ -103,14 +99,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the subminor (bugfix) version number of the test candidate.
-	 * 
+	 *
 	 * @return {@link int} versionSubminor
 	 */
 	public int getVersionSubminor();
 
 	/**
 	 * Set the subminor (bugfix) version number of the test candidate.
-	 * 
+	 *
 	 * @param {@link
 	 * 			int} versionSubminor
 	 */
@@ -118,14 +114,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the major version number of the eCard-API supported by the test candidate.
-	 * 
+	 *
 	 * @return {@link int} apiMajor
 	 */
 	public int getApiMajor();
 
 	/**
 	 * Set the major version number of the eCard-API supported by the test candidate.
-	 * 
+	 *
 	 * @param {@link
 	 * 			int} apiMajor
 	 */
@@ -133,14 +129,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the minor version number of the eCard-API supported by the test candidate.
-	 * 
+	 *
 	 * @return {@link int} apiMinor
 	 */
 	public int getApiMinor();
 
 	/**
 	 * Set the minor version number of the eCard-API supported by the test candidate.
-	 * 
+	 *
 	 * @param {@link
 	 * 			int} apiMinor
 	 */
@@ -148,14 +144,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the subminor version number of the eCard-API supported by the test candidate.
-	 * 
+	 *
 	 * @return {@link int} apiSubminor
 	 */
 	public int getApiSubminor();
 
 	/**
 	 * Set the subminor version number of the eCard-API supported by the test candidate.
-	 * 
+	 *
 	 * @param {@link
 	 * 			int} apiSubminor
 	 */
@@ -163,14 +159,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the URL which is used to connect to the candidate on the eCard-API-Interface.
-	 * 
+	 *
 	 * @return {@link URL} ecardapiUrl
 	 */
 	public URL getEcardapiUrl();
 
 	/**
 	 * Set the URL which is used to connect to the candidate on the eCard-API-Interface.
-	 * 
+	 *
 	 * @param {@link
 	 * 			URL} ecardapiUrl
 	 */
@@ -178,14 +174,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the URL which is used to connect to the candidate on the eID-Interface.
-	 * 
+	 *
 	 * @return {@link URL} eidinterfaceUrl
 	 */
 	public URL getEidinterfaceUrl();
 
 	/**
 	 * Set the URL which is used to connect to the candidate on the eID-Interface.
-	 * 
+	 *
 	 * @param {@link
 	 * 			URL} eidinterfaceUrl
 	 */
@@ -193,14 +189,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the URL which is used to connect to the candidate when the SAML profile is used.
-	 * 
+	 *
 	 * @return {@link URL} samlUrl
 	 */
 	public URL getSamlUrl();
 
 	/**
 	 * Set the URL which is used to connect to the candidate when the SAML profile is used.
-	 * 
+	 *
 	 * @param {@link
 	 * 			URL} samlUrl
 	 */
@@ -208,14 +204,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the URL of the TC Token in case the candidate is operating in attached mode.
-	 * 
+	 *
 	 * @return {@link URL} attachedTcTokenUrl
 	 */
 	public URL getAttachedTcTokenUrl();
 
 	/**
 	 * Set the URL of the TC Token in case the candidate is operating in attached mode.
-	 * 
+	 *
 	 * @param {@link
 	 * 			URL} attachedTcTokenUrl
 	 */
@@ -223,14 +219,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the {@link Set} of {@link IcsOptionalprofile}s supported by the test candidate.
-	 * 
+	 *
 	 * @return {@link Set<IcsOptionalprofile>} optionalProfiles
 	 */
 	public Set<IcsOptionalprofile> getOptionalProfiles();
 
 	/**
 	 * Set the {@link Set} of {@link IcsOptionalprofile}s supported by the test candidate.
-	 * 
+	 *
 	 * @param {@link
 	 * 			Set<IcsOptionalprofile>} optionalProfiles
 	 */
@@ -238,14 +234,14 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the {@link Set} of {@link IcsMandatoryprofile}s supported by the test candidate.
-	 * 
+	 *
 	 * @return {@link Set<IcsMandatoryprofile>} mandatoryProfiles
 	 */
 	public Set<IcsMandatoryprofile> getMandatoryProfiles();
 
 	/**
 	 * Set the {@link Set} of {@link IcsMandatoryprofile}s supported by the test candidate.
-	 * 
+	 *
 	 * @param {@link
 	 * 			Set<IcsMandatoryprofile>} mandatoryProfiles
 	 */
@@ -254,7 +250,7 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the {@link Set} of Chip Authentication algorithms supported by the test candidate.
-	 * 
+	 *
 	 * @return {@link
 	 * 		Set<IcsCa>} chipAuthenticationAlgorithms
 	 */
@@ -262,7 +258,7 @@ public interface TestCandidate
 
 	/**
 	 * Set the {@link Set} of Chip Authentication algorithms supported by the test candidate.
-	 * 
+	 *
 	 * @param {@link
 	 * 			Set<IcsCa>} chipAuthenticationAlgorithms
 	 */
@@ -270,7 +266,7 @@ public interface TestCandidate
 
 	/**
 	 * Retrieve the {@link Set} of Chip Authentication domain parameters supported by the test candidate.
-	 * 
+	 *
 	 * @return {@link
 	 * 		Set<IcsCa>} chipAuthenticationAlgorithms
 	 */
@@ -278,27 +274,43 @@ public interface TestCandidate
 
 	/**
 	 * Set the {@link Set} of Chip Authentication algorithms supported by the test candidate.
-	 * 
+	 *
 	 * @param {@link
 	 * 			Set<IcsCa>} chipAuthenticationAlgorithms
 	 */
 	public void setChipAuthenticationDomainParameters(Set<IcsCaDomainparams> domainParameters);
 
 	/**
-	 * Retrieve the {@link Set} of XML content encryption algorithms supported by the test candidate.
-	 * 
+	 * Retrieve the {@link Set} of SAML XML content encryption algorithms supported by the test candidate.
+	 *
 	 * @return {@link
-	 * 		Set<IcsXmlsecEncryptionContentUri>} xmlEncryptionAlgorithms
+	 * 		Set<IcsXmlsecEncryptionContentUri>} xmlEncryptionAlgorithmsSaml
 	 */
-	public Set<IcsXmlsecEncryptionContentUri> getXmlEncryptionAlgorithms();
+	public Set<IcsXmlsecEncryptionContentUri> getXmlEncryptionAlgorithmsSaml();
 
 	/**
-	 * Set the {@link Set} of XML content encryption algorithms supported by the test candidate.
-	 * 
+	 * Set the {@link Set} of SAML XML content encryption algorithms supported by the test candidate.
+	 *
 	 * @param {@link
-	 * 			Set<IcsXmlsecEncryptionContentUri>} xmlEncryptionAlgorithms
+	 * 			Set<IcsXmlsecEncryptionContentUri>} xmlEncryptionAlgorithmsSaml
 	 */
-	public void setXmlEncryptionAlgorithms(Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithms);
+	public void setXmlEncryptionAlgorithmsSaml(Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithmsSaml);
+
+	/**
+	 * Retrieve the {@link Set} of eIDAS XML content encryption algorithms supported by the test candidate.
+	 *
+	 * @return {@link
+	 * 		Set<IcsXmlsecEncryptionContentUri>} xmlEncryptionAlgorithmsEidas
+	 */
+	public Set<IcsXmlsecEncryptionContentUri> getXmlEncryptionAlgorithmsEidas();
+
+	/**
+	 * Set the {@link Set} of eIDAS XML content encryption algorithms supported by the test candidate.
+	 *
+	 * @param {@link
+	 * 			Set<IcsXmlsecEncryptionContentUri>} xmlEncryptionAlgorithmsEidas
+	 */
+	public void setXmlEncryptionAlgorithmsEidas(Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithmsEidas);
 
 	public Set<XmlSignature> getXmlSignatureAlgorithmsEid();
 
@@ -308,6 +320,10 @@ public interface TestCandidate
 
 	public void setXmlSignatureAlgorithmsSaml(Set<XmlSignature> xmlSignatureAlgorithmsSaml);
 
+	public Set<XmlSignature> getXmlSignatureAlgorithmsEidas();
+
+	public void setXmlSignatureAlgorithmsEidas(Set<XmlSignature> xmlSignatureAlgorithmsEidas);
+
 	public Set<TestCase> getTestCases();
 
 	public void setTestCases(Set<TestCase> testCases);
@@ -315,6 +331,10 @@ public interface TestCandidate
 	public Set<CertificateX509> getX509Certificates();
 
 	public void setX509Certificates(Set<CertificateX509> x509Certificates);
+
+	Set<CertificateCV> getCvCertificates();
+
+	void setCvCertificates(Set<CertificateCV> cvCertificates);
 
 	public Set<TestRun> getTestRuns();
 
@@ -324,54 +344,62 @@ public interface TestCandidate
 
 	public void setReports(Set<Report> reports);
 
-	public Set<Tls> getTlsEcardApiPsk();
+	public Set<XmlEncryptionKeyAgreement> getXmlKeyAgreementSaml();
 
-	public void setTlsEcardApiPsk(Set<Tls> tlsEcardApiPsk);
+	public void setXmlKeyAgreementSaml(Set<XmlEncryptionKeyAgreement> xmlKeyAgreement);
 
-	public Set<Tls> getTlsEcardApiAttached();
+	public Set<XmlEncryptionKeyAgreement> getXmlKeyAgreementEidas();
 
-	public void setTlsEcardApiAttached(Set<Tls> tlsEcardApiAttached);
+	public void setXmlKeyAgreementEidas(Set<XmlEncryptionKeyAgreement> xmlKeyAgreement);
 
-	public Set<Tls> getTlsEidInterface();
+	public Set<XmlEncryptionKeyTransport> getXmlKeyTransportEidas();
 
-	public void setTlsEidInterface(Set<Tls> tlsEidInterface);
+	public void setXmlKeyTransportEidas(Set<XmlEncryptionKeyTransport> xmlKeyTransportEidas);
 
-	public Set<Tls> getTlsSaml();
+	public Set<XmlEncryptionKeyTransport> getXmlKeyTransportSaml();
 
-	public void setTlsSaml(Set<Tls> tlsSaml);
-
-	public Set<XmlEncryptionKeyAgreement> getXmlKeyAgreement();
-
-	public void setXmlKeyAgreement(Set<XmlEncryptionKeyAgreement> xmlKeyAgreement);
-
-	public Set<XmlEncryptionKeyTransport> getXmlKeyTransport();
-
-	public void setXmlKeyTransport(Set<XmlEncryptionKeyTransport> xmlKeyTransport);
+	public void setXmlKeyTransportSaml(Set<XmlEncryptionKeyTransport> xmlKeyTransportSaml);
 
 	/**
 	 * Returns <i>true</i> if the server is capable to serve multiple clients without reconfiguration.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isMultiClientCapable();
 
 	/**
 	 * Sets whether the server is capable to serve multiple clients without reconfiguration.
-	 * 
+	 *
 	 * @param multiClientCapable
 	 *            {@link boolean}
 	 */
 	public void setMultiClientCapable(boolean multiClientCapable);
 
 	/**
-	 * Set the eIDAS metadata XMl for eService F
-	 * 
+	 * Set the eIDAS metadata XML
+	 *
 	 * @param eidasMetadataXml
 	 */
 	public void setEidasMetadata(String eidasMetadataXml);
 
 	/**
-	 * Get the eIDAS metadata XMl for eService F
+	 * Get the eIDAS metadata XML
 	 */
 	public String getEidasMetadata();
+
+	public void setMasterlist(byte[] masterlist);
+
+	public byte[] getMasterlist();
+
+	public void setDefectlist(byte[] defectlist);
+
+	public byte[] getDefectlist();
+
+	public void setBlacklists(Set<Blacklist> blacklists);
+
+	public Set<Blacklist> getBlacklists();
+
+	public void setCryptoFiles(Set<CryptoFile> cryptoFiles);
+
+	public Set<CryptoFile> getCryptoFiles();
 }

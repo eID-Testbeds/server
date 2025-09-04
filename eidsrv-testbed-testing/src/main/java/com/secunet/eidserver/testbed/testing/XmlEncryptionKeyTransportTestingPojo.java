@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Set;
 
-import com.secunet.eidserver.testbed.common.helper.BcTlsHelper;
+import com.secunet.eidserver.testbed.common.helper.CryptoHelper;
 import com.secunet.eidserver.testbed.common.ics.IcsEllipticcurve;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionKeyTransportUri;
 import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyTransport;
@@ -44,7 +44,7 @@ public class XmlEncryptionKeyTransportTestingPojo extends BaseTestingPojo implem
 	@Override
 	public void setBitLengths(Set<BigInteger> bitLengths) throws NumberFormatException
 	{
-		if (!BcTlsHelper.checkOnlyAllowedBitlengths(bitLengths))
+		if (!CryptoHelper.checkOnlyAllowedBitlengths(bitLengths))
 		{
 			throw new NumberFormatException("The provided set contained unallowed values");
 		}

@@ -2,6 +2,7 @@
 <p:testcaseDefinition xmlns:p="http://www.secunet.com"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.secunet.com ../../xmlScheme/sn_TestcaseDefinition.xsd ">
+	<!-- Referenced by D1_1 Testcases, not relevant as a single testcase -->
 	<p:name>EID_SERVER_C1_1_15</p:name>
 	<p:description>Positive test describing the PAOS communication between the eIDServer and the eID-Client. The eIDAS request requires to read the minimum dataset.</p:description>
 	<p:modulePath>
@@ -39,7 +40,4 @@
 		<p:step>OUT_TRANSMIT</p:step>
 		<p:step>IN_START_PAOS_RESPONSE</p:step>
 	</p:steps>
-	<p:variables>
-		<p:variable name="REQUIREDCHAT">7F4C12060904007F00070301020253050000009804</p:variable> <!-- If present, the element "RequiredCHAT" contains the CHAT value for reading [ATTRIBUTE_SET1]. -->
-	</p:variables>
 </p:testcaseDefinition>

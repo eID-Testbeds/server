@@ -6,7 +6,7 @@ import java.util.Set;
 import com.secunet.eidserver.testbed.common.interfaces.beans.CandidateController;
 import com.secunet.eidserver.testbed.web.i18n.I18NHandler;
 import com.secunet.eidserver.testbed.web.i18n.I18NText;
-import com.vaadin.data.Validator;
+import com.vaadin.v7.data.Validator;
 
 /**
  * Check by the backend if a value is already in use at a certain column of a certain table or if the name is empty

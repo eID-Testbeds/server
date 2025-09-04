@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;all>
- *         &lt;element name="eCard-Api" type="{http://trdoccheck.bsi.bund.de/server/ics}ics.crypto.ecardapi"/>
  *         &lt;element name="eID-Interface" type="{http://trdoccheck.bsi.bund.de/server/ics}ics.crypto.eidinterface" minOccurs="0"/>
  *         &lt;element name="SAML" type="{http://trdoccheck.bsi.bund.de/server/ics}ics.crypto.saml" minOccurs="0"/>
+ *         &lt;element name="eIDAS" type="{http://trdoccheck.bsi.bund.de/server/ics}ics.crypto.eidas" minOccurs="0"/>
  *         &lt;element name="ChipAuthentication" type="{http://trdoccheck.bsi.bund.de/server/ics}ics.crypto.ca"/>
  *       &lt;/all>
  *     &lt;/restriction>
@@ -44,38 +44,14 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class IcsCrypto {
 
-    @XmlElement(name = "eCard-Api", required = true)
-    protected IcsCryptoEcardapi eCardApi;
     @XmlElement(name = "eID-Interface")
     protected IcsCryptoEidinterface eidInterface;
+    @XmlElement(name = "eIDAS")
+    protected IcsCryptoEidas eidas;
     @XmlElement(name = "SAML")
     protected IcsCryptoSaml saml;
     @XmlElement(name = "ChipAuthentication", required = true)
     protected IcsCryptoCa chipAuthentication;
-
-    /**
-     * Ruft den Wert der eCardApi-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link IcsCryptoEcardapi }
-     *     
-     */
-    public IcsCryptoEcardapi getECardApi() {
-        return eCardApi;
-    }
-
-    /**
-     * Legt den Wert der eCardApi-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link IcsCryptoEcardapi }
-     *     
-     */
-    public void setECardApi(IcsCryptoEcardapi value) {
-        this.eCardApi = value;
-    }
 
     /**
      * Ruft den Wert der eidInterface-Eigenschaft ab.
@@ -123,6 +99,30 @@ public class IcsCrypto {
      */
     public void setSAML(IcsCryptoSaml value) {
         this.saml = value;
+    }
+
+    /**
+     * Ruft den Wert der eidas-Eigenschaft ab.
+     *
+     * @return
+     *     possible object is
+     *     {@link IcsCryptoEidas }
+     *
+     */
+    public IcsCryptoEidas getEIDAS() {
+        return eidas;
+    }
+
+    /**
+     * Legt den Wert der saml-Eigenschaft fest.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link IcsCryptoEidas }
+     *
+     */
+    public void setEIDAS(IcsCryptoEidas value) {
+        this.eidas = value;
     }
 
     /**

@@ -1,9 +1,9 @@
 package com.secunet.eidserver.testbed.tlsclient;
 
+import org.bouncycastle.tls.TlsPSKIdentity;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.bouncycastle.crypto.tls.TlsPSKIdentity;
 
 public class TLSPSKClientIdentity implements TlsPSKIdentity
 {

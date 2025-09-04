@@ -10,15 +10,7 @@ import com.secunet.eidserver.testbed.common.ics.IcsCaDomainparams;
 import com.secunet.eidserver.testbed.common.ics.IcsMandatoryprofile;
 import com.secunet.eidserver.testbed.common.ics.IcsOptionalprofile;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionContentUri;
-import com.secunet.eidserver.testbed.common.interfaces.entities.CertificateX509;
-import com.secunet.eidserver.testbed.common.interfaces.entities.Report;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestCase;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestRun;
-import com.secunet.eidserver.testbed.common.interfaces.entities.Tls;
-import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyAgreement;
-import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyTransport;
-import com.secunet.eidserver.testbed.common.interfaces.entities.XmlSignature;
+import com.secunet.eidserver.testbed.common.interfaces.entities.*;
 
 public class TestCandidateTestingPojo extends BaseTestingPojo implements Serializable, TestCandidate
 {
@@ -33,7 +25,6 @@ public class TestCandidateTestingPojo extends BaseTestingPojo implements Seriali
 	private int apiMinor;
 
 	private int apiSubminor;
-
 	private URL ecardapiUrl;
 
 	private URL eidinterfaceUrl;
@@ -54,14 +45,6 @@ public class TestCandidateTestingPojo extends BaseTestingPojo implements Seriali
 
 	private Set<TestRun> testRuns = new HashSet<>();
 
-	private Set<Tls> tlsEcardApiPsk = new HashSet<>();
-
-	private Set<Tls> tlsEcardApiAttached = new HashSet<>();
-
-	private Set<Tls> tlsEidInterface = new HashSet<>();
-
-	private Set<Tls> tlsSaml = new HashSet<>();
-
 	private String vendor;
 
 	private int versionMajor;
@@ -70,23 +53,41 @@ public class TestCandidateTestingPojo extends BaseTestingPojo implements Seriali
 
 	private int versionSubminor;
 
-	private Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithms = new HashSet<>();
+	private Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithmsSaml = new HashSet<>();
 
-	private Set<XmlEncryptionKeyAgreement> xmlKeyAgreement = new HashSet<>();
+	private Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithmsEidas = new HashSet<>();
 
-	private Set<XmlEncryptionKeyTransport> xmlKeyTransport = new HashSet<>();
+	private Set<XmlEncryptionKeyAgreement> xmlKeyAgreementSaml = new HashSet<>();
+
+	private Set<XmlEncryptionKeyAgreement> xmlKeyAgreementEidas = new HashSet<>();
+
+	private Set<XmlEncryptionKeyTransport> xmlKeyTransportSaml = new HashSet<>();
+
+	private Set<XmlEncryptionKeyTransport> xmlKeyTransportEidas = new HashSet<>();
 
 	private Set<XmlSignature> xmlSignatureAlgorithmsEid = new HashSet<>();
 
 	private Set<XmlSignature> xmlSignatureAlgorithmsSaml = new HashSet<>();
 
+	private Set<XmlSignature> xmlSignatureAlgorithmsEidas = new HashSet<>();
+
 	private Set<CertificateX509> x509Certificates = new HashSet<>();
+
+	private Set<CertificateCV> cvCertificates = new HashSet<>();
+
+	private Set<Blacklist> blacklists = new HashSet<>();
+
+	private Set<CryptoFile> cryptoFiles = new HashSet<>();
 
 	private Set<Report> reports = new HashSet<>();
 
 	private boolean multiClientCapable;
 
 	private String eidasMetadata;
+
+	private byte[] masterList;
+
+	private byte[] defectlist;
 
 	public TestCandidateTestingPojo()
 	{
@@ -225,15 +226,27 @@ public class TestCandidateTestingPojo extends BaseTestingPojo implements Seriali
 	}
 
 	@Override
-	public Set<IcsXmlsecEncryptionContentUri> getXmlEncryptionAlgorithms()
+	public Set<IcsXmlsecEncryptionContentUri> getXmlEncryptionAlgorithmsSaml()
 	{
-		return xmlEncryptionAlgorithms;
+		return xmlEncryptionAlgorithmsSaml;
 	}
 
 	@Override
-	public void setXmlEncryptionAlgorithms(Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithms)
+	public void setXmlEncryptionAlgorithmsSaml(Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithmsSaml)
 	{
-		this.xmlEncryptionAlgorithms = xmlEncryptionAlgorithms;
+		this.xmlEncryptionAlgorithmsSaml = xmlEncryptionAlgorithmsSaml;
+	}
+
+	@Override
+	public Set<IcsXmlsecEncryptionContentUri> getXmlEncryptionAlgorithmsEidas()
+	{
+		return xmlEncryptionAlgorithmsEidas;
+	}
+
+	@Override
+	public void setXmlEncryptionAlgorithmsEidas(Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithmsEidas)
+	{
+		this.xmlEncryptionAlgorithmsEidas = xmlEncryptionAlgorithmsEidas;
 	}
 
 	@Override
@@ -258,6 +271,18 @@ public class TestCandidateTestingPojo extends BaseTestingPojo implements Seriali
 	public void setXmlSignatureAlgorithmsSaml(Set<XmlSignature> xmlSignatureAlgorithmsSaml)
 	{
 		this.xmlSignatureAlgorithmsSaml = xmlSignatureAlgorithmsSaml;
+	}
+
+	@Override
+	public Set<XmlSignature> getXmlSignatureAlgorithmsEidas()
+	{
+		return xmlSignatureAlgorithmsEidas;
+	}
+
+	@Override
+	public void setXmlSignatureAlgorithmsEidas(Set<XmlSignature> xmlSignatureAlgorithmsEidas)
+	{
+		this.xmlSignatureAlgorithmsEidas = xmlSignatureAlgorithmsEidas;
 	}
 
 	@Override
@@ -318,7 +343,7 @@ public class TestCandidateTestingPojo extends BaseTestingPojo implements Seriali
 	}
 
 	/**
-	 * @see com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate#setCandidateName()
+	 * @see com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate#setCandidateName(String)
 	 */
 	@Override
 	public void setCandidateName(String candidateName)
@@ -327,75 +352,51 @@ public class TestCandidateTestingPojo extends BaseTestingPojo implements Seriali
 	}
 
 	@Override
-	public Set<Tls> getTlsEcardApiPsk()
+	public Set<XmlEncryptionKeyAgreement> getXmlKeyAgreementSaml()
 	{
-		return tlsEcardApiPsk;
+		return xmlKeyAgreementSaml;
 	}
 
 	@Override
-	public void setTlsEcardApiPsk(Set<Tls> tlsEcardApiPsk)
+	public void setXmlKeyAgreementSaml(Set<XmlEncryptionKeyAgreement> xmlKeyAgreementSaml)
 	{
-		this.tlsEcardApiPsk = tlsEcardApiPsk;
+		this.xmlKeyAgreementSaml = xmlKeyAgreementSaml;
 	}
 
 	@Override
-	public Set<Tls> getTlsEcardApiAttached()
+	public Set<XmlEncryptionKeyAgreement> getXmlKeyAgreementEidas()
 	{
-		return tlsEcardApiAttached;
+		return xmlKeyAgreementEidas;
 	}
 
 	@Override
-	public void setTlsEcardApiAttached(Set<Tls> tlsEcardApiAttached)
+	public void setXmlKeyAgreementEidas(Set<XmlEncryptionKeyAgreement> xmlKeyAgreementEidas)
 	{
-		this.tlsEcardApiAttached = tlsEcardApiAttached;
+		this.xmlKeyAgreementEidas = xmlKeyAgreementEidas;
 	}
 
 	@Override
-	public Set<Tls> getTlsEidInterface()
+	public Set<XmlEncryptionKeyTransport> getXmlKeyTransportSaml()
 	{
-		return tlsEidInterface;
+		return xmlKeyTransportSaml;
 	}
 
 	@Override
-	public void setTlsEidInterface(Set<Tls> tlsEidInterface)
+	public void setXmlKeyTransportSaml(Set<XmlEncryptionKeyTransport> xmlKeyTransportSaml)
 	{
-		this.tlsEidInterface = tlsEidInterface;
+		this.xmlKeyTransportSaml = xmlKeyTransportSaml;
 	}
 
 	@Override
-	public Set<Tls> getTlsSaml()
+	public Set<XmlEncryptionKeyTransport> getXmlKeyTransportEidas()
 	{
-		return tlsSaml;
+		return xmlKeyTransportEidas;
 	}
 
 	@Override
-	public void setTlsSaml(Set<Tls> tlsSaml)
+	public void setXmlKeyTransportEidas(Set<XmlEncryptionKeyTransport> xmlKeyTransportEidas)
 	{
-		this.tlsSaml = tlsSaml;
-	}
-
-	@Override
-	public Set<XmlEncryptionKeyAgreement> getXmlKeyAgreement()
-	{
-		return xmlKeyAgreement;
-	}
-
-	@Override
-	public void setXmlKeyAgreement(Set<XmlEncryptionKeyAgreement> xmlKeyAgreement)
-	{
-		this.xmlKeyAgreement = xmlKeyAgreement;
-	}
-
-	@Override
-	public Set<XmlEncryptionKeyTransport> getXmlKeyTransport()
-	{
-		return xmlKeyTransport;
-	}
-
-	@Override
-	public void setXmlKeyTransport(Set<XmlEncryptionKeyTransport> xmlKeyTransport)
-	{
-		this.xmlKeyTransport = xmlKeyTransport;
+		this.xmlKeyTransportEidas = xmlKeyTransportEidas;
 	}
 
 	@Override
@@ -489,4 +490,51 @@ public class TestCandidateTestingPojo extends BaseTestingPojo implements Seriali
 		return this.eidasMetadata;
 	}
 
+	@Override
+	public Set<CertificateCV> getCvCertificates() {
+		return cvCertificates;
+	}
+
+	@Override
+	public void setCvCertificates(Set<CertificateCV> cvCertificates) {
+		this.cvCertificates = cvCertificates;
+	}
+
+	@Override
+	public Set<Blacklist> getBlacklists() {
+		return blacklists;
+	}
+
+	@Override
+	public void setBlacklists(Set<Blacklist> blacklists) {
+		this.blacklists = blacklists;
+	}
+
+	@Override
+	public Set<CryptoFile> getCryptoFiles() {
+		return cryptoFiles;
+	}
+
+	@Override
+	public void setCryptoFiles(Set<CryptoFile> cryptoFiles) {
+		this.cryptoFiles = cryptoFiles;
+	}
+
+	public byte[] getMasterlist() {
+		return masterList;
+	}
+
+	public void setMasterlist(byte[] masterList) {
+		this.masterList = masterList;
+	}
+
+	@Override
+	public byte[] getDefectlist() {
+		return defectlist;
+	}
+
+	@Override
+	public void setDefectlist(byte[] defectlist) {
+		this.defectlist = defectlist;
+	}
 }

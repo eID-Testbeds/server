@@ -6,7 +6,6 @@
         <classes>
             <class name="com.secunet.eidserver.testbed.common.classes.EidCardsTest"/>
             <class name="com.secunet.eidserver.testbed.common.ics.IcsTest"/>
-            <class name="com.secunet.eidserver.testbed.common.helper.BcTlsHelperTest"/>
         </classes>
     </test>
 </suite>

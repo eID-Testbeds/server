@@ -1,0 +1,76 @@
+//
+// Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.8-b130911.1802 generiert 
+// Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
+// Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
+// Generiert: 2017.11.30 um 03:44:07 PM CET 
+//
+
+
+package com.secunet.eidserver.testbed.common.ics;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+
+/**
+ * <p>Java-Klasse für ics.xmlencryption.keytransport complex type.
+ * 
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * 
+ * <pre>
+ * &lt;complexType name="ics.xmlencryption.keytransport">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence maxOccurs="unbounded">
+ *         &lt;element name="TransportAlgorithm" type="{http://trdoccheck.bsi.bund.de/server/ics}ics.xmlencryption.keytransport.algorithm"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ics.xmlencryption.keytransport", propOrder = {
+    "transportAlgorithm"
+})
+public class IcsXmlencryptionKeytransport {
+
+    @XmlElement(name = "TransportAlgorithm", required = true)
+    protected List<IcsXmlencryptionKeytransportAlgorithm> transportAlgorithm;
+
+    /**
+     * Gets the value of the transportAlgorithm property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the transportAlgorithm property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getTransportAlgorithm().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link IcsXmlencryptionKeytransportAlgorithm }
+     * 
+     * 
+     */
+    public List<IcsXmlencryptionKeytransportAlgorithm> getTransportAlgorithm() {
+        if (transportAlgorithm == null) {
+            transportAlgorithm = new ArrayList<IcsXmlencryptionKeytransportAlgorithm>();
+        }
+        return this.transportAlgorithm;
+    }
+
+}

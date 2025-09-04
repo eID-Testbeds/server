@@ -4,7 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
-import org.vaadin.viritin.ListContainer;
+import org.vaadin.viritinv7.ListContainer;
 
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCaseStep;
 import com.secunet.eidserver.testbed.web.i18n.I18NHandler;
@@ -13,8 +13,8 @@ import com.secunet.eidserver.testbed.web.ui.comp.TogglePanelLayout;
 import com.secunet.eidserver.testbed.web.ui.util.Humanizer;
 import com.secunet.eidserver.testbed.web.ui.view.step.TeststepEditModel;
 import com.vaadin.server.Resource;
-import com.vaadin.shared.ui.combobox.FilteringMode;
-import com.vaadin.ui.ComboBox;
+import com.vaadin.v7.shared.ui.combobox.FilteringMode;
+import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 
 public class StepSelectionPanel extends TogglePanelLayout implements PropertyChangeListener

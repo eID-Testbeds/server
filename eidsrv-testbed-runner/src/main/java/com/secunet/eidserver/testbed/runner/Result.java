@@ -37,9 +37,9 @@ public class Result<T>
 	 * @param computedValue
 	 *            the computedValue to set
 	 */
-	public void setComputed(T computed)
+	public void setComputed(T computedValue)
 	{
-		this.computedValue = Optional.of(computed);
+		this.computedValue = Optional.of(computedValue);
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.secunet.eidserver.testbed.web.ui.comp;
 
-import com.vaadin.ui.TreeTable;
+import com.vaadin.v7.ui.TreeTable;
 
 /**
  * 

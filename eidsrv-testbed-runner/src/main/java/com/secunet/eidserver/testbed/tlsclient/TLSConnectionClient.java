@@ -12,12 +12,12 @@ import java.security.SecureRandom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.crypto.tls.Certificate;
-import org.bouncycastle.crypto.tls.CipherSuite;
-import org.bouncycastle.crypto.tls.TlsClient;
-import org.bouncycastle.crypto.tls.TlsClientProtocol;
 
 import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
+import org.bouncycastle.tls.Certificate;
+import org.bouncycastle.tls.CipherSuite;
+import org.bouncycastle.tls.TlsClient;
+import org.bouncycastle.tls.TlsClientProtocol;
 
 public class TLSConnectionClient
 {
@@ -46,20 +46,6 @@ public class TLSConnectionClient
 		usePSK = false;
 		clientAuth = true;
 		supported_suites = new int[] { CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 };
-	}
-
-	// Initialize the class to use client certificates and PSK
-	public TLSConnectionClient(String target_host, int target_port, Certificate client_cert, AsymmetricKeyParameter client_keys, byte[] PSK_ID, byte[] PSK)
-	{
-		host = target_host;
-		port = (target_port != -1) ? target_port : 443;
-		clientCert = client_cert;
-		clientKey = client_keys;
-		PSKIdentity = PSK_ID;
-		PreSharedKey = PSK;
-		usePSK = true;
-		clientAuth = true;
-		supported_suites = new int[] { CipherSuite.TLS_RSA_PSK_WITH_AES_256_CBC_SHA, CipherSuite.TLS_PSK_WITH_AES_256_CBC_SHA };
 	}
 
 	// Initialize the class to use sever certificates only
@@ -102,7 +88,7 @@ public class TLSConnectionClient
 		// Choose the connection class depending on the usage of PSK/Client certificate
 		if (usePSK)
 		{
-			myTLSClient = new TLSConnectionPSK(host, PSKIdentity, PreSharedKey);
+			myTLSClient = (TlsClient) new TLSConnectionPSK(host, PSKIdentity, PreSharedKey);
 		}
 		else
 		{
@@ -118,7 +104,7 @@ public class TLSConnectionClient
 		// Open the connection
 		socket = new Socket(host, port);
 		logger.debug("Connection opened to " + host + " on port " + port);
-		tlsClientProtocol = new TlsClientProtocol(socket.getInputStream(), socket.getOutputStream(), random);
+		tlsClientProtocol = new TlsClientProtocol(socket.getInputStream(), socket.getOutputStream());
 		tlsClientProtocol.connect(myTLSClient);
 
 		reader = new BufferedReader(new InputStreamReader(tlsClientProtocol.getInputStream()));

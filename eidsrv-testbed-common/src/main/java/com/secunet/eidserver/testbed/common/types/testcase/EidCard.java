@@ -35,8 +35,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="EIDCARD_12_2"/>
  *     &lt;enumeration value="EIDCARD_12_3"/>
  *     &lt;enumeration value="EIDCARD_13"/>
- *     &lt;enumeration value="EIDCARD_14"/>
- *     &lt;enumeration value="EIDCARD_15"/>
+ *     &lt;enumeration value="EIDCARD_1_NOMAC"/>
+ *     &lt;enumeration value="EIDCARD_1_INVMAC"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -47,9 +47,19 @@ import javax.xml.bind.annotation.XmlType;
 public enum EidCard {
 
     EIDCARD_1,
+    EIDCARD_1_NOMAC,
+    EIDCARD_1_INVMAC,
     EIDCARD_2,
     EIDCARD_3,
-    EIDCARD_4,
+    EIDCARD_4_T_BRAINPOOLP384R1_CA_ECDH_AES_CBC_CMAC_256,
+    EIDCARD_4_T_BRAINPOOLP384R1_CA_ECDH_AES_CBC_CMAC_192,
+    EIDCARD_4_T_BRAINPOOLP384R1_CA_ECDH_AES_CBC_CMAC_128,
+    EIDCARD_4_T_BRAINPOOLP256R1_CA_ECDH_AES_CBC_CMAC_256,
+    EIDCARD_4_T_BRAINPOOLP256R1_CA_ECDH_AES_CBC_CMAC_192,
+    EIDCARD_4_T_BRAINPOOLP256R1_CA_ECDH_AES_CBC_CMAC_128,
+    EIDCARD_4_T_BRAINPOOLP512R1_CA_ECDH_AES_CBC_CMAC_256,
+    EIDCARD_4_T_BRAINPOOLP512R1_CA_ECDH_AES_CBC_CMAC_192,
+    EIDCARD_4_T_BRAINPOOLP512R1_CA_ECDH_AES_CBC_CMAC_128,
     EIDCARD_5,
     EIDCARD_6,
     EIDCARD_7,

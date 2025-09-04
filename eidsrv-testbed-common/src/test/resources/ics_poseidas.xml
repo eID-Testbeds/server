@@ -27,61 +27,15 @@
 		<MandatoryProfile>REVOKED_CARD</MandatoryProfile>
 		<MandatoryProfile>EXPIRED_CARD</MandatoryProfile>
 		<MandatoryProfile>NONAUTH_CARD</MandatoryProfile>
-		<MandatoryProfile>RI_MIGRATION</MandatoryProfile>
 		<MandatoryProfile>DG_VARIATIONS</MandatoryProfile>
 		<OptionalProfile>SOAP</OptionalProfile>
 		<OptionalProfile>SOAP_TLS</OptionalProfile>
 		<OptionalProfile>TLS_PSK</OptionalProfile>
+		<OptionalProfile>RI_MIGRATION</OptionalProfile>
 	</Profiles>
 
 	<Cryptography>
-
-		<eCard-Api>
-			<PskChannel>
-				<TLS version="TLSv12">
-					<Ciphersuites>
-						<Ciphersuite>TLS_RSA_PSK_WITH_AES_256_CBC_SHA</Ciphersuite>
-					</Ciphersuites>
-				</TLS>
-				<TLS version="TLSv11">
-					<Ciphersuites>
-						<Ciphersuite>TLS_RSA_PSK_WITH_AES_256_CBC_SHA</Ciphersuite>
-					</Ciphersuites>
-				</TLS>
-			</PskChannel>
-			<AttachedServer>
-				<TLS version="TLSv12">
-					<Ciphersuites>
-						<Ciphersuite>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384</Ciphersuite>
-					</Ciphersuites>
-					<EllipticCurves>
-						<NamedCurve>secp256r1</NamedCurve>
-					</EllipticCurves>
-					<SignatureAlgorithms>
-						<Algorithm>SHA1withRSA</Algorithm>
-					</SignatureAlgorithms>
-				</TLS>
-			</AttachedServer>
-		</eCard-Api>
-
 		<eID-Interface>
-			<TLS version="TLSv12">
-				<Ciphersuites>
-					<Ciphersuite>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384</Ciphersuite>
-				</Ciphersuites>
-				<EllipticCurves>
-					<NamedCurve>secp256r1</NamedCurve>
-				</EllipticCurves>
-				<SignatureAlgorithms>
-					<Algorithm>SHA256withRSA</Algorithm>
-				</SignatureAlgorithms>
-				<ClientCertificates>
-					<ClientCertificate>
-						<Type>rsa_sign</Type>
-						<SignatureAlgorithm>SHA256withRSA</SignatureAlgorithm>
-					</ClientCertificate>
-				</ClientCertificates>
-			</TLS>
 			<XmlSignature>
 				<Signature URI="http://www.w3.org/2000/09/xmldsig#rsa-sha1">
 					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>
@@ -111,19 +65,6 @@
 		</eID-Interface>
 
 		<SAML>
-			<TransportSecurity>
-				<TLS version="TLSv12">
-					<Ciphersuites>
-						<Ciphersuite>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384</Ciphersuite>
-					</Ciphersuites>
-					<EllipticCurves>
-						<NamedCurve>secp256r1</NamedCurve>
-					</EllipticCurves>
-					<SignatureAlgorithms>
-						<Algorithm>SHA256withRSA</Algorithm>
-					</SignatureAlgorithms>
-				</TLS>
-			</TransportSecurity>
 			<XmlSignature>
 				<Signature URI="http://www.w3.org/2000/09/xmldsig#rsa-sha1">
 					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>

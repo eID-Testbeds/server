@@ -14,6 +14,8 @@ public class LogMessageTestingPojo extends BaseTestingPojo implements Serializab
 
 	private String testStepName;
 
+	private Long testStepNumber;
+
 	public LogMessageTestingPojo()
 	{
 	}
@@ -59,6 +61,18 @@ public class LogMessageTestingPojo extends BaseTestingPojo implements Serializab
 	public void setTestStepName(String name)
 	{
 		this.testStepName = name;
+	}
+
+	@Override
+	public Long getTestStepNumber()
+	{
+		return testStepNumber;
+	}
+
+	@Override
+	public void setTestStepNumber(Long number)
+	{
+		this.testStepNumber = number;
 	}
 
 }

@@ -200,11 +200,6 @@
 			<xs:documentation xml:lang="en" xml:space="preserve">The data type for the Cryptography.</xs:documentation>
 		</xs:annotation>
 		<xs:all>
-			<xs:element name="eCard-Api" type="sics:ics.crypto.ecardapi">
-				<xs:annotation>
-					<xs:documentation xml:lang="en" xml:space="preserve">This element contains the cryptographic algorithms and parameters supported by the test candidate on the eCard-API interface.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="eID-Interface" type="sics:ics.crypto.eidinterface"
 				minOccurs="0">
 				<xs:annotation>
@@ -217,6 +212,12 @@
 					<xs:documentation xml:lang="en" xml:space="preserve">This element contains the cryptographic algorithms and parameters supported by the test candidate during SAML communication.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="eIDAS" type="sics:ics.crypto.eidas"
+						minOccurs="0">
+				<xs:annotation>
+					<xs:documentation xml:lang="en" xml:space="preserve">This element contains the cryptographic algorithms and parameters supported by the test candidate during eIDAS communication.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="ChipAuthentication" type="sics:ics.crypto.ca">
 				<xs:annotation>
 					<xs:documentation xml:lang="en" xml:space="preserve">This element contains the cryptographic algorithms and parameters for XML signature generation.</xs:documentation>
@@ -225,97 +226,14 @@
 		</xs:all>
 	</xs:complexType>
 
-	<xs:complexType name="ics.crypto.ecardapi">
-		<xs:sequence>
-			<xs:element name="PskChannel" type="sics:ics.crypto.ecardapi.psktls"
-				minOccurs="0" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>The TLS protocol version and the respective
-						ciphersuites supported while communicating over TLS2 on the
-						eCard-API Interface.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="AttachedServer" type="sics:ics.crypto.tls"
-				minOccurs="0" maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation>The TLS protocol version and the respective
-						ciphersuites supported while communicating on the eCard-API
-						Interface in attached mode.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-	
-	<xs:complexType name="ics.crypto.ecardapi.psktls">
-		<xs:sequence>
-			<xs:element name="TLS" type="sics:ics.crypto.tls.type"
-				maxOccurs="3">
-				<xs:annotation>
-					<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the TLS versions supported by the test candidate on the PSK channel.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-
 	<xs:complexType name="ics.crypto.eidinterface">
-		<xs:choice minOccurs="1" maxOccurs="unbounded">
-			<xs:element name="TLS" type="sics:ics.crypto.eidinterface.tls.type.ec.and.signature.with.clientcertificates">
-				<xs:annotation>
-					<xs:documentation>This element contains information about the
-						transport layer security mechanisms supported on the
-						eID-Interface.
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
+		<xs:all>
 			<xs:element name="XmlSignature" type="sics:ics.xmlsignatures">
 				<xs:annotation>
 					<xs:documentation>This element contains information about the
 						transport layer security mechanisms supported on the
 						eID-Interface.
 					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:choice>
-	</xs:complexType>
-	
-	<xs:complexType name="ics.crypto.eidinterface.tls.type.ec.and.signature.with.clientcertificates">
-		<xs:complexContent>
-			<xs:extension base="sics:ics.crypto.tls.type.ec.and.signature">
-				<xs:choice minOccurs="1" maxOccurs="1">
-					<xs:element name="ClientCertificates"
-						type="sics:ics.crypto.eidinterface.tls.clientcertificates.type" minOccurs="0" maxOccurs="1">
-						<xs:annotation>
-							<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the TLS versions supported by the test candidate.</xs:documentation>
-						</xs:annotation>
-					</xs:element>
-				</xs:choice>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-
-	<xs:complexType name="ics.crypto.eidinterface.tls.clientcertificates.type">
-		<xs:choice maxOccurs="unbounded">
-			<xs:element name="ClientCertificate" minOccurs="1"
-				type="sics:ics.crypto.eidinterface.tls.clientcertificate">
-				<xs:annotation>
-					<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the types and signature algorithms for client certificates supported by the candidate.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:choice>
-	</xs:complexType>
-
-	<xs:complexType name="ics.crypto.eidinterface.tls.clientcertificate">
-		<xs:all>
-			<xs:element name="Type" type="sics:ics.tls.clientcertificate.type">
-				<xs:annotation>
-					<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the type of the client certificate supported by the candidate.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="SignatureAlgorithm" type="sics:ics.tls.signaturealgorithms">
-				<xs:annotation>
-					<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the type of the client certificate supported by the candidate.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:all>
@@ -326,17 +244,12 @@
 			<xs:documentation></xs:documentation>
 		</xs:annotation>
 		<xs:all>
-			<xs:element name="TransportSecurity" type="sics:ics.crypto.tls">
-				<xs:annotation>
-					<xs:documentation></xs:documentation>
-				</xs:annotation>
-			</xs:element>
 			<xs:element name="XmlSignature" type="sics:ics.xmlsignatures">
 				<xs:annotation>
 					<xs:documentation></xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="XmlEncryption" type="sics:ics.crypto.saml.xmlencryption">
+			<xs:element name="XmlEncryption" type="sics:ics.xmlencryption">
 				<xs:annotation>
 					<xs:documentation></xs:documentation>
 				</xs:annotation>
@@ -344,36 +257,54 @@
 		</xs:all>
 	</xs:complexType>
 
-	<xs:complexType name="ics.crypto.saml.xmlencryption">
+	<xs:complexType name="ics.crypto.eidas">
+		<xs:annotation>
+			<xs:documentation></xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="XmlSignature" type="sics:ics.xmlsignatures">
+				<xs:annotation>
+					<xs:documentation></xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="XmlEncryption" type="sics:ics.xmlencryption">
+				<xs:annotation>
+					<xs:documentation></xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ics.xmlencryption">
 		<xs:annotation>
 			<xs:documentation xml:lang="en" xml:space="preserve">The data type for the XML encryption.</xs:documentation>
 		</xs:annotation>
 		<xs:all>
 			<xs:element name="KeyTransportAlgorithms"
-				type="sics:ics.crypto.saml.xmlencryption.keytransport">
+				type="sics:ics.xmlencryption.keytransport">
 				<xs:annotation>
 					<xs:documentation xml:lang="en" xml:space="preserve">This element contains the URI of a supported XML encryption algorithm.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="KeyAgreementAlgorithms"
-				type="sics:ics.crypto.saml.xmlencryption.keyagreement.algorithms">
+				type="sics:ics.xmlencryption.keyagreement.algorithms">
 				<xs:annotation>
 					<xs:documentation xml:lang="en" xml:space="preserve">This element contains the URI of a supported algorithm for XML encryption.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="ContentEncryptionAlgorithms"
-				type="sics:ics.crypto.saml.xmlencryption.contentencryption" />
+				type="sics:ics.xmlencryption.contentencryption" />
 		</xs:all>
 	</xs:complexType>
 
-	<xs:complexType name="ics.crypto.saml.xmlencryption.keytransport">
+	<xs:complexType name="ics.xmlencryption.keytransport">
 		<xs:sequence maxOccurs="unbounded">
 			<xs:element name="TransportAlgorithm"
-				type="sics:ics.crypto.saml.xmlencryption.keytransport.algorithm" />
+				type="sics:ics.xmlencryption.keytransport.algorithm" />
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="ics.crypto.saml.xmlencryption.keytransport.algorithm">
+	<xs:complexType name="ics.xmlencryption.keytransport.algorithm">
 		<xs:sequence maxOccurs="unbounded">
 			<xs:element name="Parameter" type="sics:ics.bitlength" />
 		</xs:sequence>
@@ -381,14 +312,14 @@
 			type="sics:ics.xmlsec.encryption.key.transport.uri" use="required" />
 	</xs:complexType>
 
-	<xs:complexType name="ics.crypto.saml.xmlencryption.keyagreement.algorithms">
+	<xs:complexType name="ics.xmlencryption.keyagreement.algorithms">
 		<xs:sequence maxOccurs="unbounded">
 			<xs:element name="AgreementAlgorithm"
-				type="sics:ics.crypto.saml.xmlencryption.keyagreement.algorithm" />
+				type="sics:ics.xmlencryption.keyagreement.algorithm" />
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="ics.crypto.saml.xmlencryption.keyagreement.algorithm">
+	<xs:complexType name="ics.xmlencryption.keyagreement.algorithm">
 		<xs:all>
 			<xs:element name="Parameters" type="sics:ics.xmlsecurity.parameters" />
 			<xs:element name="KeyWrappingUri"
@@ -398,7 +329,7 @@
 			type="sics:ics.xmlsec.encryption.key.agreement.uri" use="required" />
 	</xs:complexType>
 
-	<xs:complexType name="ics.crypto.saml.xmlencryption.contentencryption">
+	<xs:complexType name="ics.xmlencryption.contentencryption">
 		<xs:sequence maxOccurs="unbounded">
 			<xs:element name="URI" type="sics:ics.xmlsec.encryption.content.uri">
 				<xs:annotation>
@@ -426,94 +357,6 @@
 
 
 	<!-- Shared complex types -->
-	
-	<xs:complexType name="ics.crypto.tls">
-		<xs:annotation>
-			<xs:documentation xml:lang="en" xml:space="preserve">The data type for the Cryptography algorithms and parameters used by the connections of the test candidate.</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="TLS" type="sics:ics.crypto.tls.type.ec.and.signature"
-				maxOccurs="3">
-				<xs:annotation>
-					<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the TLS versions supported by the test candidate on the respective channel.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="ics.crypto.tls.type">
-		<xs:choice>
-			<xs:element name="Ciphersuites" type="sics:ics.crypto.tls.ciphersuites.type">
-				<xs:annotation>
-					<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the ciphersute supported by the test candidate on the given channel.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:choice>
-		<xs:attribute name="version" type="sics:ics.tls.version"
-			use="required">
-			<xs:annotation>
-				<xs:documentation>The attribute which specifies the TLS versions
-					supported by the test candidate.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-	</xs:complexType>
-
-	<xs:complexType name="ics.crypto.tls.type.ec.and.signature">
-		<xs:complexContent>
-			<xs:extension base="sics:ics.crypto.tls.type">
-				<xs:choice minOccurs="1" maxOccurs="2">
-					<xs:element name="EllipticCurves"
-						type="sics:ics.crypto.tls.ellipticcurves" maxOccurs="1">
-						<xs:annotation>
-							<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the TLS versions supported by the test candidate.</xs:documentation>
-						</xs:annotation>
-					</xs:element>
-					<xs:element name="SignatureAlgorithms"
-						type="sics:ics.crypto.tls.signaturealgorithms" minOccurs="1"
-						maxOccurs="1">
-						<xs:annotation>
-							<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the TLS versions supported by the test candidate.</xs:documentation>
-						</xs:annotation>
-					</xs:element>
-				</xs:choice>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-
-	<xs:complexType name="ics.crypto.tls.ellipticcurves">
-		<xs:annotation>
-			<xs:documentation xml:lang="en" xml:space="preserve">The data type for the Cryptography algorithms and parameters used by the connections of the test candidate.</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="NamedCurve" type="sics:ics.ellipticcurve" minOccurs="1" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the TLS versions supported by the test candidate on the respective channel.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="ics.crypto.tls.ciphersuites.type">
-		<xs:choice maxOccurs="unbounded">
-			<xs:element name="Ciphersuite" minOccurs="1"
-				type="sics:ics.tls.ciphersuite">
-				<xs:annotation>
-					<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the ciphersuites supported by the test candidate.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:choice>
-	</xs:complexType>
-
-	<xs:complexType name="ics.crypto.tls.signaturealgorithms">
-		<xs:choice maxOccurs="unbounded">
-			<xs:element name="Algorithm" minOccurs="1"
-				type="sics:ics.tls.signaturealgorithms">
-				<xs:annotation>
-					<xs:documentation xml:lang="en" xml:space="preserve">The element which specifies the signature algorithms supported by the test candidate on the given TLS channel.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:choice>
-	</xs:complexType>
 
 	<xs:complexType name="ics.xmlsignatures">
 		<xs:annotation>
@@ -587,8 +430,11 @@
 			<xs:enumeration value="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
 			<xs:enumeration value="http://www.w3.org/2001/04/xmldsig-more#rsa-sha224" />
 			<xs:enumeration value="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
+			<xs:enumeration value="http://www.w3.org/2007/05/xmldsig-more#sha256-rsa-MGF1"/>
 			<xs:enumeration value="http://www.w3.org/2001/04/xmldsig-more#rsa-sha384" />
+			<xs:enumeration value="http://www.w3.org/2007/05/xmldsig-more#sha384-rsa-MGF1"/>
 			<xs:enumeration value="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512" />
+			<xs:enumeration value="http://www.w3.org/2007/05/xmldsig-more#sha512-rsa-MGF1"/>
 			<xs:enumeration
 				value="http://www.w3.org/2001/04/xmldsig-more#rsa-ripemd160" />
 			<xs:enumeration value="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1" />
@@ -680,102 +526,6 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:simpleType name="ics.tls.signaturealgorithms">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="SHA1withRSA" />
-			<xs:enumeration value="SHA224withRSA" />
-			<xs:enumeration value="SHA256withRSA" />
-			<xs:enumeration value="SHA384withRSA" />
-			<xs:enumeration value="SHA512withRSA" />
-			<xs:enumeration value="SHA1withDSA" />
-			<xs:enumeration value="SHA224withDSA" />
-			<xs:enumeration value="SHA256withDSA" />
-			<xs:enumeration value="SHA384withDSA" />
-			<xs:enumeration value="SHA512withDSA" />
-			<xs:enumeration value="SHA1withECDSA" />
-			<xs:enumeration value="SHA224withECDSA" />
-			<xs:enumeration value="SHA256withECDSA" />
-			<xs:enumeration value="SHA384withECDSA" />
-			<xs:enumeration value="SHA512withECDSA" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="ics.tls.ciphersuite">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA" />
-			<xs:enumeration value="TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA" />
-			<xs:enumeration value="TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA" />
-			<xs:enumeration value="TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA" />
-			<xs:enumeration value="TLS_DH_DSS_WITH_AES_128_CBC_SHA" />
-			<xs:enumeration value="TLS_DH_RSA_WITH_AES_128_CBC_SHA" />
-			<xs:enumeration value="TLS_DHE_DSS_WITH_AES_128_CBC_SHA" />
-			<xs:enumeration value="TLS_DHE_RSA_WITH_AES_128_CBC_SHA" />
-			<xs:enumeration value="TLS_DH_DSS_WITH_AES_256_CBC_SHA" />
-			<xs:enumeration value="TLS_DH_RSA_WITH_AES_256_CBC_SHA" />
-			<xs:enumeration value="TLS_DHE_DSS_WITH_AES_256_CBC_SHA" />
-			<xs:enumeration value="TLS_DHE_RSA_WITH_AES_256_CBC_SHA" />
-			<xs:enumeration value="TLS_DH_DSS_WITH_AES_128_CBC_SHA256" />
-			<xs:enumeration value="TLS_DH_RSA_WITH_AES_128_CBC_SHA256" />
-			<xs:enumeration value="TLS_DHE_DSS_WITH_AES_128_CBC_SHA256" />
-			<xs:enumeration value="TLS_DH_DSS_WITH_AES_256_CBC_SHA256" />
-			<xs:enumeration value="TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA" />
-			<xs:enumeration value="TLS_DH_RSA_WITH_AES_256_CBC_SHA256" />
-			<xs:enumeration value="TLS_DHE_DSS_WITH_AES_256_CBC_SHA256" />
-			<xs:enumeration value="TLS_DHE_RSA_WITH_AES_256_CBC_SHA256" />
-			<xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256" />
-			<xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384" />
-			<xs:enumeration value="TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256" />
-			<xs:enumeration value="TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384" />
-			<xs:enumeration value="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256" />
-			<xs:enumeration value="TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384" />
-			<xs:enumeration value="TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256" />
-			<xs:enumeration value="TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384" />
-			<xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256" />
-			<xs:enumeration value="TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384" />
-			<xs:enumeration value="TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256" />
-			<xs:enumeration value="TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384" />
-			<xs:enumeration value="TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" />
-			<xs:enumeration value="TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384" />
-			<xs:enumeration value="TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256" />
-			<xs:enumeration value="TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384" />
-			<xs:enumeration value="TLS_RSA_PSK_WITH_RC4_128_SHA" />
-			<xs:enumeration value="TLS_RSA_PSK_WITH_3DES_EDE_CBC_SHA" />
-			<xs:enumeration value="TLS_RSA_PSK_WITH_AES_128_CBC_SHA" />
-			<xs:enumeration value="TLS_RSA_PSK_WITH_AES_256_CBC_SHA" />
-			<xs:enumeration value="TLS_RSA_PSK_WITH_AES_128_CBC_SHA256" />
-			<xs:enumeration value="TLS_RSA_PSK_WITH_AES_256_CBC_SHA384" />
-			<xs:enumeration value="TLS_RSA_PSK_WITH_AES_128_GCM_SHA256" />
-			<xs:enumeration value="TLS_RSA_PSK_WITH_AES_256_GCM_SHA384" />
-			<xs:enumeration value="TLS_DHE_RSA_WITH_AES_256_GCM_SHA384" />
-			<xs:enumeration value="TLS_DHE_RSA_WITH_AES_128_GCM_SHA256" />
-			<xs:enumeration value="TLS_DHE_RSA_WITH_AES_128_CBC_SHA256" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="ics.tls.clientcertificate.type">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="rsa_sign" />
-			<xs:enumeration value="dss_sign" />
-			<xs:enumeration value="rsa_fixed_dh" />
-			<xs:enumeration value="dss_fixed_dh" />
-			<xs:enumeration value="rsa_ephemeral_dh_RESERVED" />
-			<xs:enumeration value="dss_ephemeral_dh_RESERVED" />
-			<xs:enumeration value="fortezza_dms_RESERVED" />
-			<xs:enumeration value="ecdsa_sign" />
-			<xs:enumeration value="rsa_fixed_ecdh" />
-			<xs:enumeration value="ecdsa_fixed_ecdh" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="ics.tls.version">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="SSLv3" /> <!-- This is only used for negative testing purposes. Do NOT implement it -->
-			<xs:enumeration value="TLSv10" />
-			<xs:enumeration value="TLSv11" />
-			<xs:enumeration value="TLSv12" />
-		</xs:restriction>
-	</xs:simpleType>
-
 	<xs:simpleType name="ics.ellipticcurve">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="sect163k1" />
@@ -802,6 +552,11 @@
 			<xs:enumeration value="secp256r1" />
 			<xs:enumeration value="secp384r1" />
 			<xs:enumeration value="secp521r1" />
+			<xs:enumeration value="brainpoolp224r1" />
+			<xs:enumeration value="brainpoolp256r1" />
+			<xs:enumeration value="brainpoolp320r1" />
+			<xs:enumeration value="brainpoolp384r1" />
+			<xs:enumeration value="brainpoolp512r1" />
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -859,7 +614,6 @@
 			<xs:enumeration value="REVOKED_CARD" />
 			<xs:enumeration value="EXPIRED_CARD" />
 			<xs:enumeration value="NONAUTH_CARD" />
-			<xs:enumeration value="RI_MIGRATION" />
 			<xs:enumeration value="CRYPTO" />
 			<xs:enumeration value="DG_VARIATIONS" />
 		</xs:restriction>
@@ -873,11 +627,11 @@
 			<xs:enumeration value="SAML_ATTACHED" />
 			<xs:enumeration value="ESER_ATTACHED" />
 			<xs:enumeration value="TLS_PSK" />
-			<xs:enumeration value="TLS_ETM" />
 			<xs:enumeration value="ALL_LINK" />
 			<xs:enumeration value="CONF_MAX_SE" />
 			<xs:enumeration value="CONF_TM_OUT" />
 			<xs:enumeration value="EIDAS_MW" />
+			<xs:enumeration value="RI_MIGRATION" />
 		</xs:restriction>
 	</xs:simpleType>
 

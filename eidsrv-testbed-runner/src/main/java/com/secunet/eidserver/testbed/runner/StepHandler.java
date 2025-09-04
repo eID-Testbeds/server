@@ -1,37 +1,23 @@
 package com.secunet.eidserver.testbed.runner;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import com.secunet.eidserver.testbed.common.classes.EidCards;
+import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
+import com.secunet.eidserver.testbed.common.enumerations.Functional;
+import com.secunet.eidserver.testbed.common.enumerations.Replaceable;
+import com.secunet.eidserver.testbed.common.enumerations.RequestAttribute;
+import com.secunet.eidserver.testbed.common.enumerations.SpecialFunction;
+import com.secunet.eidserver.testbed.common.interfaces.dao.LogMessageDAO;
+import com.secunet.eidserver.testbed.common.interfaces.entities.LogMessage;
+import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
+import com.secunet.eidserver.testbed.common.interfaces.entities.TestCaseStep;
+import com.secunet.eidserver.testbed.common.types.testcase.*;
+import com.secunet.eidserver.testbed.runner.exceptions.EphemeralKeyNotFoundException;
+import com.secunet.eidserver.testbed.runner.exceptions.InvalidTestCaseDescriptionException;
+import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyException;
+import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
+import com.secunet.testbedutils.cvc.cvcertificate.DataBuffer;
+import com.secunet.testbedutils.cvc.cvcertificate.exception.*;
+import com.secunet.testbedutils.utilities.JaxBUtil;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.logging.log4j.LogManager;
@@ -45,33 +31,26 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import com.secunet.eidserver.testbed.common.classes.EidCards;
-import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
-import com.secunet.eidserver.testbed.common.enumerations.Functional;
-import com.secunet.eidserver.testbed.common.enumerations.Replaceable;
-import com.secunet.eidserver.testbed.common.enumerations.RequestAttribute;
-import com.secunet.eidserver.testbed.common.enumerations.SpecialFunction;
-import com.secunet.eidserver.testbed.common.interfaces.dao.LogMessageDAO;
-import com.secunet.eidserver.testbed.common.interfaces.entities.LogMessage;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestCaseStep;
-import com.secunet.eidserver.testbed.common.types.testcase.EService;
-import com.secunet.eidserver.testbed.common.types.testcase.EidCard;
-import com.secunet.eidserver.testbed.common.types.testcase.OptAttrString;
-import com.secunet.eidserver.testbed.common.types.testcase.Step;
-import com.secunet.eidserver.testbed.common.types.testcase.StepToken;
-import com.secunet.eidserver.testbed.common.types.testcase.TestStepType;
-import com.secunet.eidserver.testbed.runner.exceptions.EphemeralKeyNotFoundException;
-import com.secunet.eidserver.testbed.runner.exceptions.InvalidTestCaseDescriptionException;
-import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyException;
-import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
-import com.secunet.testbedutils.cvc.cvcertificate.DataBuffer;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVBufferNotEmptyException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVDecodeErrorException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVInvalidDateException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVInvalidECPointLengthException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVInvalidOidException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVTagNotFoundException;
-import com.secunet.testbedutils.utilities.JaxBUtil;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public abstract class StepHandler
 {
@@ -86,9 +65,6 @@ public abstract class StepHandler
 
 	// the known certificates
 	protected Map<String, CVCertificate> knownCvCertificates;
-
-	// the candidate name
-	protected String candidateName;
 
 	// abort the test?
 	private boolean abort = false;
@@ -108,20 +84,15 @@ public abstract class StepHandler
 
 	private final int expectedNumOfCv;
 
+	protected TestCandidate candidate;
+
 	// the instance used to valide message elements that need computations
 	protected ComputationHelper computationHelper;
 
-	protected StepHandler(String candidateName, KnownValues values, LogMessageDAO logMessageDAO, final EService service, final EidCard card, final int expectedNumOfCv)
+	protected StepHandler(TestCandidate candidate, KnownValues values, LogMessageDAO logMessageDAO, final EService service, final EidCard card, final int expectedNumOfCv)
 	{
-		this.candidateName = candidateName;
-		if (null != values)
-		{
-			this.knownValues = values;
-		}
-		else
-		{
-			this.knownValues = new KnownValues();
-		}
+		this.candidate = candidate;
+        this.knownValues = Objects.requireNonNullElseGet(values, KnownValues::new);
 		this.logMessageDAO = logMessageDAO;
 		this.card = card;
 		this.service = service;
@@ -129,18 +100,18 @@ public abstract class StepHandler
 	}
 
 	// fill values that are already known
-	protected void fillCommonData(String candidateName, URL candidateUrl, String testbedRefreshAdress, EidCard card)
+	protected void fillCommonData(TestCandidate candidate, String testbedRefreshAddress, EidCard card)
 	{
 		knownValues.add(new KnownValue(Replaceable.USER_AGENT.toString(),
 				(GeneralConstants.USER_AGENT_NAME + "/" + GeneralConstants.USER_AGENT_MAJOR + "." + GeneralConstants.USER_AGENT_MINOR + "." + GeneralConstants.USER_AGENT_SUBMINOR)));
 		knownValues.add(new KnownValue(Replaceable.TESTBED_USER_AGENT_NAME.toString(), GeneralConstants.USER_AGENT_NAME));
-		if (candidateUrl != null)
+		if (candidate.getEcardapiUrl() != null)
 		{
-			knownValues.add(new KnownValue(Replaceable.CANDIDATE_URL.toString(), candidateUrl.toString()));
-			knownValues.add(new KnownValue(Replaceable.CANDIDATE_HOSTNAME.toString(), candidateUrl.getHost()));
-			knownValues.add(new KnownValue(Replaceable.CANDIDATE_PATH.toString(), getNonEmptyPath(candidateUrl)));
+			knownValues.add(new KnownValue(Replaceable.CANDIDATE_URL.toString(), candidate.getEcardapiUrl().toString()));
+			knownValues.add(new KnownValue(Replaceable.CANDIDATE_HOSTNAME.toString(), candidate.getEcardapiUrl().getHost()));
+			knownValues.add(new KnownValue(Replaceable.CANDIDATE_PATH.toString(), getNonEmptyPath(candidate.getEcardapiUrl())));
 		}
-		knownValues.add(new KnownValue(Replaceable.TESTBED_REFRESH_ADDRESS.toString(), testbedRefreshAdress));
+		knownValues.add(new KnownValue(Replaceable.TESTBED_REFRESH_ADDRESS.toString(), testbedRefreshAddress));
 		// user agent numbers are int values, need to append an empty string
 		knownValues.add(new KnownValue(Replaceable.TESTBED_USER_AGENT_MAJOR.toString(), GeneralConstants.USER_AGENT_MAJOR + ""));
 		knownValues.add(new KnownValue(Replaceable.TESTBED_USER_AGENT_MINOR.toString(), GeneralConstants.USER_AGENT_MINOR + ""));
@@ -157,6 +128,8 @@ public abstract class StepHandler
 
 		// optional: add default values for variables used to extract data from the card
 		fillIfNonexistant(Replaceable.DOCUMENT_VALIDITY.toString(), GeneralConstants.DEFAULT_DOCUMENT_VALIDITY);
+		fillIfNonexistant(Replaceable.RCHATMANDATORY.toString(), "false");
+		fillIfNonexistant(Replaceable.OCHATMANDATORY.toString(), "false");
 		fillIfNonexistant(Replaceable.AGE_COMPARISON_VALUE.toString(), GeneralConstants.AGE_COMPARISON_VALUE);
 		fillIfNonexistant(Replaceable.PLACE_COMPARISON_VALUE.toString(), GeneralConstants.PLACE_COMPARISON_VALUE);
 		for (RequestAttribute ra : RequestAttribute.values())
@@ -168,7 +141,7 @@ public abstract class StepHandler
 			fillIfNonexistant(GeneralConstants.REQUESTED_PREFIX + sf.toString().toUpperCase(), GeneralConstants.PERMISSION_PROHIBITED);
 		}
 
-		this.candidateName = candidateName;
+		this.candidate = candidate;
 	}
 
 	protected void fillDataToRequest()
@@ -210,31 +183,31 @@ public abstract class StepHandler
 	}
 
 	/**
-	 * Generate the message that will be sent to the server using a XML step definition
+	 * Generate the message that will be sent to the server using an XML step definition
 	 * 
-	 * @param xmlContent
-	 * @return
-	 * @throws InvalidTestCaseDescription
-	 * @throws EphemeralKeyNotFoundException
-	 * @throws SharedSecretNotYetReadyException
+	 * @param generateFrom Source message
+	 * @return Generated message
+	 * @throws InvalidTestCaseDescriptionException If the test case description is invalid
+	 * @throws EphemeralKeyNotFoundException If the ephemeral key is not found
+	 * @throws SharedSecretNotYetReadyException If the shared secret is not yet ready
 	 */
 	protected abstract String generateMsg(String generateFrom) throws InvalidTestCaseDescriptionException, EphemeralKeyNotFoundException, SharedSecretNotYetReadyException;
 
 	/**
 	 * Generate the message that will be sent to the server
 	 * 
-	 * @param httpHeader
-	 * @param protocolBody
-	 * @return
-	 * @throws InvalidTestCaseDescription
-	 * @throws EphemeralKeyNotFoundException
-	 * @throws SharedSecretNotYetReadyException
+	 * @param httpHeader HTTP header
+	 * @param protocolBody Protocol body
+	 * @return Generated message
+	 * @throws InvalidTestCaseDescriptionException If the test case description is invalid
+	 * @throws EphemeralKeyNotFoundException If the ephemeral key is not found
+	 * @throws SharedSecretNotYetReadyException If the shared secret is not yet ready
 	 */
 	protected String generateMsg(String httpHeader, String protocolBody) throws InvalidTestCaseDescriptionException, EphemeralKeyNotFoundException, SharedSecretNotYetReadyException
 	{
 		// concat header and body
 		String returnMsg;
-		if (null != protocolBody && protocolBody.length() > 0)
+		if (null != protocolBody && !protocolBody.isEmpty())
 		{
 			returnMsg = httpHeader + GeneralConstants.HTTP_LINE_ENDING + GeneralConstants.HTTP_LINE_ENDING + protocolBody;
 		}
@@ -262,27 +235,20 @@ public abstract class StepHandler
 		// generate authentication token
 		if (returnMsg.contains(Functional.AUTHENTICATION_TOKEN.getTextMark()))
 		{
-			try
-			{
-				String authenticationToken = computationHelper.computeAuthenticationToken(knownValues.get(Replaceable.EPHEMERALPUBLICKEY.toString()).getValue());
-				if (authenticationToken != null)
-				{
-					returnMsg = returnMsg.replace(Functional.AUTHENTICATION_TOKEN.getTextMark(), authenticationToken);
-				}
-			}
-			catch (SharedSecretNotYetReadyException e)
-			{
-				throw e;
-			}
-		}
+            String authenticationToken = computationHelper.computeAuthenticationToken(knownValues.get(Replaceable.EPHEMERALPUBLICKEY.toString()).getValue());
+            if (authenticationToken != null)
+            {
+                returnMsg = returnMsg.replace(Functional.AUTHENTICATION_TOKEN.getTextMark(), authenticationToken);
+            }
+        }
 		// insert responseapdus
 		if (returnMsg.contains(Functional.APDU.getTextMark()))
 		{
 			// compute the apdus
 			returnMsg = returnMsg.replace(Functional.APDU.getTextMark(), computationHelper.getPreviousApdus());
 		}
-
 		// do we have to compute the charlength?
+		returnMsg = returnMsg.replaceAll("(\r)?\n", "\r\n");
 		if (returnMsg.contains(Functional.CHARLENGTH.getTextMark()))
 		{
 			returnMsg = returnMsg.replace(Functional.CHARLENGTH.getTextMark(), "" + getCharlength(returnMsg));
@@ -294,7 +260,7 @@ public abstract class StepHandler
 	// compute the charlength of the message body
 	private int getCharlength(String message)
 	{
-		String body = new String();
+		String body = "";
 		// try all kinds of delimiters
 		int delimiterPosition = message.indexOf(GeneralConstants.HTTP_LINE_ENDING + GeneralConstants.HTTP_LINE_ENDING);
 		if (delimiterPosition == -1)
@@ -326,14 +292,15 @@ public abstract class StepHandler
 	}
 
 	// validate a given message step
+	@SuppressWarnings("rawtypes")
 	protected List<LogMessage> validateStep(String receivedMessage, List<TestCaseStep> alternatives)
 	{
 		LogMessage result = logMessageDAO.createNew();
 		result.setTestStepName(alternatives.get(0).getName());
 		result.setSuccess(true);
-		String endResult = "Processing step " + alternatives.get(0).getName() + ". Message was:" + System.getProperty("line.separator");
-		endResult += receivedMessage + System.getProperty("line.separator");
-		String resultMessage = "Results: " + System.getProperty("line.separator");
+		String endResult = "Processing step " + alternatives.get(0).getName() + ". Message was:" + System.lineSeparator();
+		endResult += receivedMessage + System.lineSeparator();
+		StringBuilder resultMessage = new StringBuilder("Results: " + System.lineSeparator());
 		int resultMessageLength = resultMessage.length();
 
 		// split into http and body
@@ -358,8 +325,7 @@ public abstract class StepHandler
 					{
 						result.setSuccess(false);
 					}
-					resultMessage += "Wrong HTTP token " + htoken.getName() + ". Expected value was " + htoken.getValue() + ", received " + httpHeaders.get(htoken.getName()) + "."
-							+ System.getProperty("line.separator");
+					resultMessage.append("Wrong HTTP token ").append(htoken.getName()).append(". Expected value was ").append(htoken.getValue()).append(", received ").append(httpHeaders.get(htoken.getName())).append(".").append(System.lineSeparator());
 				}
 			}
 			else
@@ -369,17 +335,34 @@ public abstract class StepHandler
 				{
 					result.setSuccess(false);
 				}
-				resultMessage += "Missing HTTP token " + htoken.getName() + "." + System.getProperty("line.separator");
+				resultMessage.append("Missing HTTP token ").append(htoken.getName()).append(".").append(System.lineSeparator());
 			}
 		}
 
 		// create XML object out of the receivedMessage string
-		if (httpHeaders.get("HTTP_STATUS_CODE").equals("HTTP/1.1 200 OK") && messageComponents.length > 1 && messageComponents[1].length() != 0)
+		if (httpHeaders.get("HTTP_STATUS_CODE").startsWith("HTTP/1.1 200") && messageComponents.length > 1 && !messageComponents[1].isEmpty())
 		{
 			// check if we operate in attached mode
 			if (alternatives.get(0).getName().startsWith(TestStepType.IN_ATTACHED_WEBPAGE.value()))
 			{
 				logger.debug("IN_ATTACHED_WEBPAGE");
+
+				String jSessionId = parseJSessionId(receivedMessage);
+				if (jSessionId != null)
+				{
+					String jsessionid_cookiewrapper = "\nCookie: JSESSIONID=";
+					knownValues.add(new KnownValue(Replaceable.ATTACHED_JSESSIONID.toString(), jSessionId));
+					knownValues.add(new KnownValue(Replaceable.ATTACHED_JSESSIONID_COOKIEWRAPPER.toString(), jsessionid_cookiewrapper));
+					resultMessage.append("Received JSESSIONID: ").append(jSessionId);
+				}
+				else
+				{
+					String jsessionid_cookiewrapper = "";
+					knownValues.add(new KnownValue(Replaceable.ATTACHED_JSESSIONID.toString(), ""));
+					knownValues.add(new KnownValue(Replaceable.ATTACHED_JSESSIONID_COOKIEWRAPPER.toString(), jsessionid_cookiewrapper));
+					resultMessage.append("Could not parse a valid JSESSIONID from the received message");
+				}
+
 
 				URL tcTokenUrl = parseTcTokenUrl(receivedMessage);
 				if (tcTokenUrl != null)
@@ -387,11 +370,11 @@ public abstract class StepHandler
 					knownValues.add(new KnownValue(Replaceable.ATTACHED_TCTOKEN.toString(), tcTokenUrl.toString()));
 					knownValues.add(new KnownValue(Replaceable.ATTACHED_TCTOKEN_HOSTNAME.toString(), tcTokenUrl.getHost()));
 					knownValues.add(new KnownValue(Replaceable.ATTACHED_TCTOKEN_PATH.toString(), getNonEmptyPath(tcTokenUrl)));
-					resultMessage += "Received TC Token URL: " + tcTokenUrl.toString();
+					resultMessage.append("Received TC Token URL: ").append(tcTokenUrl);
 				}
 				else
 				{
-					resultMessage += "Could not parse a valid TC Token URL from the received message";
+					resultMessage.append("Could not parse a valid TC Token URL from the received message");
 					result.setSuccess(false);
 				}
 			}
@@ -404,7 +387,7 @@ public abstract class StepHandler
 				{
 					// load schema file to validate against, if provided
 					boolean schemaValidated = false;
-					if (step.getSchema() != null && step.getSchema().length() > 0)
+					if (step.getSchema() != null && !step.getSchema().isEmpty())
 					{
 						InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("schema/" + step.getSchema());
 						if (input != null)
@@ -416,28 +399,25 @@ public abstract class StepHandler
 						}
 						else
 						{
-							resultMessage += "The schema specified schema file named " + step.getSchema() + " could not be loaded." + System.getProperty("line.separator");
+							resultMessage.append("The schema specified schema file named ").append(step.getSchema()).append(" could not be loaded.").append(System.lineSeparator());
 						}
 					}
 
 					builder = factory.newDocumentBuilder();
 					builder.setErrorHandler(new ErrorHandler() {
 						@Override
-						public void warning(SAXParseException exception) throws SAXException
-						{
-							schemaParsingResult += ("[Warning] " + exception.getMessage() + System.getProperty("line.separator"));
+						public void warning(SAXParseException exception) {
+							schemaParsingResult += ("[Warning] " + exception.getMessage() + System.lineSeparator());
 						}
 
 						@Override
-						public void fatalError(SAXParseException exception) throws SAXException
-						{
-							schemaParsingResult += ("[Fatal error] " + exception.getMessage() + System.getProperty("line.separator"));
+						public void fatalError(SAXParseException exception) {
+							schemaParsingResult += ("[Fatal error] " + exception.getMessage() + System.lineSeparator());
 						}
 
 						@Override
-						public void error(SAXParseException exception) throws SAXException
-						{
-							schemaParsingResult += ("[Error] " + exception.getMessage() + System.getProperty("line.separator"));
+						public void error(SAXParseException exception) {
+							schemaParsingResult += ("[Error] " + exception.getMessage() + System.lineSeparator());
 						}
 					});
 					Document document = builder.parse(new InputSource(new StringReader(messageComponents[1])));
@@ -445,15 +425,15 @@ public abstract class StepHandler
 					// save parsing error message, if we have got any
 					if (schemaValidated)
 					{
-						if (schemaParsingResult.length() > 0)
+						if (!schemaParsingResult.isEmpty())
 						{
-							resultMessage += "Validation results against the schema " + step.getSchema() + ":" + System.getProperty("line.separator");
-							resultMessage += schemaParsingResult;
+							resultMessage.append("Validation results against the schema ").append(step.getSchema()).append(":").append(System.lineSeparator());
+							resultMessage.append(schemaParsingResult);
 							schemaParsingResult = "";
 						}
 						else
 						{
-							resultMessage += "Successfully validated the message against the schema " + step.getSchema() + "." + System.getProperty("line.separator");
+							resultMessage.append("Successfully validated the message against the schema ").append(step.getSchema()).append(".").append(System.lineSeparator());
 						}
 					}
 
@@ -463,10 +443,10 @@ public abstract class StepHandler
 					{
 						result.setSuccess(res.wasSuccessful());
 					}
-					resultMessage += res.getMessage();
+					resultMessage.append(res.getMessage());
 
 					// save the data necessary to compute future steps
-					resultMessage += saveData(step, document, messageComponents[1]);
+					resultMessage.append(saveData(step, document, messageComponents[1]));
 
 					// check if this is a EAC1 InputType message
 					if (alternatives.get(0).getName().startsWith(TestStepType.IN_DID_AUTHENTICATE_EAC_1_INPUTTYPE.value()))
@@ -475,22 +455,23 @@ public abstract class StepHandler
 						String savingResult = saveCVcertificates(document);
 						if (savingResult != null)
 						{
-							resultMessage += savingResult + System.getProperty("line.separator");
+							resultMessage.append(savingResult).append(System.lineSeparator());
 						}
 						computationHelper = new ComputationHelper(knownValues.get(Replaceable.EFCARDACCESS.toString()).getValue(), knownValues.get(Replaceable.NONCE.toString()).getValue(),
 								knownValues.get(Replaceable.CA_PRIVATE.toString()).getValue());
-						Result cvValidationResult = computationHelper.validateCVcertificates(knownCvCertificates, expectedNumOfCv, service);
+						Result cvValidationResult = computationHelper.validateCVcertificates(knownCvCertificates, expectedNumOfCv, service, candidate);
 						if (result.getSuccess())
 						{
-							result.setSuccess(cvValidationResult.wasSuccessful());
+							boolean temp = cvValidationResult.wasSuccessful();
+							result.setSuccess(temp);
 						}
-						resultMessage += cvValidationResult.getMessage() + System.getProperty("line.separator");
+						resultMessage.append(cvValidationResult.getMessage()).append(System.lineSeparator());
 						Result descriptionResult = validateCertificateDescription(document);
 						if (result.getSuccess())
 						{
 							result.setSuccess(descriptionResult.wasSuccessful());
 						}
-						resultMessage += descriptionResult.getMessage() + System.getProperty("line.separator");
+						resultMessage.append(descriptionResult.getMessage()).append(System.lineSeparator());
 					}
 					// check if this is a EAC2 InputType message
 					else if (alternatives.get(0).getName().startsWith(TestStepType.IN_DID_AUTHENTICATE_EAC_2_INPUTTYPE.value()))
@@ -504,12 +485,12 @@ public abstract class StepHandler
 							{
 								result.setSuccess(signatureResult.wasSuccessful());
 							}
-							resultMessage += signatureResult.getMessage();
+							resultMessage.append(signatureResult.getMessage());
 							// skip additionalinputtype
 							this.stepsToSkip = 1;
 						}
 					}
-					// check if this is a EAC AdditionalInputType message
+					// check if this is an EAC AdditionalInputType message
 					else if (alternatives.get(0).getName().startsWith(TestStepType.IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE.value()))
 					{
 						logger.debug("IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE");
@@ -518,51 +499,51 @@ public abstract class StepHandler
 						{
 							result.setSuccess(signatureResult.wasSuccessful());
 						}
-						resultMessage += signatureResult.getMessage();
+						resultMessage.append(signatureResult.getMessage());
 					}
 					// check if this is a Transmit message
 					else if (alternatives.get(0).getName().startsWith(TestStepType.IN_TRANSMIT.value()))
 					{
 						logger.debug("IN_TRANSMIT");
 						NodeList nodes = getElementsByLocalTagName(document, "InputAPDU");
-						List<String> inputAPDUvalues = new ArrayList<String>();
+						List<String> inputAPDUvalues = new ArrayList<>();
 						for (int i = 0; i < nodes.getLength(); i++)
 						{
 							inputAPDUvalues.add(nodes.item(i).getTextContent());
 						}
-						resultMessage += computationHelper.handleApduList(inputAPDUvalues, card, knownValues.get(Replaceable.AGE_COMPARISON_VALUE.toString()).getValue(),
-								knownValues.get(Replaceable.PLACE_COMPARISON_VALUE.toString()).getValue());
+						resultMessage.append(computationHelper.handleApduList(inputAPDUvalues, card, knownValues.get(Replaceable.AGE_COMPARISON_VALUE.toString()).getValue(),
+                                knownValues.get(Replaceable.PLACE_COMPARISON_VALUE.toString()).getValue()));
 					}
 					// check if this is a StartPAOSResponse without an error. if so, check the apdus
-					else if (alternatives.get(0).equals((TestStepType.IN_START_PAOS_RESPONSE)))
+					else if (alternatives.get(0).getName().equals((TestStepType.IN_START_PAOS_RESPONSE.value())))
 					{
 						logger.debug("IN_START_PAOS_RESPONSE");
 						Result apduResult = checkReceivedApdus();
 						result.setSuccess(apduResult.wasSuccessful());
-						resultMessage += apduResult.getMessage();
+						resultMessage.append(apduResult.getMessage());
 					}
 				}
 				catch (Exception e)
 				{
 					result.setSuccess(false);
 					this.abort = true;
-					resultMessage += "Internal testbed error - unable to parse the received message. See technical log for details.";
+					resultMessage.append("Internal testbed error - unable to parse the received message. See technical log for details.");
 					StringWriter trace = new StringWriter();
 					e.printStackTrace(new PrintWriter(trace));
-					logger.warn("Could not parse received message: " + System.getProperty("line.separator") + trace.toString());
+					logger.warn("Could not parse received message: " + System.lineSeparator() + trace);
 				}
 			}
 		}
 		else
 		{
-			resultMessage += "The received message did not contain a SOAP body";
+			resultMessage.append("The received message did not contain a SOAP body");
 		}
 
 		// was the result ok? if not, do we have alternatives?
 		List<LogMessage> alternativeValidations = null;
 		if (!result.getSuccess() && alternatives.size() > 1)
 		{
-			resultMessage += "Validation failed, trying alternative message.";
+			resultMessage.append("Validation failed, trying alternative message.");
 			stepsToSkip++;
 			alternativeValidations = validateStep(receivedMessage, alternatives.subList(1, alternatives.size()));
 		}
@@ -575,7 +556,7 @@ public abstract class StepHandler
 		result.setMessage(endResult);
 
 		// build the list
-		List<LogMessage> resultList = new ArrayList<LogMessage>();
+		List<LogMessage> resultList = new ArrayList<>();
 		resultList.add(result);
 		if (alternativeValidations != null)
 		{
@@ -584,16 +565,17 @@ public abstract class StepHandler
 		return resultList;
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected Result checkReceivedApdus()
 	{
 		Set<RequestAttribute> attributes = computationHelper.getReceivedAttribues();
 		Set<SpecialFunction> functions = computationHelper.getReceivedFunctions();
 
 		boolean success = true;
-		String message = "";
+		StringBuilder message = new StringBuilder();
 
 		// first, check if all elements that have been requested by the user have also been requested by the server
-		KnownValues allowedByUser = knownValues.getStartingWith(GeneralConstants.ALLOWED_BY_USER_PREFIX.toString());
+		KnownValues allowedByUser = knownValues.getStartingWith(GeneralConstants.ALLOWED_BY_USER_PREFIX);
 		for (KnownValue kv : allowedByUser)
 		{
 			if (kv.getValue().equals(GeneralConstants.PERMISSION_ALLOWED))
@@ -608,7 +590,7 @@ public abstract class StepHandler
 					else
 					{
 						success = false;
-						message += "The attribute " + ra.toString() + " was requested by the user, but the server did not send a request for it to the card." + System.getProperty("line.separator");
+						message.append("The attribute ").append(ra).append(" was requested by the user, but the server did not send a request for it to the card.").append(System.lineSeparator());
 					}
 				}
 				else
@@ -621,7 +603,7 @@ public abstract class StepHandler
 					else
 					{
 						success = false;
-						message += "The function " + sf.toString() + " was requested by the user, but the server did not send a request for it to the card." + System.getProperty("line.separator");
+						message.append("The function ").append(sf.toString()).append(" was requested by the user, but the server did not send a request for it to the card.").append(System.lineSeparator());
 					}
 				}
 			}
@@ -631,14 +613,14 @@ public abstract class StepHandler
 		if (!attributes.isEmpty())
 		{
 			success = false;
-			java.util.StringJoiner sj = new java.util.StringJoiner(", ", ": ", ("." + System.getProperty("line.separator")));
+			java.util.StringJoiner sj = new java.util.StringJoiner(", ", ": ", ("." + System.lineSeparator()));
 			attributes.forEach(ra -> sj.add(ra.toString()));
-			message += "The server requested the additional attributes" + sj.toString();
+			message.append("The server requested the additional attributes").append(sj);
 		}
 		if (functions.size() > 1 || (functions.size() == 1 && !functions.contains(SpecialFunction.RestrictedID)))
 		{
 			success = false;
-			java.util.StringJoiner sj = new java.util.StringJoiner(", ", ": ", ("." + System.getProperty("line.separator")));
+			java.util.StringJoiner sj = new java.util.StringJoiner(", ", ": ", ("." + System.lineSeparator()));
 			for (SpecialFunction sf : functions)
 			{
 				if (!sf.equals(SpecialFunction.RestrictedID))
@@ -646,13 +628,14 @@ public abstract class StepHandler
 					sj.add(sf.toString());
 				}
 			}
-			message += "The server requested the additional functions" + sj.toString();
+			message.append("The server requested the additional functions").append(sj);
 		}
 
-		return new Result(success, message);
+		return new Result(success, message.toString());
 	}
 
 	// validate the certificate description
+	@SuppressWarnings("rawtypes")
 	private Result validateCertificateDescription(Document document)
 	{
 		// TODO reactivate certificate description check
@@ -695,11 +678,12 @@ public abstract class StepHandler
 	}
 
 	// validate the signed challenge sent by the server
+	@SuppressWarnings("rawtypes")
 	private Result validateSignature(NodeList signatureNodes)
 	{
 		String resultMessage = "";
 		boolean success = false;
-		if (signatureNodes == null || signatureNodes.getLength() == 0 || signatureNodes.item(0).getTextContent().length() == 0)
+		if (signatureNodes == null || signatureNodes.getLength() == 0 || signatureNodes.item(0).getTextContent().isEmpty())
 		{
 			resultMessage += "Signature has not been found";
 		}
@@ -713,16 +697,16 @@ public abstract class StepHandler
 			{
 				success = (computationHelper.isValidSignature(signatureNodes.item(0).getTextContent(), knownValues.get(Replaceable.IDPICC.toString()).getValue(),
 						knownValues.get(Replaceable.CHALLENGE.toString()).getValue(), knownValues.get(Replaceable.EPHEMERALPUBLICKEY.toString()).getValue(),
-						knownValues.get(Replaceable.AUTHENTICATEDAUXILIARYDATA.toString()).getValue()));
+						knownValues.get(Replaceable.AUTHENTICATEDAUXILIARYDATA.toString()).getValue(), candidate));
 			}
 			else
 			{
 				success = (computationHelper.isValidSignature(signatureNodes.item(0).getTextContent(), knownValues.get(Replaceable.IDPICC.toString()).getValue(),
-						knownValues.get(Replaceable.CHALLENGE.toString()).getValue(), knownValues.get(Replaceable.EPHEMERALPUBLICKEY.toString()).getValue()));
+						knownValues.get(Replaceable.CHALLENGE.toString()).getValue(), knownValues.get(Replaceable.EPHEMERALPUBLICKEY.toString()).getValue(), candidate));
 			}
 			resultMessage += "Signature validation " + ((success) ? "was successful" : "failed");
 		}
-		resultMessage += System.getProperty("line.separator");
+		resultMessage += System.lineSeparator();
 		return new Result(success, resultMessage);
 	}
 
@@ -731,9 +715,9 @@ public abstract class StepHandler
 		if (document != null)
 		{
 			List<OptAttrString> toSaves = step.getToSave();
-			List<String> remaining = new ArrayList<String>();
+			List<String> remaining = new ArrayList<>();
 			// search for nodes first
-			String result = new String();
+			StringBuilder result = new StringBuilder();
 			for (OptAttrString toSave : toSaves)
 			{
 				String name = toSave.getValue();
@@ -743,25 +727,25 @@ public abstract class StepHandler
 
 				ArrayList<Node> nodes = filterNodeListByParentName(nodeList, toSave);
 
-				if (nodes == null || nodes.size() == 0 || nodes.get(0).getTextContent().length() == 0)
+				if (nodes.isEmpty() || nodes.get(0).getTextContent().isEmpty())
 				{
 					remaining.add(name);
 				}
 				else
 				{
 					knownValues.add(new KnownValue(knownValueName, nodes.get(0).getTextContent()));
-					result += ("Saved value of element " + elementName + " as " + knownValueName + ": " + nodes.get(0).getTextContent() + System.getProperty("line.separator"));
+					result.append("Saved value of element ").append(elementName).append(" as ").append(knownValueName).append(": ").append(nodes.get(0).getTextContent()).append(System.lineSeparator());
 				}
 			}
 
 			// if some data could not be found, check if it exists as attribute
-			if (remaining.size() > 0)
+			if (!remaining.isEmpty())
 			{
 				for (String name : remaining)
 				{
 					NodeList nodes = evaluateIgnoreCase(documentString, document, name);
 					if (nodes == null || nodes.getLength() == 0 || nodes.item(0).getAttributes() == null || nodes.item(0).getAttributes().getLength() == 0
-							|| nodes.item(0).getAttributes().getNamedItem(name) == null || nodes.item(0).getAttributes().getNamedItem(name).getTextContent().length() == 0)
+							|| nodes.item(0).getAttributes().getNamedItem(name) == null || nodes.item(0).getAttributes().getNamedItem(name).getTextContent().isEmpty())
 					{
 						// check if the token is mandatory. if not, ignore
 						for (StepToken token : step.getProtocolStepToken())
@@ -771,21 +755,21 @@ public abstract class StepHandler
 								if (token.isIsMandatory())
 								{
 									this.abort = true;
-									return "Necessary token " + name + " not found, aborting the test." + System.getProperty("line.separator");
+									return "Necessary token " + name + " not found, aborting the test." + System.lineSeparator();
 								}
 								else
 								{
-									result += "Token " + name + " was not provided, therefore it's value will not be saved" + System.getProperty("line.separator");
+									result.append("Token ").append(name).append(" was not provided, therefore it's value will not be saved").append(System.lineSeparator());
 									break;
 								}
 							}
 						}
 					}
 					knownValues.add(new KnownValue(name.toUpperCase(), nodes.item(0).getAttributes().getNamedItem(name).getTextContent()));
-					result += ("Saved value of attribute " + name + ": " + nodes.item(0).getAttributes().getNamedItem(name).getTextContent() + System.getProperty("line.separator"));
+					result.append("Saved value of attribute ").append(name).append(": ").append(nodes.item(0).getAttributes().getNamedItem(name).getTextContent()).append(System.lineSeparator());
 				}
 			}
-			return result;
+			return result.toString();
 		}
 		return "No data has been saved.";
 	}
@@ -808,7 +792,7 @@ public abstract class StepHandler
 		{
 			StringWriter trace = new StringWriter();
 			e.printStackTrace(new PrintWriter(trace));
-			logger.warn("Could not save values: " + System.getProperty("line.separator") + trace.toString());
+			logger.warn("Could not save values: " + System.lineSeparator() + trace);
 		}
 
 		return saveData(step, document, documentString);
@@ -831,7 +815,7 @@ public abstract class StepHandler
 	{
 		// first, try the given name
 		NodeList nodeList = getElementsByLocalTagName(document, name);
-		if (nodeList == null || nodeList.getLength() == 0 || nodeList.item(0).getTextContent().length() == 0)
+		if (nodeList == null || nodeList.getLength() == 0 || nodeList.item(0).getTextContent().isEmpty())
 		{
 			// now, treat the document as text and search for the word
 			String newName = findMostProbableName(documentString, name);
@@ -855,7 +839,7 @@ public abstract class StepHandler
 			// first, try the given name
 			nodes = (NodeList) xpath.evaluate("//*[@" + name + "]", document, XPathConstants.NODESET);
 			if (nodes == null || nodes.getLength() == 0 || nodes.item(0).getAttributes() == null || nodes.item(0).getAttributes().getLength() == 0
-					|| nodes.item(0).getAttributes().getNamedItem(name) == null || nodes.item(0).getAttributes().getNamedItem(name).getTextContent().length() == 0)
+					|| nodes.item(0).getAttributes().getNamedItem(name) == null || nodes.item(0).getAttributes().getNamedItem(name).getTextContent().isEmpty())
 			{
 				// now, treat the document as text and search for the word
 				String newName = findMostProbableName(documentString, name);
@@ -869,7 +853,7 @@ public abstract class StepHandler
 		{
 			StringWriter trace = new StringWriter();
 			e.printStackTrace(new PrintWriter(trace));
-			logger.warn("Could not parse the XPATH expression: " + System.getProperty("line.separator") + trace.toString());
+			logger.warn("Could not parse the XPATH expression: " + System.lineSeparator() + trace);
 		}
 		return nodes;
 	}
@@ -901,14 +885,14 @@ public abstract class StepHandler
 			{
 				DataBuffer cvBuffer = new DataBuffer(Hex.decodeHex(nodes.item(i).getTextContent().toCharArray()));
 				c = new CVCertificate(cvBuffer);
-				knownCvCertificates.put(c.getCertHolderRef() + candidateName, c);
+				knownCvCertificates.put(c.getCertHolderRef() + candidate.getCandidateName(), c);
 			}
 			catch (CVTagNotFoundException | CVBufferNotEmptyException | CVInvalidOidException | CVDecodeErrorException | CVInvalidDateException | CVInvalidECPointLengthException | DOMException
 					| DecoderException e)
 			{
 				StringWriter trace = new StringWriter();
 				e.printStackTrace(new PrintWriter(trace));
-				logger.warn("Could not read CV certificate: " + System.getProperty("line.separator") + trace.toString());
+				logger.warn("Could not read CV certificate: " + System.lineSeparator() + trace);
 				message = ("Could not read CV certificate: " + e.getLocalizedMessage() + ". See technical log for details.");
 				break;
 			}
@@ -917,10 +901,11 @@ public abstract class StepHandler
 	}
 
 	// check if the tokens match the expected data
+	@SuppressWarnings("rawtypes")
 	private Result checkTokens(List<StepToken> tokens, Document document)
 	{
 		boolean result = true;
-		String resultMessage = "";
+		StringBuilder resultMessage = new StringBuilder();
 		for (StepToken token : tokens)
 		{
 			NodeList nodeList = getElementsByLocalTagName(document, token.getName());
@@ -933,28 +918,28 @@ public abstract class StepHandler
 				maxOccurences = token.getMaxNumberOfOccurences().intValue();
 			}
 			// token not found
-			if (nodes == null || nodes.size() == 0)
+			if (nodes.isEmpty())
 			{
 				// PersonalData tokens are mandatory if provided
 				if (token.isIsMandatory() || (null != token.getParentName()) && (token.getParentName().equals("PersonalData") && !token.getValue().startsWith("[PERSONAL_")))
 				{
 					result = false;
 				}
-				resultMessage += ((token.isIsMandatory() || ((null != token.getParentName()) && token.getParentName().equals("PersonalData") && !token.getValue().startsWith("[PERSONAL_")))
-						? "Mandatory"
-						: "Optional") + " protocol token " + token.getName();
+				resultMessage.append((token.isIsMandatory() || ((null != token.getParentName()) && token.getParentName().equals("PersonalData") && !token.getValue().startsWith("[PERSONAL_")))
+                        ? "Mandatory"
+                        : "Optional").append(" protocol token ").append(token.getName());
 				if (null != token.getParentName())
 				{
-					resultMessage += " with parent " + token.getParentName();
+					resultMessage.append(" with parent ").append(token.getParentName());
 				}
-				resultMessage += " not found." + System.getProperty("line.separator");
+				resultMessage.append(" not found.").append(System.lineSeparator());
 			}
 			// check if the token occurred more often than the allowed number of
 			// times
 			else if (nodes.size() > maxOccurences)
 			{
 				result = false;
-				resultMessage += "Protocol token " + token.getName() + " occured more than the allowed limit of " + maxOccurences + " times.";
+				resultMessage.append("Protocol token ").append(token.getName()).append(" occured more than the allowed limit of ").append(maxOccurences).append(" times.");
 			}
 			// found a single token, check the content
 			else
@@ -982,21 +967,21 @@ public abstract class StepHandler
 					{
 						// if the token isn't mandatory refrain from changing the
 						// result of the test
-						if (token.isIsMandatory())
+						if (token.isIsMandatory() || "true".equalsIgnoreCase(token.isIsReallyMandatory()))
 						{
 							result = false;
 						}
-						resultMessage += "Wrong protocol token value for token " + token.getName() + " with parent " + token.getParentName() + ". Expected value was ";
+						resultMessage.append("Wrong protocol token value for token ").append(token.getName()).append(" with parent ").append(token.getParentName()).append(". Expected value was ");
 						if (token.isNegate())
 						{
-							resultMessage += "a value that differs from ";
+							resultMessage.append("a value that differs from ");
 						}
-						resultMessage += token.getValue() + ", but received " + ((receivedValue.length() > 0) ? receivedValue : "an empty element") + "." + System.getProperty("line.separator");
+						resultMessage.append(token.getValue()).append(", but received ").append((!receivedValue.isEmpty()) ? receivedValue : "an empty element").append(".").append(System.lineSeparator());
 					}
 				}
 			}
 		}
-		return new Result(result, resultMessage);
+		return new Result(result, resultMessage.toString());
 	}
 
 	private ArrayList<Node> filterNodeListByParentName(NodeList nodeList, StepToken token)
@@ -1011,7 +996,7 @@ public abstract class StepHandler
 
 	private ArrayList<Node> filterNodeListByParentName(NodeList nodeList, String parentName)
 	{
-		ArrayList<Node> nodes = new ArrayList<Node>();
+		ArrayList<Node> nodes = new ArrayList<>();
 
 		for (int i = 0; i < nodeList.getLength(); i++)
 		{
@@ -1041,23 +1026,19 @@ public abstract class StepHandler
 
 	protected static String insertValues(KnownValues knownValues, String testMessage)
 	{
-		Iterator<KnownValue> iter = knownValues.iterator();
-		while (iter.hasNext())
-		{
-			KnownValue v = iter.next();
-			if (testMessage.contains(v.getPlaceholder().toUpperCase()))
-			{
-				testMessage = testMessage.replace(v.getPlaceholder().toUpperCase(), v.getValue());
-			}
-		}
+        for (KnownValue v : knownValues) {
+            if (testMessage.contains(v.getPlaceholder().toUpperCase())) {
+                testMessage = testMessage.replace(v.getPlaceholder().toUpperCase(), v.getValue());
+            }
+        }
 		return testMessage;
 	}
 
 	protected Map<String, String> getHttpHeaders(String message)
 	{
-		Map<String, String> httpHeaders = new HashMap<String, String>();
+		Map<String, String> httpHeaders = new HashMap<>();
 		String[] httpLines = message.split(GeneralConstants.HTTP_LINE_ENDING);
-		String headerValue = "";
+		StringBuilder headerValue = new StringBuilder();
 		String headerName = "";
 		httpHeaders.put("HTTP_STATUS_CODE", httpLines[0]);
 		for (int i = 1; i < httpLines.length; i++)
@@ -1066,36 +1047,34 @@ public abstract class StepHandler
 			if (headerCandidate.charAt(0) == ' ' || headerCandidate.charAt(0) == '\t')
 			{
 				// linebreak, add to known keypair
-				headerValue += headerCandidate;
+				headerValue.append(headerCandidate);
 			}
 			else
 			{
 				// previous header finished, save it
 				if (headerValue.length() > 0)
 				{
-					httpHeaders.put(headerName, headerValue);
-					headerValue = "";
-					headerName = "";
+					httpHeaders.put(headerName, headerValue.toString());
 				}
 				// new header
 				headerName = headerCandidate.substring(0, headerCandidate.indexOf(':'));
-				headerValue = headerCandidate.substring(headerCandidate.indexOf(':') + 1, headerCandidate.length());
+				headerValue = new StringBuilder(headerCandidate.substring(headerCandidate.indexOf(':') + 1));
 				// remove trailing whitespace or tab
-				if (headerValue.startsWith(" ") || headerValue.startsWith("\t"))
+				if (headerValue.toString().startsWith(" ") || headerValue.toString().startsWith("\t"))
 				{
-					headerValue = headerValue.substring(1);
+					headerValue = new StringBuilder(headerValue.substring(1));
 				}
 			}
 		}
 		// save the last header
-		httpHeaders.put(headerName, headerValue);
+		httpHeaders.put(headerName, headerValue.toString());
 		return httpHeaders;
 	}
 
 	/**
 	 * Add or override a known value
 	 * 
-	 * @param value
+	 * @param value {@link KnownValue}
 	 */
 	protected void addKnownValue(KnownValue value)
 	{
@@ -1105,7 +1084,7 @@ public abstract class StepHandler
 	/**
 	 * Returns the values that have been collected during the current test run
 	 * 
-	 * @return
+	 * @return {@link KnownValues}
 	 */
 	public KnownValues getKnownValues()
 	{
@@ -1113,9 +1092,9 @@ public abstract class StepHandler
 	}
 
 	/**
-	 * Returns whether or not the test shall be aborted
+	 * Returns whether the test shall be aborted
 	 * 
-	 * @return
+	 * @return {@link Boolean}
 	 */
 	public boolean getAbortState()
 	{
@@ -1126,7 +1105,7 @@ public abstract class StepHandler
 	 * Returns the amount of steps that shall be skipped in order to account for
 	 * the number of optional steps skipped
 	 * 
-	 * @return
+	 * @return {@link Integer}
 	 */
 	public int getStepsToSkip()
 	{
@@ -1152,7 +1131,7 @@ public abstract class StepHandler
 	/**
 	 * Convenience method to retrieve a port number from a URL.
 	 * 
-	 * @param url
+	 * @param url URL to extract port number from
 	 * @return port number from given URL or a default value
 	 */
 	public int getNonEmptyPort(URL url)
@@ -1172,7 +1151,7 @@ public abstract class StepHandler
 	/**
 	 * Convenience method to retrieve a path from a URL.
 	 * 
-	 * @param url
+	 * @param url URL to extract path from
 	 * @return path from given URL or the default string "/".
 	 */
 	public String getNonEmptyPath(URL url)
@@ -1192,7 +1171,7 @@ public abstract class StepHandler
 	/**
 	 * Extracts the path from the refresh address
 	 * 
-	 * @return
+	 * @return path of the refresh address
 	 */
 	protected String getRefreshAddressPath()
 	{
@@ -1206,7 +1185,7 @@ public abstract class StepHandler
 		{
 			StringWriter trace = new StringWriter();
 			e.printStackTrace(new PrintWriter(trace));
-			logger.error("Getting pathof the refresh URL failed: " + System.getProperty("line.separator") + trace.toString());
+			logger.error("Getting pathof the refresh URL failed: " + System.lineSeparator() + trace);
 		}
 		return refreshPath;
 	}
@@ -1224,61 +1203,82 @@ public abstract class StepHandler
 
 	/**
 	 * This function returns additional data about outbound steps which has to be shown to the tester.
+	 * The stored additional data will be deleted after the call.
 	 * 
-	 * @return
+	 * @return {@link String} The additional data
 	 */
 	protected String getAdditionalOutboundInfo()
 	{
 		String local = additionalOutboundData;
 		additionalOutboundData = null;
 		return local;
-	};
+	}
 
-	/**
+    /**
 	 * Parses the TC Token Url from a HTML webpage. The result will be stored in the ATTACHED_TC_TOKEN
-	 * 
 	 * TODO JavaScript support
 	 * 
 	 * @param message
 	 *            {@link String}
 	 * 
-	 * @return
+	 * @return {@link URL} The TC Token URL
 	 */
 	protected URL parseTcTokenUrl(String message)
 	{
-		Pattern p = Pattern.compile("(<a [^<>]*href=\"http://127.0.0.1:24727/eID-Client\\?tcTokenURL=)([^\"]*)(\"[^<>]*>)");
+		Pattern p = Pattern.compile("(<a [^<>]*href=\"(http|eid)://127.0.0.1:24727/eID-Client\\?tcTokenURL=)([^\"]*)(\"[^<>]*>)");
 		Matcher m = p.matcher(message);
 		String tcTokenUrl = null;
 		while (m.find()) // find last occurrence of given pattern
 		{
-			tcTokenUrl = m.group(2);
+			tcTokenUrl = m.group(3);
 		}
 		if (tcTokenUrl != null)
 		{
 			try
 			{
-				return new URL(URLDecoder.decode(tcTokenUrl, "UTF-8"));
+				return new URL(URLDecoder.decode(tcTokenUrl, StandardCharsets.UTF_8));
 			}
-			catch (UnsupportedEncodingException | MalformedURLException e)
+			catch (MalformedURLException e)
 			{
 				StringWriter trace = new StringWriter();
 				e.printStackTrace(new PrintWriter(trace));
-				logger.error("Could not decode TCToken URL from received message due to: " + e.getMessage() + System.getProperty("line.separator") + trace.toString());
+				logger.error("Could not decode TCToken URL from received message due to: " + e.getMessage() + System.lineSeparator() + trace);
 			}
 		}
 		return null;
 	}
 
 	/**
+	 * Parses the JSessionId from HTTP header. The result will be stored in the ATTACHED_JSESSIONID
+	 * TODO JavaScript support
+	 *
+	 * @param message
+	 *
+	 * @return {String} The JSESSIONID
+	 */
+	protected String parseJSessionId(String message)
+	{
+		Pattern p = Pattern.compile("Set-Cookie: JSESSIONID=([0-9a-fA-F]+)");
+		Matcher m = p.matcher(message);
+		String jSessionId = null;
+		if (m.find()) // find first occurrence of given pattern
+		{
+			jSessionId = m.group(1);
+		}
+		return jSessionId;
+
+	}
+
+	/**
 	 * Returns the {@link KnownValues} for which the user has restricted the access
 	 * 
-	 * @return
+	 * @return {@link Set} of {@link String} containing the restricted attributes
 	 */
 	protected Set<String> getRestrictedByUser()
 	{
 		KnownValues allowedValues = knownValues.getStartingWith(GeneralConstants.ALLOWED_BY_USER_PREFIX);
 		Set<String> restrictedAttributes = allowedValues.stream().filter(kv -> kv.getValue().equals(GeneralConstants.PERMISSION_PROHIBITED))
-				.map(kv -> kv.getName().substring(GeneralConstants.ALLOWED_BY_USER_PREFIX.length(), kv.getName().length())).collect(Collectors.toSet());
+				.map(kv -> kv.getName().substring(GeneralConstants.ALLOWED_BY_USER_PREFIX.length())).collect(Collectors.toSet());
 		return restrictedAttributes;
 	}
 

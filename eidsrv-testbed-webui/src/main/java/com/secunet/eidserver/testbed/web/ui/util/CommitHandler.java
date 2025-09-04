@@ -3,11 +3,11 @@ package com.secunet.eidserver.testbed.web.ui.util;
 import java.util.Collection;
 import java.util.Map;
 
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.data.Validator.InvalidValueException;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.server.UserError;
 import com.vaadin.ui.AbstractField;
-import com.vaadin.ui.Field;
+import com.vaadin.v7.ui.Field;
 
 public class CommitHandler
 {

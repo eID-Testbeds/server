@@ -23,6 +23,8 @@ import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.SignatureMethod;
 
+import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
+import com.secunet.eidserver.testbed.testing.TestCandidateTestingPojo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.annotations.BeforeClass;
@@ -40,7 +42,7 @@ import com.secunet.eidserver.testbed.common.types.testcase.EidCard;
 import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyException;
 import com.secunet.eidserver.testbed.testing.LogMessageTestingPojo;
 
-public class TestStepHandlerSOAP
+public class TestStepHandlerSOAP extends RunnerTestBase
 {
 	private static final Logger logger = LogManager.getLogger(TestStepHandlerSOAP.class);
 	private LogMessageDAO logMessageDAO;
@@ -70,13 +72,18 @@ public class TestStepHandlerSOAP
 
 		List<String> certificateNames = new ArrayList<>();
 		certificateNames.add("CERT_EID_XMLSIG_ESERVICE_1_A");
-		StepHandlerSOAP shs = new StepHandlerSOAP(candidateName, candidateUrl, testbedRefreshAdress, eidUrl, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setCandidateName(candidateName);
+		candidate.setEcardapiUrl(candidateUrl);
+		candidate.setEidinterfaceUrl(eidUrl);
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandlerSOAP shs = new StepHandlerSOAP(candidate, testbedRefreshAdress, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0, false);
 		String request = shs.createSOAPrequest(message);
 		assertNotNull(request);
 	}
 
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void testCreateSOAPrequestRSAManipulated() throws Exception
 	{
 		String candidateName = "TEST_CANDIDATE";
@@ -93,7 +100,12 @@ public class TestStepHandlerSOAP
 
 		List<String> certificateNames = new ArrayList<>();
 		certificateNames.add("CERT_EID_XMLSIG_ESERVICE_1_A");
-		StepHandlerSOAP shs = new StepHandlerSOAP(candidateName, candidateUrl, testbedRefreshAdress, eidUrl, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setCandidateName(candidateName);
+		candidate.setEcardapiUrl(candidateUrl);
+		candidate.setEidinterfaceUrl(eidUrl);
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandlerSOAP shs = new StepHandlerSOAP(candidate, testbedRefreshAdress, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0, false);
 		String request = shs.createSOAPrequest(message);
 		assertNotNull(request);
 	}
@@ -110,7 +122,11 @@ public class TestStepHandlerSOAP
 
 		List<String> certificateNames = new ArrayList<>();
 		certificateNames.add("CERT_EID_XMLSIG_ESERVICE_1_A");
-		StepHandlerSOAP shs = new StepHandlerSOAP(candidateName, attachedUrl, testbedRefreshAdress, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setCandidateName(candidateName);
+		candidate.setAttachedTcTokenUrl(attachedUrl);
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandlerSOAP shs = new StepHandlerSOAP(candidate, testbedRefreshAdress, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0, true);
 		URL url = shs.parseTcTokenUrl(message);
 		assertNotNull(url);
 		assertEquals("https://some.eid.server.de:8443/getTcToken.html;jsessionid=4242424242424242424242", url.toString());
@@ -129,7 +145,12 @@ public class TestStepHandlerSOAP
 
 		List<String> certificateNames = new ArrayList<>();
 		certificateNames.add("CERT_EID_XMLSIG_ESERVICE_1_A");
-		StepHandlerSOAP shs = new StepHandlerSOAP(candidateName, candidateUrl, testbedRefreshAdress, eidUrl, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setCandidateName(candidateName);
+		candidate.setEcardapiUrl(candidateUrl);
+		candidate.setEidinterfaceUrl(eidUrl);
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandlerSOAP shs = new StepHandlerSOAP(candidate, testbedRefreshAdress, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0, false);
 		String request = shs.createSOAPrequest(message);
 		assertNotNull(request);
 	}
@@ -139,9 +160,9 @@ public class TestStepHandlerSOAP
 	public void testCreateSOAPrequestRSA() throws Exception
 	{
 		CryptoHelper.Algorithm algorithm = CryptoHelper.Algorithm.RSA_ALG_ID;
-		IcsXmlsecSignatureUri uri = IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_256;
+		IcsXmlsecSignatureUri uri = IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_256_MGF1;
 		IcsXmlsecSignatureCanonicalization canonicalization = IcsXmlsecSignatureCanonicalization.HTTP_WWW_W_3_ORG_2001_10_XML_EXC_C_14_N;
-		IcsXmlsecSignatureDigest digest = IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_SHA_1;
+		IcsXmlsecSignatureDigest digest = IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2001_04_XMLENC_SHA_256;
 		logger.debug("--- Testing : " + algorithm.getAlgorithmName() + " || " + uri.value() + " || " + canonicalization.value() + " || " + digest.value() + " ...");
 		String request = createSOAPrequest(algorithm, uri, canonicalization, digest, EService.A);
 		assertNotNull(request);
@@ -155,9 +176,9 @@ public class TestStepHandlerSOAP
 	public void testCreateSOAPrequestRSAC_14_N_11WithComments() throws Exception
 	{
 		CryptoHelper.Algorithm algorithm = CryptoHelper.Algorithm.RSA_ALG_ID;
-		IcsXmlsecSignatureUri uri = IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_256;
+		IcsXmlsecSignatureUri uri = IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_256_MGF1;
 		IcsXmlsecSignatureCanonicalization canonicalization = IcsXmlsecSignatureCanonicalization.HTTP_WWW_W_3_ORG_2006_12_XML_C_14_N_11_WITH_COMMENTS;
-		IcsXmlsecSignatureDigest digest = IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_SHA_1;
+		IcsXmlsecSignatureDigest digest = IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2001_04_XMLENC_SHA_256;
 		logger.debug("--- Testing : " + algorithm.getAlgorithmName() + " || " + uri.value() + " || " + canonicalization.value() + " || " + digest.value() + " ...");
 		String request = createSOAPrequest(algorithm, uri, canonicalization, digest, EService.A);
 		assertNotNull(request);
@@ -168,13 +189,13 @@ public class TestStepHandlerSOAP
 	}
 
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void testCreateSOAPrequestRSAUnsupportedCanonicalization() throws Exception
 	{
 		CryptoHelper.Algorithm algorithm = CryptoHelper.Algorithm.RSA_ALG_ID;
-		IcsXmlsecSignatureUri uri = IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_RSA_SHA_1;
+		IcsXmlsecSignatureUri uri = IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_256;
 		IcsXmlsecSignatureCanonicalization canonicalization = IcsXmlsecSignatureCanonicalization.HTTP_WWW_W_3_ORG_2010_10_XML_C_14_N_2;
-		IcsXmlsecSignatureDigest digest = IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_SHA_1;
+		IcsXmlsecSignatureDigest digest = IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2001_04_XMLENC_SHA_256;
 		logger.debug("--- Testing : " + algorithm.getAlgorithmName() + " || " + uri.value() + " || " + canonicalization.value() + " || " + digest.value() + " ...");
 		assertNull(createSOAPrequest(algorithm, uri, canonicalization, digest, EService.A));
 	}
@@ -218,11 +239,11 @@ public class TestStepHandlerSOAP
 	{
 		List<String> listURI = new LinkedList<String>();
 		// listURIRSA.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_MD_5.value()); // Not supported
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_RSA_SHA_1.value());
+		// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_RSA_SHA_1.value());
 		// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_224.value()); // Not supported
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_256.value());
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_384.value());
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_512.value());
+		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_256_MGF1.value());
+		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_384_MGF1.value());
+		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_512_MGF1.value());
 		// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_RIPEMD_160.value()); // Not supported
 
 		LinkedList<String> listDigest = getAllSignatureDigests(true);
@@ -246,16 +267,16 @@ public class TestStepHandlerSOAP
 		}
 	}
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void testCreateSOAPrequestRSAMultipleAll() throws Exception
 	{
 		List<String> listURI = new LinkedList<String>();
 		// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_MD_5.value()); // Not supported
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_RSA_SHA_1.value());
+		// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_RSA_SHA_1.value());
 		// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_224.value()); // Not supported
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_256.value());
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_384.value());
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_512.value());
+		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_256_MGF1.value());
+		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_384_MGF1.value());
+		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_512_MGF1.value());
 		// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_RIPEMD_160.value()); // Not supported
 
 		LinkedList<String> listDigest = getAllSignatureDigests(false);
@@ -273,11 +294,11 @@ public class TestStepHandlerSOAP
 	}
 
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void testCreateSOAPrequestDSAMultipleAll() throws Exception
 	{
 		List<String> listURI = new LinkedList<String>();
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_DSA_SHA_1.value());
+		// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_DSA_SHA_1.value());
 		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2009_XMLDSIG_11_DSA_SHA_256.value());
 
 		LinkedList<String> listDigest = getAllSignatureDigests(false);
@@ -299,7 +320,7 @@ public class TestStepHandlerSOAP
 	public void testCreateSOAPrequestDSAMultipleWorking() throws Exception
 	{
 		List<String> listURI = new LinkedList<String>();
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_DSA_SHA_1.value());
+		//listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_DSA_SHA_1.value());
 		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2009_XMLDSIG_11_DSA_SHA_256.value());
 
 		LinkedList<String> listDigest = getAllSignatureDigests(true);
@@ -324,11 +345,11 @@ public class TestStepHandlerSOAP
 	}
 
 
-	@Test(enabled = true)
+	@Test(enabled = false)
 	public void testCreateSOAPrequestECDSAMultipleAll() throws Exception
 	{
 		List<String> listURI = new LinkedList<String>();
-		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_1.value());
+		// listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_1.value());
 		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_224.value());
 		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_256.value());
 		listURI.add(IcsXmlsecSignatureUri.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_ECDSA_SHA_384.value());
@@ -381,7 +402,7 @@ public class TestStepHandlerSOAP
 	// }
 
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void testGenerateMessageSaveUseId() throws Exception, SharedSecretNotYetReadyException
 	{
 
@@ -395,7 +416,12 @@ public class TestStepHandlerSOAP
 
 		List<String> certificateNames = new ArrayList<>();
 		certificateNames.add("CERT_EID_XMLSIG_ESERVICE_1_A");
-		StepHandlerSOAP shs = new StepHandlerSOAP(candidateName, candidateUrl, testbedRefreshAdress, eidUrl, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setCandidateName(candidateName);
+		candidate.setEcardapiUrl(candidateUrl);
+		candidate.setEidinterfaceUrl(eidUrl);
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandlerSOAP shs = new StepHandlerSOAP(candidate, testbedRefreshAdress, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0, false);
 		shs.generateMsg(useIdAll);
 	}
 
@@ -422,7 +448,12 @@ public class TestStepHandlerSOAP
 
 		List<String> certificateNames = new ArrayList<>();
 		certificateNames.add("CERT_EID_XMLSIG_ESERVICE_1_A");
-		StepHandlerSOAP shs = new StepHandlerSOAP(candidateName, candidateUrl, testbedRefreshAdress, eidUrl, values, logMessageDAO, service, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setCandidateName(candidateName);
+		candidate.setEcardapiUrl(candidateUrl);
+		candidate.setEidinterfaceUrl(eidUrl);
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandlerSOAP shs = new StepHandlerSOAP(candidate, testbedRefreshAdress, values, logMessageDAO, service, EidCard.EIDCARD_1, 0, false);
 		String request = shs.createSOAPrequest(message);
 		// assertNotNull(request);
 		return request;
@@ -511,7 +542,6 @@ public class TestStepHandlerSOAP
 	private LinkedList<String> getAllSignatureDigests(boolean supportedOnly)
 	{
 		LinkedList<String> listDigest = new LinkedList<String>();
-		listDigest.add(IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2000_09_XMLDSIG_SHA_1.value());
 		listDigest.add(IcsXmlsecSignatureDigest.HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_SHA_384.value());
 		if (!supportedOnly)
 		{

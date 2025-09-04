@@ -5,7 +5,7 @@ import java.util.Locale;
 
 import com.secunet.eidserver.testbed.web.i18n.I18NHandler;
 import com.secunet.eidserver.testbed.web.i18n.I18NText;
-import com.vaadin.data.util.converter.StringToDoubleConverter;
+import com.vaadin.v7.data.util.converter.StringToDoubleConverter;
 
 /**
  * Removes grouping, done by the default implementation.

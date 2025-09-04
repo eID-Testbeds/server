@@ -12,7 +12,7 @@
 		<p:profile>EIDAS_MW</p:profile>
 		<p:profile>CRYPTO</p:profile>
 	</p:profiles>
-	<p:eservice>F</p:eservice><p:clientExplanation>Configure the server to accept the certificate chain for client F. This includes the TLS, XML signature and the CV certificate.</p:clientExplanation>
+	<p:eservice>EECDSA</p:eservice><p:clientExplanation>Configure the server to accept the certificate chain for client E_ECDSA. This includes the TLS, XML signature and the CV certificate.</p:clientExplanation>
 	<p:certificateBaseNames>
 		<p:certificate>CERT_ECARD_TLS_EIDSERVER_1</p:certificate>
 	</p:certificateBaseNames>

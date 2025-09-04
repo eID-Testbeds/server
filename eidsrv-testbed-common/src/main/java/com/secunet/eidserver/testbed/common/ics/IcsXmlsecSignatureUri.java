@@ -65,6 +65,12 @@ public enum IcsXmlsecSignatureUri {
     HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_384("http://www.w3.org/2001/04/xmldsig-more#rsa-sha384"),
     @XmlEnumValue("http://www.w3.org/2001/04/xmldsig-more#rsa-sha512")
     HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_512("http://www.w3.org/2001/04/xmldsig-more#rsa-sha512"),
+    @XmlEnumValue("http://www.w3.org/2007/05/xmldsig-more#sha256-rsa-MGF1")
+    HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_256_MGF1("http://www.w3.org/2007/05/xmldsig-more#sha256-rsa-MGF1"),
+    @XmlEnumValue("http://www.w3.org/2007/05/xmldsig-more#sha384-rsa-MGF1")
+    HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_384_MGF1("http://www.w3.org/2007/05/xmldsig-more#sha384-rsa-MGF1"),
+    @XmlEnumValue("http://www.w3.org/2007/05/xmldsig-more#sha512-rsa-MGF1")
+    HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_SHA_512_MGF1("http://www.w3.org/2007/05/xmldsig-more#sha512-rsa-MGF1"),
     @XmlEnumValue("http://www.w3.org/2001/04/xmldsig-more#rsa-ripemd160")
     HTTP_WWW_W_3_ORG_2001_04_XMLDSIG_MORE_RSA_RIPEMD_160("http://www.w3.org/2001/04/xmldsig-more#rsa-ripemd160"),
     @XmlEnumValue("http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1")

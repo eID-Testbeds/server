@@ -26,48 +26,7 @@
 	</Profiles>
 
 	<Cryptography>
-
-		<eCard-Api>
-			<PskChannel>
-				<TLS version="TLSv12">
-					<Ciphersuites>
-						<Ciphersuite>TLS_RSA_PSK_WITH_AES_256_GCM_SHA384</Ciphersuite>
-					</Ciphersuites>
-				</TLS>
-			</PskChannel>
-			<AttachedServer>
-				<TLS version="TLSv12">
-					<Ciphersuites>
-						<Ciphersuite>TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384</Ciphersuite>
-					</Ciphersuites>
-					<EllipticCurves>
-						<NamedCurve>sect193r1</NamedCurve>
-					</EllipticCurves>
-					<SignatureAlgorithms>
-						<Algorithm>SHA1withRSA</Algorithm>
-					</SignatureAlgorithms>
-				</TLS>
-			</AttachedServer>
-		</eCard-Api>
-
 		<eID-Interface>
-			<TLS version="TLSv12">
-				<Ciphersuites>
-					<Ciphersuite>TLS_DHE_DSS_WITH_AES_128_CBC_SHA</Ciphersuite>
-				</Ciphersuites>
-				<EllipticCurves>
-					<NamedCurve>secp521r1</NamedCurve>
-				</EllipticCurves>
-				<SignatureAlgorithms>
-					<Algorithm>SHA1withRSA</Algorithm>
-				</SignatureAlgorithms>
-				<ClientCertificates>
-					<ClientCertificate>
-						<Type>rsa_sign</Type>
-						<SignatureAlgorithm>SHA256withRSA</SignatureAlgorithm>
-					</ClientCertificate>
-				</ClientCertificates>
-			</TLS>
 			<XmlSignature>
 				<Signature URI="http://www.w3.org/2000/09/xmldsig#rsa-sha1">
 					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>
@@ -87,19 +46,6 @@
 		</eID-Interface>
 
 		<SAML>
-			<TransportSecurity>
-				<TLS version="TLSv12">
-					<Ciphersuites>
-						<Ciphersuite>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384</Ciphersuite>
-					</Ciphersuites>
-					<EllipticCurves>
-						<NamedCurve>sect193r1</NamedCurve>
-					</EllipticCurves>
-					<SignatureAlgorithms>
-						<Algorithm>SHA1withRSA</Algorithm>
-					</SignatureAlgorithms>
-				</TLS>
-			</TransportSecurity>
 			<XmlSignature>
 				<Signature URI="http://www.w3.org/2000/09/xmldsig#rsa-sha1">
 					<Digest>http://www.w3.org/2000/09/xmldsig#sha1</Digest>

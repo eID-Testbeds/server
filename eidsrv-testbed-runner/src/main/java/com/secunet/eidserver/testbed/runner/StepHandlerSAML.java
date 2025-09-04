@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.InvalidAlgorithmParameterException;
@@ -52,13 +51,15 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import com.secunet.eidserver.testbed.common.classes.Singletons;
+import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
+import net.shibboleth.shared.xml.SerializeSupport;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.xml.security.exceptions.Base64DecodingException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
-import org.joda.time.DateTime;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.Namespace;
@@ -72,12 +73,10 @@ import org.opensaml.core.xml.schema.impl.XSAnyMarshaller;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.core.Attribute;
-import org.opensaml.saml.saml2.core.AttributeValue;
-import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.Extensions;
-import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.*;
 import org.opensaml.saml.saml2.core.impl.AttributeBuilder;
+import org.opensaml.saml.saml2.core.impl.RequesterIDBuilder;
+import org.opensaml.saml.saml2.core.impl.ScopingBuilder;
 import org.opensaml.saml.saml2.encryption.Encrypter;
 import org.opensaml.saml.saml2.encryption.Encrypter.KeyPlacement;
 import org.opensaml.security.credential.BasicCredential;
@@ -119,8 +118,6 @@ import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyEx
 import com.secunet.testbedutils.utilities.CommonUtil;
 import com.secunet.testbedutils.utilities.JaxBUtil;
 
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
-
 public class StepHandlerSAML extends StepHandler
 {
 	private static final Logger logger = LogManager.getLogger(StepHandlerSAML.class);
@@ -129,48 +126,46 @@ public class StepHandlerSAML extends StepHandler
 	 * Create a StepHandler for the SAML profile without known certificates
 	 * (beside the encryption and signing certificate of the test candidate)
 	 * 
-	 * @param candidateName
-	 * @param ecardApiUrl
+	 * @param candidate
 	 * @param testbedRefreshAdress
-	 * @param samlUrl
-	 * @param x509Certificates
+	 * @param values
 	 * @param logMessageDao
+	 * @param service
+	 * @param card
 	 * @param expectedNumOfCv
 	 *            {@link int}
 	 */
-	protected StepHandlerSAML(String candidateName, URL ecardApiUrl, String testbedRefreshAdress, URL samlUrl, KnownValues values, LogMessageDAO logMessageDao, EService service, EidCard card,
-			final int expectedNumOfCv)
+	protected StepHandlerSAML(TestCandidate candidate, String testbedRefreshAdress, KnownValues values, LogMessageDAO logMessageDao, EService service, EidCard card,
+							  final int expectedNumOfCv)
 	{
-		super(candidateName, values, logMessageDao, service, card, expectedNumOfCv);
+		super(candidate, values, logMessageDao, service, card, expectedNumOfCv);
 
 		// fill values that are already known
-		super.fillCommonData(candidateName, ecardApiUrl, testbedRefreshAdress, card);
+		super.fillCommonData(candidate, testbedRefreshAdress, card);
 		knownValues.add(new KnownValue(Replaceable.SAML_ID.toString(), UUID.randomUUID().toString()));
-		knownValues.add(new KnownValue(Replaceable.SAML_PROCESSOR_URL.toString(), samlUrl.toString()));
-		knownValues.add(new KnownValue(Replaceable.SAML_PROCESSOR_HOSTNAME.toString(), samlUrl.getHost()));
-		knownValues.add(new KnownValue(Replaceable.SAML_PROCESSOR_PATH.toString(), samlUrl.getPath()));
+		knownValues.add(new KnownValue(Replaceable.SAML_PROCESSOR_URL.toString(), candidate.getSamlUrl().toString()));
+		knownValues.add(new KnownValue(Replaceable.SAML_PROCESSOR_HOSTNAME.toString(), candidate.getSamlUrl().getHost()));
+		knownValues.add(new KnownValue(Replaceable.SAML_PROCESSOR_PATH.toString(), candidate.getSamlUrl().getPath()));
 	}
 
 	/**
 	 * Create a StepHandler for the SAML profile, known certificates and a
 	 * CommunicationErrorAddress
-	 * 
-	 * @param profileSuffix
-	 * @param eCardApiUrl
+	 *
+	 * @param candidate
 	 * @param testbedRefreshAdress
-	 * @param x509Certificates
-	 * @param cvCertificates
 	 * @param communicationErrorAddress
 	 * @param values
 	 * @param logMessageDao
+	 * @param service
+	 * @param card
 	 * @param expectedNumOfCv
-	 *            {@link int}
 	 */
-	protected StepHandlerSAML(String profileSuffix, URL eCardApiUrl, String testbedRefreshAdress, URL samlUrl, String communicationErrorAddress, KnownValues values, LogMessageDAO logMessageDao,
+	protected StepHandlerSAML(TestCandidate candidate, String testbedRefreshAdress, String communicationErrorAddress, KnownValues values, LogMessageDAO logMessageDao,
 			EService service, EidCard card, final int expectedNumOfCv)
 	{
 		// fill values that are already known
-		this(profileSuffix, eCardApiUrl, testbedRefreshAdress, samlUrl, values, logMessageDao, service, card, expectedNumOfCv);
+		this(candidate, testbedRefreshAdress, values, logMessageDao, service, card, expectedNumOfCv);
 		knownValues.add(new KnownValue(Replaceable.COMMUNICATIONERRORADDRESS.toString(), communicationErrorAddress));
 	}
 
@@ -237,7 +232,7 @@ public class StepHandlerSAML extends StepHandler
 				alg = CryptoHelper.Algorithm.getFromAlgorithmName(algo);
 			}
 
-			X509Certificate sigCert = CryptoHelper.loadSignatureCertificate(CryptoHelper.Protocol.SAML_PROT_ID, alg, service);
+			X509Certificate sigCert = CryptoHelper.loadSignatureCertificate(CryptoHelper.Protocol.SAML_PROT_ID, alg, service, candidate);
 			Result sigResult = verifySignature(samlAssertion, relayState, SIGAlg, signature, sigCert.getPublicKey());
 			result += sigResult.getMessage() + System.getProperty("line.separator");
 			success &= sigResult.wasSuccessful();
@@ -288,6 +283,7 @@ public class StepHandlerSAML extends StepHandler
 
 		if (step != null)
 		{
+
 			// outbound messages have only one http token and may have one protocol token
 			StepToken headerToken = step.getHttpStepToken().get(0);
 			String header = headerToken.getValue();
@@ -343,15 +339,15 @@ public class StepHandlerSAML extends StepHandler
 			X509Certificate x509Enc = null;
 			if (service.equals(EService.EDSA))
 			{
-				x509Enc = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.DSA_ALG_ID, service.toString() + GeneralConstants.ENCRYPTION_SUFFIX);
+				x509Enc = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.DSA_ALG_ID, service.toString() + GeneralConstants.ENCRYPTION_SUFFIX, candidate);
 			}
 			else if (service.equals(EService.EECDSA))
 			{
-				x509Enc = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.ECDSA_ALG_ID, service.toString() + GeneralConstants.ENCRYPTION_SUFFIX);
+				x509Enc = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.ECDSA_ALG_ID, service.toString() + GeneralConstants.ENCRYPTION_SUFFIX, candidate);
 			}
 			else
 			{
-				x509Enc = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.RSA_ALG_ID, service.toString() + GeneralConstants.ENCRYPTION_SUFFIX);
+				x509Enc = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.RSA_ALG_ID, service.toString() + GeneralConstants.ENCRYPTION_SUFFIX, candidate);
 			}
 
 			if (x509Enc == null)
@@ -429,7 +425,7 @@ public class StepHandlerSAML extends StepHandler
 			String signatureAlgorithmEncoded = URLEncoder.encode(signatureAlgorithm, "UTF-8");
 			Signature sig = Signature.getInstance(CryptoHelper.getAlgorithmForSignatureUrl(signatureAlgorithm));
 
-			sig.initSign(CryptoHelper.loadSignatureKey(CryptoHelper.Protocol.SAML_PROT_ID, alg, service));
+			sig.initSign(CryptoHelper.loadSignatureKey(CryptoHelper.Protocol.SAML_PROT_ID, alg, service, candidate));
 			sig.update(("SAMLRequest=" + samlAutnRequest + "&SigAlg=" + signatureAlgorithmEncoded).getBytes());
 
 			if (withSignature)
@@ -484,12 +480,11 @@ public class StepHandlerSAML extends StepHandler
 	protected AuthnRequest buildAuthRequest(PublicKey encKey) throws EncryptionException, MarshallingException, ConfigurationException, TransformerException, InitializationException
 	{
 		logger.entry("Building the AuthnRequest");
-		DateTime now = new DateTime();
 		InitializationService.initialize();
 		XMLObjectBuilderFactory builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 		SAMLObjectBuilder<AuthnRequest> requestBuilder = (SAMLObjectBuilder<AuthnRequest>) builderFactory.getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
 		AuthnRequest request = requestBuilder.buildObject();
-		request.setIssueInstant(now);
+		request.setIssueInstant(java.time.Instant.now());
 		request.setVersion(SAMLVersion.VERSION_20);
 		request.setID(knownValues.get(Replaceable.SAML_ID.toString()).getValue());
 		request.setProtocolBinding("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect");
@@ -502,7 +497,13 @@ public class StepHandlerSAML extends StepHandler
 		{
 			request.setAssertionConsumerServiceURL(GeneralConstants.TESTBED_REFRESH_URL);
 		}
-		request.setProviderName(GeneralConstants.PROVIDER_NAME);
+
+		Scoping scoping = new ScopingBuilder().buildObject();
+		RequesterID reqID = new RequesterIDBuilder().buildObject();
+		reqID.setURI(GeneralConstants.PROVIDER_NAME);
+		scoping.getRequesterIDs().add(reqID);
+		request.setScoping(scoping);
+
 		request.getNamespaceManager().registerNamespaceDeclaration(new Namespace("http://bsi.bund.de/eID/", "eid"));
 		request.getNamespaceManager().registerNamespaceDeclaration(new Namespace(SAMLConstants.SAML20_NS, SAMLConstants.SAML20_PREFIX));
 		request.getNamespaceManager().registerNamespaceDeclaration(new Namespace("http://www.w3.org/2000/09/xmldsig#", "ds"));
@@ -757,10 +758,9 @@ public class StepHandlerSAML extends StepHandler
 
 	/**
 	 * Verifies the SAML Assertion signature using the given parameters
-	 * 
 	 * @param SAMLAssertion
-	 * @param SIGAlg
 	 * @param relayState
+	 * @param sigAlg
 	 * @param signature
 	 * @param SigningKeyPub
 	 * @return
@@ -1231,27 +1231,13 @@ public class StepHandlerSAML extends StepHandler
 			Cipher symm = null;
 			SecretKeySpec secretKeySpec = null;
 			int ivLength = -1;
-			if (alg == IcsXmlsecEncryptionContentUri.HTTP_WWW_W_3_ORG_2001_04_XMLENC_AES_128_CBC || alg == IcsXmlsecEncryptionContentUri.HTTP_WWW_W_3_ORG_2001_04_XMLENC_AES_192_CBC
-					|| alg == IcsXmlsecEncryptionContentUri.HTTP_WWW_W_3_ORG_2001_04_XMLENC_AES_256_CBC)
-			{
-				symm = Cipher.getInstance("AES/CBC/NoPadding", "BC");
-				secretKeySpec = new SecretKeySpec(symmetricKey, "AES");
-				ivLength = 16;
-			}
-			else if (alg == IcsXmlsecEncryptionContentUri.HTTP_WWW_W_3_ORG_2009_XMLENC_11_AES_128_GCM || alg == IcsXmlsecEncryptionContentUri.HTTP_WWW_W_3_ORG_2009_XMLENC_11_AES_192_GCM
+			if (alg == IcsXmlsecEncryptionContentUri.HTTP_WWW_W_3_ORG_2009_XMLENC_11_AES_128_GCM || alg == IcsXmlsecEncryptionContentUri.HTTP_WWW_W_3_ORG_2009_XMLENC_11_AES_192_GCM
 					|| alg == IcsXmlsecEncryptionContentUri.HTTP_WWW_W_3_ORG_2009_XMLENC_11_AES_256_GCM)
 			{
-				symm = Cipher.getInstance("AES/GCM/NoPadding", "BC");
+				symm = Cipher.getInstance("AES/GCM/NoPadding", Singletons.BC_PROVIDER);
 				secretKeySpec = new SecretKeySpec(symmetricKey, "AES");
 				ivLength = 16;
-			}
-			// note: camelia is ignored here
-			else
-			{
-				symm = Cipher.getInstance("DESede/CBC/NoPadding", "BC");
-				secretKeySpec = new SecretKeySpec(symmetricKey, "DES");
-				ivLength = 8;
-			}
+
 			// IV = first ivLength bytes of the ciphertext
 			byte[] deB64 = Base64.decode(cipherNode.getTextContent());
 			IvParameterSpec ivSpec = new IvParameterSpec(Arrays.copyOfRange(deB64, 0, ivLength));
@@ -1264,6 +1250,13 @@ public class StepHandlerSAML extends StepHandler
 			else
 			{
 				message += "Error while decoding the encrypted Assertion";
+				success = false;
+			}
+			}
+			else
+			{
+				message += "Wrong algorithm specified:" + alg;
+				System.out.println("XXXXXXXXXXXXXXXXXX" + alg.value());
 				success = false;
 			}
 		}
@@ -1354,12 +1347,12 @@ public class StepHandlerSAML extends StepHandler
 				try
 				{
 					byte[] decodedKey = Base64.decode(keyData.getFirstChild().getTextContent());
-					cipher = Cipher.getInstance(algo, "BC");
-					cipher.init(Cipher.DECRYPT_MODE, CryptoHelper.loadKey(CryptoHelper.Protocol.SAML_PROT_ID, alg, (service + GeneralConstants.ENCRYPTION_SUFFIX)));
+					cipher = Cipher.getInstance(algo, Singletons.BC_PROVIDER);
+					cipher.init(Cipher.DECRYPT_MODE, CryptoHelper.loadKey(CryptoHelper.Protocol.SAML_PROT_ID, alg, (service + GeneralConstants.ENCRYPTION_SUFFIX), candidate));
 					cipher.update(decodedKey);
 					symmBytes = cipher.doFinal();
 				}
-				catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | DOMException e)
+				catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | DOMException e)
 				{
 					success = false;
 					StringWriter trace = new StringWriter();

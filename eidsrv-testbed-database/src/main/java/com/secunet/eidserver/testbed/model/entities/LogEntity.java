@@ -1,9 +1,7 @@
 package com.secunet.eidserver.testbed.model.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -59,6 +57,15 @@ public class LogEntity extends BaseEntity implements Serializable, Log
 	@Override
 	public List<LogMessage> getLogMessages()
 	{
+		//TODO: Why on earth is this here, while the TestStepNumber is never set, so it runs into a NullPointerException every time???
+/*		Collections.sort(this.logMessages, new Comparator<LogMessage>()
+		{
+			public int compare(LogMessage o1, LogMessage o2)
+			{
+				return (int)(o1.getTestStepNumber().longValue() - o2.getTestStepNumber().longValue());
+			}
+		});*/
+
 		return this.logMessages;
 	}
 

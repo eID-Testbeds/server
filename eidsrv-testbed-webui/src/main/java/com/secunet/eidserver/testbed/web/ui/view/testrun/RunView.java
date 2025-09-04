@@ -35,25 +35,25 @@ import com.secunet.eidserver.testbed.web.ui.util.ParameterHandler;
 import com.secunet.eidserver.testbed.web.ui.view.testrun.liveview.TestRunLiveViewWindow;
 import com.secunet.eidserver.testbed.web.ui.view.testrun.panels.CandidateSelectionPanel;
 import com.vaadin.cdi.CDIView;
-import com.vaadin.data.Item;
+import com.vaadin.v7.data.Item;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.MultiSelectMode;
-import com.vaadin.ui.AbstractSelect.ItemDescriptionGenerator;
+import com.vaadin.v7.ui.AbstractSelect.ItemDescriptionGenerator;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
+import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.ProgressBar;
-import com.vaadin.ui.Table.Align;
-import com.vaadin.ui.TreeTable;
+import com.vaadin.v7.ui.ProgressBar;
+import com.vaadin.v7.ui.Table.Align;
+import com.vaadin.v7.ui.TreeTable;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.VerticalLayout;
 
 @CDIView("execution")
 public class RunView extends AbstractTestbedView implements View, PropertyChangeListener
@@ -362,10 +362,8 @@ public class RunView extends AbstractTestbedView implements View, PropertyChange
 			liveViewWindow.initialize(startThisRunModel);
 			UI.getCurrent().addWindow(liveViewWindow);
 			liveViewWindow.center();
-			liveViewWindow.setImmediate(true);
 			liveViewWindow.setResponsive(true);
 			UI.getCurrent().setResponsive(true);
-			UI.getCurrent().setImmediate(true);
 			liveViewWindow.setPosition(-1, 5);
 		}
 		catch (Exception exc)

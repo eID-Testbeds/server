@@ -13,7 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.time.Instant;
@@ -58,6 +57,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
+import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -94,14 +95,10 @@ public class StepHandlerSOAP extends StepHandler
 	/**
 	 * Create a StepHandler for the SOAP profile
 	 * 
-	 * @param candidateName
-	 *            {@link String}
-	 * @param eCardApiUrl
-	 *            {@link URL}
+	 * @param candidate
+	 *            {@link TestCandidate}
 	 * @param testbedRefreshAdress
 	 *            {@link String}
-	 * @param eidUrl
-	 *            {@link URL}
 	 * @param values
 	 *            {@link KnownValues}
 	 * @param logMessageDao
@@ -113,54 +110,21 @@ public class StepHandlerSOAP extends StepHandler
 	 * @param expectedNumOfCv
 	 *            {@link int}
 	 */
-	protected StepHandlerSOAP(String candidateName, URL eCardApiUrl, String testbedRefreshAdress, URL eidUrl, KnownValues values, LogMessageDAO logMessageDao, EService service, EidCard card,
-			final int expectedNumOfCv)
+	protected StepHandlerSOAP(TestCandidate candidate, String testbedRefreshAdress, KnownValues values, LogMessageDAO logMessageDao, EService service, EidCard card,
+							  final int expectedNumOfCv, final boolean attachedMode)
 	{
-		super(candidateName, values, logMessageDao, service, card, expectedNumOfCv);
-
+		super(candidate, values, logMessageDao, service, card, expectedNumOfCv);
 		// fill values that are already known
-		super.fillCommonData(candidateName, eCardApiUrl, testbedRefreshAdress, card);
-		knownValues.add(new KnownValue(Replaceable.EID_INTERFACE_URL.toString(), eidUrl.toString()));
-		knownValues.add(new KnownValue(Replaceable.EID_INTERFACE_HOSTNAME.toString(), eidUrl.getHost()));
-		knownValues.add(new KnownValue(Replaceable.EID_INTERFACE_PATH.toString(), getNonEmptyPath(eidUrl)));
-		// default request counter value
-		knownValues.add(new KnownValue(Replaceable.REQUESTCOUNTER.toString(), GeneralConstants.DEFAULT_REQUEST_COUNTER));
-	}
-
-	/**
-	 * Create a StepHandler for the SOAP profile in attached mode
-	 * 
-	 * @param candidateName
-	 *            {@link String}
-	 * @param eCardApiUrl
-	 *            {@link URL}
-	 * @param testbedRefreshAdress
-	 *            {@link String}
-	 * @param eidUrl
-	 *            {@link URL}
-	 * @param values
-	 *            {@link KnownValues}
-	 * @param logMessageDao
-	 *            {@link LogMessageDAO}
-	 * @param service
-	 *            {@link EService}
-	 * @param card
-	 *            {@link EidCard}
-	 * @param certificateBaseNames
-	 *            {@link List} of {@link String}
-	 * @param expectedNumOfCv
-	 *            {@link int}
-	 */
-	protected StepHandlerSOAP(String candidateName, URL attachedUrl, String testbedRefreshAdress, KnownValues values, LogMessageDAO logMessageDao, EService service, EidCard card,
-			final int expectedNumOfCv)
-	{
-		super(candidateName, values, logMessageDao, service, card, expectedNumOfCv);
-
-		// fill values that are already known
-		super.fillCommonData(candidateName, null, testbedRefreshAdress, card);
-		knownValues.add(new KnownValue(Replaceable.ATTACHED_WEBPAGE.toString(), attachedUrl.toString()));
-		knownValues.add(new KnownValue(Replaceable.ATTACHED_WEBPAGE_HOSTNAME.toString(), attachedUrl.getHost()));
-		knownValues.add(new KnownValue(Replaceable.ATTACHED_WEBPAGE_PATH.toString(), getNonEmptyPath(attachedUrl)));
+		super.fillCommonData(candidate, testbedRefreshAdress, card);
+		if (attachedMode) {
+			knownValues.add(new KnownValue(Replaceable.ATTACHED_WEBPAGE.toString(), candidate.getAttachedTcTokenUrl().toString()));
+			knownValues.add(new KnownValue(Replaceable.ATTACHED_WEBPAGE_HOSTNAME.toString(), candidate.getAttachedTcTokenUrl().getHost()));
+			knownValues.add(new KnownValue(Replaceable.ATTACHED_WEBPAGE_PATH.toString(), getNonEmptyPath(candidate.getAttachedTcTokenUrl())));
+		} else {
+			knownValues.add(new KnownValue(Replaceable.EID_INTERFACE_URL.toString(), candidate.getEidinterfaceUrl().toString()));
+			knownValues.add(new KnownValue(Replaceable.EID_INTERFACE_HOSTNAME.toString(), candidate.getEidinterfaceUrl().getHost()));
+			knownValues.add(new KnownValue(Replaceable.EID_INTERFACE_PATH.toString(), getNonEmptyPath(candidate.getEidinterfaceUrl())));
+		}
 		// default request counter value
 		knownValues.add(new KnownValue(Replaceable.REQUESTCOUNTER.toString(), GeneralConstants.DEFAULT_REQUEST_COUNTER));
 	}
@@ -190,6 +154,7 @@ public class StepHandlerSOAP extends StepHandler
 				if (protocolBody.contains(Functional.CREATE_SOAP_SECURITY_HEADER.getTextMark()))
 				{
 					protocolBody = protocolBody.replace(Functional.CREATE_SOAP_SECURITY_HEADER.getTextMark(), "");
+					protocolBody = StringEscapeUtils.unescapeHtml4(protocolBody);
 					protocolBody = createSOAPrequest(protocolBody);
 				}
 			}
@@ -295,13 +260,13 @@ public class StepHandlerSOAP extends StepHandler
 			{
 				alg = CryptoHelper.Algorithm.DSA_ALG_ID;
 			}
-			PrivateKey privKey = CryptoHelper.loadKey(CryptoHelper.Protocol.SOAP_PROT_ID, alg, service.toString());
+			PrivateKey privKey = CryptoHelper.loadKey(CryptoHelper.Protocol.SOAP_PROT_ID, alg, service.toString(), candidate);
 			if (privKey == null)
 			{
 				logger.error("Could not load key file: " + CryptoHelper.Protocol.SOAP_PROT_ID + ", " + alg + ", " + service.toString());
 				return null;
 			}
-			X509Certificate x509Cert = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SOAP_PROT_ID, alg, service.toString());
+			X509Certificate x509Cert = CryptoHelper.loadCertificate(CryptoHelper.Protocol.SOAP_PROT_ID, alg, service.toString(), candidate);
 			if (x509Cert == null)
 			{
 				logger.error("Could not load x509 certificate file: " + CryptoHelper.Protocol.SOAP_PROT_ID + ", " + alg + ", " + service.toString());
@@ -358,7 +323,7 @@ public class StepHandlerSOAP extends StepHandler
 			String bodyId = "body-123";
 			String timestampId = "time-123";
 			String providerName = System.getProperty("jsr105Provider", "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
-			XMLSignatureFactory sigFactory = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
+			XMLSignatureFactory sigFactory = XMLSignatureFactory.getInstance("DOM");
 			DigestMethod digestMethod = sigFactory.newDigestMethod(digestMethodAlgorithm, null);
 
 			Transform transformBody = null;
@@ -509,7 +474,7 @@ public class StepHandlerSOAP extends StepHandler
 			return prettyNodeToString(root);
 		}
 		catch (ParserConfigurationException | SAXException | IOException | TransformerException | MarshalException | XMLSignatureException | SOAPException | NoSuchAlgorithmException
-				| InvalidAlgorithmParameterException | InstantiationException | IllegalAccessException | ClassNotFoundException e)
+				| InvalidAlgorithmParameterException e)
 		{
 			StringWriter trace = new StringWriter();
 			e.printStackTrace(new PrintWriter(trace));

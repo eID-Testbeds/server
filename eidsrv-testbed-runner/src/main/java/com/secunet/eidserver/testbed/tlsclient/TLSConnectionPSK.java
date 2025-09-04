@@ -1,70 +1,44 @@
 package com.secunet.eidserver.testbed.tlsclient;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.crypto.tls.AlertLevel;
-import org.bouncycastle.crypto.tls.Certificate;
-import org.bouncycastle.crypto.tls.CipherSuite;
-import org.bouncycastle.crypto.tls.CompressionMethod;
-import org.bouncycastle.crypto.tls.HashAlgorithm;
-import org.bouncycastle.crypto.tls.NameType;
-import org.bouncycastle.crypto.tls.NamedCurve;
-import org.bouncycastle.crypto.tls.PSKTlsClient;
-import org.bouncycastle.crypto.tls.ProtocolVersion;
-import org.bouncycastle.crypto.tls.ServerName;
-import org.bouncycastle.crypto.tls.ServerNameList;
-import org.bouncycastle.crypto.tls.ServerOnlyTlsAuthentication;
-import org.bouncycastle.crypto.tls.SignatureAlgorithm;
-import org.bouncycastle.crypto.tls.SignatureAndHashAlgorithm;
-import org.bouncycastle.crypto.tls.TlsAuthentication;
-import org.bouncycastle.crypto.tls.TlsECCUtils;
-import org.bouncycastle.crypto.tls.TlsExtensionsUtils;
-import org.bouncycastle.crypto.tls.TlsUtils;
+import org.bouncycastle.tls.*;
+import org.bouncycastle.tls.crypto.impl.bc.BcTlsCrypto;
 
 public class TLSConnectionPSK extends PSKTlsClient
 {
 	private static final Logger logger = LogManager.getLogger(TLSConnectionPSK.class);
 
-	private int[] supported_suites, namedCurves;
-	private short[] hashAlgorithms, signatureAlgorithms;
-	private String compressionMethod, cipherSuite, serverVersion, host;
+	private final int[] supported_suites;
+
+	private final Vector namedCurves;
+	private final short[] hashAlgorithms, signatureAlgorithms;
+    private final String host;
 
 	/**
 	 * Create a TLS PSK client without a client certificate using the given
 	 * parameters
 	 * 
-	 * @param connectionClient
-	 * @param PSKID
-	 * @param PSK
+	 * @param host The host to connect to
+	 * @param PSKID The PSK identity
+	 * @param PSK The PSK
 	 */
 	TLSConnectionPSK(String host, byte[] PSKID, byte[] PSK)
 	{
-		super(new TLSPSKClientIdentity(PSKID, PSK));
-		setDefaultCryptography();
+		super(new BcTlsCrypto(new SecureRandom()),new TLSPSKClientIdentity(PSKID, PSK));
+		this.supported_suites = new int[] { CipherSuite.TLS_RSA_PSK_WITH_AES_256_CBC_SHA, CipherSuite.TLS_PSK_WITH_AES_256_CBC_SHA };
+		this.namedCurves = new Vector(List.of(NamedGroup.brainpoolP256r1, NamedGroup.brainpoolP384r1, NamedGroup.brainpoolP512r1, NamedGroup.secp224r1, NamedGroup.secp256r1, NamedGroup.secp384r1,
+				NamedGroup.secp521r1));
+		this.hashAlgorithms = new short[] { HashAlgorithm.sha512, HashAlgorithm.sha384, HashAlgorithm.sha256, HashAlgorithm.sha224, HashAlgorithm.sha1 };
+		this.signatureAlgorithms = new short[] { SignatureAlgorithm.rsa, SignatureAlgorithm.ecdsa };
 		this.host = host;
-	}
-
-	// set default crypto params
-	private void setDefaultCryptography()
-	{
-		supported_suites = new int[] { CipherSuite.TLS_RSA_PSK_WITH_AES_256_CBC_SHA, CipherSuite.TLS_PSK_WITH_AES_256_CBC_SHA };
-		namedCurves = new int[] { NamedCurve.brainpoolP256r1, NamedCurve.brainpoolP384r1, NamedCurve.brainpoolP512r1, NamedCurve.secp224r1, NamedCurve.secp256r1, NamedCurve.secp384r1,
-				NamedCurve.secp521r1 };
-		hashAlgorithms = new short[] { HashAlgorithm.sha512, HashAlgorithm.sha384, HashAlgorithm.sha256, HashAlgorithm.sha224, HashAlgorithm.sha1 };
-		signatureAlgorithms = new short[] { SignatureAlgorithm.rsa, SignatureAlgorithm.ecdsa };
-	}
-
-	// Allows the manipulation cipher suites that can be used for the connection
-	public void setCipherSuites(int[] supported_cipher_suites)
-	{
-		supported_suites = supported_cipher_suites;
 	}
 
 	// Returns the cipher suites that can be used for the connection
@@ -75,15 +49,30 @@ public class TLSConnectionPSK extends PSKTlsClient
 	}
 
 	@Override
-	public ProtocolVersion getMinimumVersion()
+	public ProtocolVersion[] getProtocolVersions() {
+		return ProtocolVersion.TLSv12.only();
+	}
+
+	@Override
+	public ProtocolVersion[] getSupportedVersions()
 	{
-		return ProtocolVersion.TLSv12;
+		return ProtocolVersion.TLSv12.only();
 	}
 
 	// Do not terminate
 	@Override
 	public void notifySecureRenegotiation(boolean secureRenegotiation) throws IOException
 	{
+	}
+
+	private boolean containsECCCipherSuites(int[] cipherSuites)
+	{
+        for (int cipherSuite : cipherSuites) {
+            if (TlsECCUtils.isECCCipherSuite(cipherSuite)) {
+                return true;
+            }
+        }
+		return false;
 	}
 
 	// set up the client extensions
@@ -96,9 +85,9 @@ public class TLSConnectionPSK extends PSKTlsClient
 
 		// add curves. if none have been specified, use the defaults according
 		// to TR03116
-		if (TlsECCUtils.containsECCCipherSuites(getCipherSuites()))
+		if (containsECCCipherSuites(getCipherSuites()))
 		{
-			TlsECCUtils.addSupportedEllipticCurvesExtension(clientExtensions, namedCurves);
+			TlsExtensionsUtils.addSupportedGroupsExtension(clientExtensions, namedCurves);
 		}
 
 		// add all combinations of hash and signature algorithms that have been
@@ -112,11 +101,11 @@ public class TLSConnectionPSK extends PSKTlsClient
 			}
 		}
 		clientExtensions = TlsExtensionsUtils.ensureExtensionsInitialised(clientExtensions);
-		TlsUtils.addSignatureAlgorithmsExtension(clientExtensions, supportedSignatureAlgorithms);
+		TlsExtensionsUtils.addSignatureAlgorithmsExtension(clientExtensions, supportedSignatureAlgorithms);
 
 		Vector serverNames = new Vector(1);
-		serverNames.addElement(new ServerName(NameType.host_name, host));
-		TlsExtensionsUtils.addServerNameExtension(clientExtensions, new ServerNameList(serverNames));
+		serverNames.addElement(new ServerName(NameType.host_name, host.getBytes(StandardCharsets.UTF_8)));
+		TlsExtensionsUtils.addServerNameExtensionClient(clientExtensions, serverNames);
 
 		return clientExtensions;
 	}
@@ -126,13 +115,13 @@ public class TLSConnectionPSK extends PSKTlsClient
 	{
 		if (level == AlertLevel.fatal)
 		{
-			logger.info("TLS error during sending: " + AlertLevel.getName(description) + System.getProperty("line.separator") + AlertLevel.getText(description) + System.getProperty("line.separator")
+			logger.info("TLS error during sending: " + AlertLevel.getName(description) + System.lineSeparator() + AlertLevel.getText(description) + System.lineSeparator()
 					+ message);
 		}
 		else
 		{
-			logger.debug("TLS warning during sending: " + AlertLevel.getName(description) + System.getProperty("line.separator") + AlertLevel.getText(description)
-					+ System.getProperty("line.separator") + message);
+			logger.debug("TLS warning during sending: " + AlertLevel.getName(description) + System.lineSeparator() + AlertLevel.getText(description)
+					+ System.lineSeparator() + message);
 		}
 		super.notifyAlertRaised(level, description, message, cause);
 	}
@@ -151,133 +140,14 @@ public class TLSConnectionPSK extends PSKTlsClient
 		super.notifyAlertReceived(level, description);
 	}
 
-	/**
-	 * @return the signatureAlgorithms
-	 */
-	public short[] getSignatureAlgorithms()
-	{
-		return signatureAlgorithms;
-	}
-
-	/**
-	 * @param signatureAlgorithms
-	 *            the signatureAlgorithms to set
-	 */
-	public void setSignatureAlgorithms(short[] signatureAlgorithms)
-	{
-		this.signatureAlgorithms = signatureAlgorithms;
-	}
-
-	/**
-	 * @return the hashAlgorithms
-	 */
-	public short[] getHashAlgorithms()
-	{
-		return hashAlgorithms;
-	}
-
-	/**
-	 * @param hashAlgorithms
-	 *            the hashAlgorithms to set
-	 */
-	public void setHashAlgorithms(short[] hashAlgorithms)
-	{
-		this.hashAlgorithms = hashAlgorithms;
-	}
-
-	/**
-	 * @return the namedCurves
-	 */
-	public int[] getNamedCurves()
-	{
-		return namedCurves;
-	}
-
-	/**
-	 * @param namedCurves
-	 *            the namedCurves to set
-	 */
-	public void setNamedCurves(int[] namedCurves)
-	{
-		this.namedCurves = namedCurves;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.secunet.bouncycastle.crypto.tls.AbstractTlsClient#notifyServerVersion(com.secunet.bouncycastle.crypto.tls.ProtocolVersion)
-	 */
-	@Override
-	public void notifyServerVersion(ProtocolVersion serverVersion) throws IOException
-	{
-		this.serverVersion = serverVersion.toString();
-		super.notifyServerVersion(serverVersion);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.secunet.bouncycastle.crypto.tls.AbstractTlsClient#notifySelectedCompressionMethod(short)
-	 */
-	@Override
-	public void notifySelectedCompressionMethod(short selectedCompressionMethod)
-	{
-		for (Field f : CompressionMethod.class.getFields())
-		{
-			try
-			{
-				if (f.getShort(null) == selectedCompressionMethod)
-				{
-					this.compressionMethod = f.getName();
-				}
-			}
-			catch (IllegalArgumentException | IllegalAccessException e)
-			{
-				StringWriter trace = new StringWriter();
-				e.printStackTrace(new PrintWriter(trace));
-				logger.error("Could not decode compression method:" + System.getProperty("line.separator") + trace.toString());
-			}
-		}
-		super.notifySelectedCompressionMethod(selectedCompressionMethod);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.secunet.bouncycastle.crypto.tls.AbstractTlsClient#notifySelectedCipherSuite(int)
-	 */
-	@Override
-	public void notifySelectedCipherSuite(int selectedCipherSuite)
-	{
-		for (Field f : CipherSuite.class.getFields())
-		{
-			try
-			{
-				if (f.getInt(null) == selectedCipherSuite)
-				{
-					this.cipherSuite = f.getName();
-				}
-			}
-			catch (IllegalArgumentException | IllegalAccessException e)
-			{
-				StringWriter trace = new StringWriter();
-				e.printStackTrace(new PrintWriter(trace));
-				logger.error("Could not decode ciphersuite:" + System.getProperty("line.separator") + trace.toString());
-			}
-		}
-		super.notifySelectedCipherSuite(selectedCipherSuite);
-	}
-
 	@Override
 	public TlsAuthentication getAuthentication() throws IOException
 	{
 		logger.debug("Using only server certificates");
 		return new ServerOnlyTlsAuthentication() {
-
 			@Override
-			public void notifyServerCertificate(Certificate arg0) throws IOException
-			{
-				System.out.println(arg0.getCertificateList()[0].toString());
+			public void notifyServerCertificate(TlsServerCertificate serverCertificate) {
+				System.out.println(serverCertificate.getCertificate().getCertificateList()[0].toString());
 			}
 		};
 	}

@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.secunet.eidserver.testbed.common.interfaces.entities.CertificateX509;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 @Entity
 @Table(name = "CERTIFICATE_X509")
@@ -56,7 +57,7 @@ public class CertificateX509Entity extends BaseEntity implements Serializable, C
 		CertificateFactory certFactory;
 		try
 		{
-			certFactory = CertificateFactory.getInstance("X.509");
+			certFactory = CertificateFactory.getInstance("X.509", new BouncyCastleProvider());
 			InputStream stream = new ByteArrayInputStream(x509certificate);
 			X509Certificate cert = (X509Certificate) certFactory.generateCertificate(stream);
 			return cert;

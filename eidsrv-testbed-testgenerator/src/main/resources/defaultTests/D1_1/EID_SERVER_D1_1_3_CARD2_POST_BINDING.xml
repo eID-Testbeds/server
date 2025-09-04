@@ -27,25 +27,40 @@
 		<p:step>IN_EIDAS_RESPONSE_POST</p:step>
 	</p:steps>
 	<p:variables>
-		<!-- request the minimum dataset -->
+		<!-- request ATTRIBUTE_SET_EIDAS -->
 		<p:variable name="EIDAS_ATTR_FirstName">REQUIRED</p:variable>
 		<p:variable name="PERSONAL_FirstName">ERIKA</p:variable>
 		<p:variable name="USEOP_GIVENNAMES">REQUIRED</p:variable>
 		<p:variable name="OABU_GIVENNAMES">ALLOWED</p:variable>
-		
+
 		<p:variable name="EIDAS_ATTR_FamilyName">REQUIRED</p:variable>
 		<p:variable name="PERSONAL_FamilyName">MUSTERMANN</p:variable>
 		<p:variable name="USEOP_FAMILYNAMES">REQUIRED</p:variable>
 		<p:variable name="OABU_FAMILYNAMES">ALLOWED</p:variable>
-		
+
 		<p:variable name="EIDAS_ATTR_DateOfBirth">REQUIRED</p:variable>
 		<p:variable name="PERSONAL_DateOfBirth">1964-08-12</p:variable>
 		<p:variable name="USEOP_DATEOFBIRTH">REQUIRED</p:variable>
 		<p:variable name="OABU_DATEOFBIRTH">ALLOWED</p:variable>
-		
+
 		<p:variable name="EIDAS_ATTR_PersonIdentifier">REQUIRED</p:variable>
 		<p:variable name="PERSONAL_PersonIdentifier">DE/DE/4242424242424242424242424242424242424242424242424242424242424242</p:variable>
 		<p:variable name="USEOP_RESTRICTEDID">REQUIRED</p:variable>
 		<p:variable name="OABU_RESTRICTEDID">ALLOWED</p:variable>
+
+		<p:variable name="EIDAS_ATTR_PlaceOfBirth">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_PlaceOfBirth">BERLIN</p:variable>
+		<p:variable name="USEOP_PLACEOFBIRTH">ALLOWED</p:variable>
+		<p:variable name="OABU_PLACEOFBIRTH">ALLOWED</p:variable>
+
+		<p:variable name="EIDAS_ATTR_BirthName">ALLOWED</p:variable> <!-- If BirthName is REQUIRED but NOT_ON_CHIP, eidas middleware 2.2.7 will fail with a seemingly unrelated error. See https://github.com/Governikus/eidas-middleware/blob/8c332ac8a6d9670f4c6f075b40062a073aeba3b7/eidas-middleware/src/main/java/de/governikus/eumw/eidasmiddleware/handler/ResponseHandler.java#L499 -->
+		<p:variable name="PERSONAL_BirthName">ERIKA GABLER</p:variable>
+		<p:variable name="USEOP_BIRTHNAME">ALLOWED</p:variable>
+		<p:variable name="OABU_BIRTHNAME">ALLOWED</p:variable>
+
+		<p:variable name="EIDAS_ATTR_CurrentAddress">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_CurrentAddress">Thoroughfare=HEIDESTRASSE%2017;PostName=EMDEN;AdminunitFirstline=D;PostCode=51147</p:variable>
+		<p:variable name="USEOP_PLACEOFRESIDENCE">ALLOWED</p:variable>
+		<p:variable name="OABU_PLACEOFRESIDENCE">ALLOWED</p:variable>
 	</p:variables>
 </p:testcaseDefinition>

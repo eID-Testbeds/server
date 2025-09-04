@@ -1,15 +1,22 @@
 package com.secunet.eidserver.testbed.common.interfaces.beans;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.Local;
-
 import com.secunet.eidserver.testbed.common.exceptions.TestrunException;
+import com.secunet.eidserver.testbed.common.helper.CryptoHelper;
 import com.secunet.eidserver.testbed.common.interfaces.entities.LogMessage;
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCase;
+import com.secunet.eidserver.testbed.common.types.testcase.EService;
+import org.opensaml.security.x509.X509Credential;
+
+import javax.ejb.Local;
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Local
 public interface Runner
@@ -24,13 +31,7 @@ public interface Runner
 	 */
 	public List<LogMessage> runTest(TestCandidate profile, TestCase tCase) throws TestrunException;
 
+    X509Credential getSignatureCreds(CryptoHelper.Protocol protocol, CryptoHelper.Algorithm algorithm, EService service, TestCandidate candidate) throws IOException, UnrecoverableKeyException, CertificateException, KeyStoreException, NoSuchAlgorithmException;
 
-	/**
-	 * Returns a map containing all static certificates
-	 * 
-	 * @return {@link Map} Certificate map containing the relative paths and names as keys of type {@link String} and the certificates themselves as {@link byte}[]
-	 * @throws IOException
-	 */
-	public Map<String, byte[]> getStaticCertificatesAndKeys() throws IOException;
-
+	X509Credential getEncryptionCreds(CryptoHelper.Protocol protocol, CryptoHelper.Algorithm algorithm, EService service, TestCandidate candidate) throws UnrecoverableKeyException, CertificateException, KeyStoreException, NoSuchAlgorithmException, IOException;
 }

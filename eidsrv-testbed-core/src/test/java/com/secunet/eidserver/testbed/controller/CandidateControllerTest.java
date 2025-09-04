@@ -24,7 +24,12 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.quality.Strictness;
+import org.mockito.testng.MockitoSettings;
+import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import com.secunet.eidserver.testbed.common.ics.IcsCa;
@@ -34,26 +39,22 @@ import com.secunet.eidserver.testbed.common.interfaces.beans.TestGenerator;
 import com.secunet.eidserver.testbed.common.interfaces.dao.DefaultTestCaseDAO;
 import com.secunet.eidserver.testbed.common.interfaces.dao.TestCandidateDAO;
 import com.secunet.eidserver.testbed.common.interfaces.dao.TestCaseStepDAO;
-import com.secunet.eidserver.testbed.common.interfaces.dao.TlsClientCertificateDAO;
-import com.secunet.eidserver.testbed.common.interfaces.dao.TlsDAO;
 import com.secunet.eidserver.testbed.common.interfaces.dao.XmlEncryptionKeyAgreementDAO;
 import com.secunet.eidserver.testbed.common.interfaces.dao.XmlEncryptionKeyTransportDAO;
 import com.secunet.eidserver.testbed.common.interfaces.dao.XmlSignatureAlgorithmDAO;
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
-import com.secunet.eidserver.testbed.common.interfaces.entities.Tls;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TlsClientCertificate;
 import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyAgreement;
 import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyTransport;
 import com.secunet.eidserver.testbed.common.interfaces.entities.XmlSignature;
 import com.secunet.eidserver.testbed.testing.TestCandidateTestingPojo;
-import com.secunet.eidserver.testbed.testing.TlsClientCertificateTestingPojo;
-import com.secunet.eidserver.testbed.testing.TlsTestingTestingPojo;
 import com.secunet.eidserver.testbed.testing.XmlEncryptionKeyAgreementTestingPojo;
 import com.secunet.eidserver.testbed.testing.XmlEncryptionKeyTransportTestingPojo;
 import com.secunet.eidserver.testbed.testing.XmlSignatureTestingPojo;
 
 /****/
 
+@Listeners(MockitoTestNGListener.class)
+@MockitoSettings(strictness = Strictness.WARN)
 public class CandidateControllerTest
 {
 	@InjectMocks
@@ -71,26 +72,14 @@ public class CandidateControllerTest
 	@Mock
 	private XmlEncryptionKeyTransportDAO xmlEncryptionKeyTransportDAOmock;
 	@Mock
-	private TlsDAO tlsDAOMock;
-	@Mock
-	private TlsClientCertificateDAO tlsClientCertificateDAOmock;
-	@Mock
 	private TestCaseStepDAO testcaseStepDAOMock;
 
-	@BeforeClass
-	private void initMocks() throws CertificateEncodingException, UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, NoSuchProviderException, IOException,
-			TransformerFactoryConfigurationError, TransformerException
+	@BeforeMethod
+	private void initMocks() throws TransformerFactoryConfigurationError
 	{
-		// mocks themselves
-		MockitoAnnotations.initMocks(this);
-
 		// empty POJOs
 		TestCandidate emptyCandidate = new TestCandidateTestingPojo();
 		when(testCandidateDAOMock.createNew()).thenReturn(emptyCandidate);
-		Tls emptyTls = new TlsTestingTestingPojo();
-		when(tlsDAOMock.createNew()).thenReturn(emptyTls);
-		TlsClientCertificate emptyTlsClientCertificate = new TlsClientCertificateTestingPojo();
-		when(tlsClientCertificateDAOmock.createNew()).thenReturn(emptyTlsClientCertificate);
 		XmlSignature emptyXmlSignature = new XmlSignatureTestingPojo();
 		when(xmlSignatureAlgorithmDAOMock.createNew()).thenReturn(emptyXmlSignature);
 		XmlEncryptionKeyAgreement emptyXmlKeyAgreement = new XmlEncryptionKeyAgreementTestingPojo();
@@ -157,24 +146,15 @@ public class CandidateControllerTest
 		assertEquals(true, containsOptional);
 
 		// cryptography
-		// eCard-API
-		assertNotNull(result.getTlsEcardApiPsk());
-		assertNotNull(result.getTlsEcardApiAttached());
-
-		// eID-Interface
-		// TLS
-		assertNotNull(result.getTlsEidInterface());
 		// signature algorithms
 		assertNotNull(result.getXmlSignatureAlgorithmsEid());
 
 		// SAML-Profile
-		// TLS
-		assertNotNull(result.getTlsSaml());
 		// signature algorithms
 		assertNotNull(result.getXmlSignatureAlgorithmsSaml());
 
 		// xml encryption
-		assertNotNull(result.getXmlEncryptionAlgorithms());
+		assertNotNull(result.getXmlEncryptionAlgorithmsSaml());
 
 		// CA
 		assertNotNull(result.getChipAuthenticationAlgorithms());

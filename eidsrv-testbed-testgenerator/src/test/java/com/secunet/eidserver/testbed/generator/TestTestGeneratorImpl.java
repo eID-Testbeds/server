@@ -8,9 +8,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
+import org.mockito.testng.MockitoSettings;
+import org.mockito.testng.MockitoTestNGListener;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import com.secunet.eidserver.testbed.common.interfaces.dao.CopyTestCaseDAO;
@@ -23,6 +28,8 @@ import com.secunet.eidserver.testbed.testing.DefaultTestCaseTestingPojo;
 import com.secunet.eidserver.testbed.testing.TestCaseStepTestingPojo;
 import com.secunet.testbedutils.helperclasses.Pair;
 
+@Listeners(MockitoTestNGListener.class)
+@MockitoSettings(strictness = Strictness.WARN)
 public class TestTestGeneratorImpl
 {
 	@InjectMocks
@@ -37,12 +44,9 @@ public class TestTestGeneratorImpl
 	@Mock
 	private CopyTestCaseDAO ctcDAO;
 
-	@BeforeClass
+	@BeforeMethod
 	private void initMocks()
 	{
-		// mocks themselves
-		MockitoAnnotations.initMocks(this);
-
 		// empty POJOs
 		TestCaseStep emptyStep = new TestCaseStepTestingPojo();
 		when(tcsDAO.createNew()).thenReturn(emptyStep);
@@ -67,7 +71,7 @@ public class TestTestGeneratorImpl
 	{
 		Set<DefaultTestCase> defaultTestCases = tg.generateDefaultTestcases();
 		Assert.assertNotNull(defaultTestCases);
-		Assert.assertTrue(defaultTestCases.size() > 0);
+        Assert.assertFalse(defaultTestCases.isEmpty());
 	}
 
 	@Test

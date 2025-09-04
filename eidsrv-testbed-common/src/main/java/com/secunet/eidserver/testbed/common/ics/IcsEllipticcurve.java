@@ -45,6 +45,11 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="secp256r1"/>
  *     &lt;enumeration value="secp384r1"/>
  *     &lt;enumeration value="secp521r1"/>
+ *     &lt;enumeration value="brainpoolp224r1" />
+ *     &lt;enumeration value="brainpoolp256r1" />
+ *     &lt;enumeration value="brainpoolp320r1" />
+ *     &lt;enumeration value="brainpoolp384r1" />
+ *     &lt;enumeration value="brainpoolp512r1" />
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -101,7 +106,18 @@ public enum IcsEllipticcurve {
     @XmlEnumValue("secp384r1")
     SECP_384_R_1("secp384r1"),
     @XmlEnumValue("secp521r1")
-    SECP_521_R_1("secp521r1");
+    SECP_521_R_1("secp521r1"),
+    @XmlEnumValue("brainpoolp224r1")
+    BRAINPOOLP_224_R_1("brainpoolp224r1"),
+    @XmlEnumValue("brainpoolp256r1")
+    BRAINPOOLP_256_R_1("brainpoolp256r1"),
+    @XmlEnumValue("brainpoolp320r1")
+    BRAINPOOLP_320_R_1("brainpoolp320r1"),
+    @XmlEnumValue("brainpoolp384r1")
+    BRAINPOOLP_384_R_1("brainpoolp384r1"),
+    @XmlEnumValue("brainpoolp512r1")
+    BRAINPOOLP_512_R_1("brainpoolp512r1");
+
     private final String value;
 
     IcsEllipticcurve(String v) {
