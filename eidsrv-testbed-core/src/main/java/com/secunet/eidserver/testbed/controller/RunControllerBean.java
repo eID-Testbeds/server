@@ -41,7 +41,7 @@ import com.secunet.eidserver.testbed.common.interfaces.dao.LogDAO;
 import com.secunet.eidserver.testbed.common.interfaces.dao.LogMessageDAO;
 import com.secunet.eidserver.testbed.common.interfaces.dao.TestCandidateDAO;
 import com.secunet.eidserver.testbed.common.interfaces.dao.TestRunDAO;
-import com.secunet.testbedutils.helperclasses.Pair;
+import de.bsi.testbedutils.helperclasses.Pair;
 
 @Singleton
 public class RunControllerBean implements RunController {

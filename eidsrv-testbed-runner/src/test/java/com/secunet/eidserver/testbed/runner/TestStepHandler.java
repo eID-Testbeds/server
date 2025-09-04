@@ -35,8 +35,8 @@ import com.secunet.eidserver.testbed.common.types.testcase.Step;
 import com.secunet.eidserver.testbed.common.types.testcase.StepToken;
 import com.secunet.eidserver.testbed.testing.LogMessageTestingPojo;
 import com.secunet.eidserver.testbed.testing.TestCaseStepTestingPojo;
-import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
-import com.secunet.testbedutils.utilities.JaxBUtil;
+import de.bsi.testbedutils.cvc.cvcertificate.CVCertificate;
+import de.bsi.testbedutils.utilities.JaxBUtil;
 
 public class TestStepHandler extends RunnerTestBase
 {

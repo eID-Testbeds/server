@@ -11,9 +11,9 @@ import javax.persistence.Table;
 
 import com.secunet.eidserver.testbed.common.interfaces.entities.Blacklist;
 import com.secunet.eidserver.testbed.common.interfaces.entities.CertificateCV;
-import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
-import com.secunet.testbedutils.cvc.cvcertificate.DataBuffer;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.*;
+import de.bsi.testbedutils.cvc.cvcertificate.CVCertificate;
+import de.bsi.testbedutils.cvc.cvcertificate.DataBuffer;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

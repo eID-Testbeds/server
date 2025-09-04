@@ -16,7 +16,7 @@ import com.secunet.eidserver.testbed.common.types.testcase.*;
 import com.secunet.eidserver.testbed.runner.exceptions.EphemeralKeyNotFoundException;
 import com.secunet.eidserver.testbed.runner.exceptions.InvalidTestCaseDescriptionException;
 import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyException;
-import com.secunet.testbedutils.utilities.JaxBUtil;
+import de.bsi.testbedutils.utilities.JaxBUtil;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.xml.XMLParserException;
 import net.shibboleth.shared.xml.impl.BasicParserPool;

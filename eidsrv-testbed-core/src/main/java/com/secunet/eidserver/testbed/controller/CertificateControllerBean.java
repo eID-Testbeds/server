@@ -11,7 +11,7 @@ import com.secunet.eidserver.testbed.common.interfaces.beans.Runner;
 import com.secunet.eidserver.testbed.common.interfaces.dao.*;
 import com.secunet.eidserver.testbed.common.interfaces.entities.*;
 import com.secunet.eidserver.testbed.common.types.testcase.EService;
-import com.secunet.testbedutils.bouncycertgen.xml.POSeIDAS.*;
+import de.bsi.testbedutils.bouncycertgen.xml.POSeIDAS.*;
 import de.governikus._2021._03.eumw_config.*;
 import net.shibboleth.shared.xml.SerializeSupport;
 import org.apache.commons.lang3.RandomStringUtils;

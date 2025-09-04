@@ -30,7 +30,7 @@ import com.secunet.eidserver.testbed.common.interfaces.entities.TestCaseStep;
 import com.secunet.eidserver.testbed.testing.DefaultTestCaseTestingPojo;
 import com.secunet.eidserver.testbed.testing.LogMessageTestingPojo;
 import com.secunet.eidserver.testbed.testing.TestCaseStepTestingPojo;
-import com.secunet.testbedutils.helperclasses.Pair;
+import de.bsi.testbedutils.helperclasses.Pair;
 
 @Listeners(MockitoTestNGListener.class)
 @MockitoSettings(strictness = Strictness.WARN)

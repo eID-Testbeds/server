@@ -27,7 +27,7 @@
 //import com.secunet.eidserver.testbed.model.entities.TestCaseEntity;
 //import com.secunet.eidserver.testbed.model.entities.TestCaseStepEntity;
 //import com.secunet.eidserver.testbed.model.entities.TestMessageEntity;
-//import com.secunet.testbedutils.utilities.CertificateUtil;
+//import de.bsi.testbedutils.utilities.CertificateUtil;
 //
 //public class RunnerTest {
 //

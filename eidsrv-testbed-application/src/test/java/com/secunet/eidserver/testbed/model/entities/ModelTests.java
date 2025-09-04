@@ -47,10 +47,10 @@ import com.secunet.eidserver.testbed.dao.TestResultDAO;
 import com.secunet.eidserver.testbed.dao.TlsDAO;
 import com.secunet.eidserver.testbed.dao.XmlSignatureAlgorithmDAO;
 import com.secunet.eidserver.testbed.testhelper.ContainerProvider;
-import com.secunet.testbedutils.bouncycertgen.CertificateGenerator;
-import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
-import com.secunet.testbedutils.cvc.cvcertificate.DataBuffer;
-import com.secunet.testbedutils.utilities.HexUtil;
+import de.bsi.testbedutils.bouncycertgen.CertificateGenerator;
+import de.bsi.testbedutils.cvc.cvcertificate.CVCertificate;
+import de.bsi.testbedutils.cvc.cvcertificate.DataBuffer;
+import de.bsi.testbedutils.utilities.HexUtil;
 
 
 public class ModelTests {

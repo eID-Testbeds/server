@@ -6,7 +6,7 @@ import com.secunet.eidserver.testbed.common.enumerations.EidResponseApdu;
 import com.secunet.eidserver.testbed.common.helper.CryptoHelper;
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
 import com.secunet.eidserver.testbed.common.types.testcase.EidCard;
-import com.secunet.testbedutils.bouncycertgen.asn1.BSIObjectIdentifiers;
+import de.bsi.testbedutils.bouncycertgen.asn1.BSIObjectIdentifiers;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.logging.log4j.Level;

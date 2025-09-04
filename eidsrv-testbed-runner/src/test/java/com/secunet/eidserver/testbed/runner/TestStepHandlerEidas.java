@@ -18,7 +18,7 @@ import com.secunet.eidserver.testbed.common.types.testcase.TestStepType;
 import com.secunet.eidserver.testbed.runner.exceptions.InvalidTestCaseDescriptionException;
 import com.secunet.eidserver.testbed.testing.LogMessageTestingPojo;
 import com.secunet.eidserver.testbed.testing.TestCandidateTestingPojo;
-import com.secunet.testbedutils.utilities.Base64Util;
+import de.bsi.testbedutils.utilities.Base64Util;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.xml.XMLParserException;
 import net.shibboleth.shared.xml.impl.BasicParserPool;

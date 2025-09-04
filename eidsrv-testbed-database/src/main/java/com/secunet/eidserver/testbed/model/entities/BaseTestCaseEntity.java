@@ -26,7 +26,7 @@ import com.secunet.eidserver.testbed.common.interfaces.entities.TestCase;
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCaseStep;
 import com.secunet.eidserver.testbed.common.types.testcase.EService;
 import com.secunet.eidserver.testbed.common.types.testcase.EidCard;
-import com.secunet.testbedutils.helperclasses.Pair;
+import de.bsi.testbedutils.helperclasses.Pair;
 
 @Entity
 @Table(name = "TEST_CASE")

@@ -1,6 +1,6 @@
 package com.secunet.eidserver.testbed.common.interfaces.entities;
 
-import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
+import de.bsi.testbedutils.cvc.cvcertificate.CVCertificate;
 
 public interface CertificateCV
 {

@@ -115,8 +115,8 @@ import com.secunet.eidserver.testbed.common.types.testcase.TestStepType;
 import com.secunet.eidserver.testbed.runner.exceptions.EphemeralKeyNotFoundException;
 import com.secunet.eidserver.testbed.runner.exceptions.InvalidTestCaseDescriptionException;
 import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyException;
-import com.secunet.testbedutils.utilities.CommonUtil;
-import com.secunet.testbedutils.utilities.JaxBUtil;
+import de.bsi.testbedutils.utilities.CommonUtil;
+import de.bsi.testbedutils.utilities.JaxBUtil;
 
 public class StepHandlerSAML extends StepHandler
 {

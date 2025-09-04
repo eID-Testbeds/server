@@ -1,10 +1,10 @@
 package com.secunet.eidserver.testbed.runner;
 
 import com.secunet.eidserver.testbed.common.enumerations.EidCardFiles;
-import com.secunet.testbedutils.eac2.EAC2ObjectIdentifiers;
-import com.secunet.testbedutils.eac2.StandardizedDomainParameters;
-import com.secunet.testbedutils.eac2.StandardizedDomainParameters.Table_Type;
-import com.secunet.testbedutils.utilities.BouncyCastleTlsHelper;
+import de.bsi.testbedutils.eac2.EAC2ObjectIdentifiers;
+import de.bsi.testbedutils.eac2.StandardizedDomainParameters;
+import de.bsi.testbedutils.eac2.StandardizedDomainParameters.Table_Type;
+import de.bsi.testbedutils.utilities.BouncyCastleTlsHelper;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.cms.*;

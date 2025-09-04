@@ -1,7 +1,7 @@
 package com.secunet.eidserver.testbed.common.classes;
 
-import com.secunet.testbedutils.bouncycertgen.GeneratedCertificate;
-import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
+import de.bsi.testbedutils.bouncycertgen.GeneratedCertificate;
+import de.bsi.testbedutils.cvc.cvcertificate.CVCertificate;
 
 import java.util.Map;
 import java.util.Set;

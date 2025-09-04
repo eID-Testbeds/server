@@ -28,15 +28,15 @@ import org.testng.annotations.Test;
 import com.secunet.eidserver.testbed.common.types.testcase.EService;
 import com.secunet.eidserver.testbed.common.types.testcase.EidCard;
 import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyException;
-import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
-import com.secunet.testbedutils.cvc.cvcertificate.DataBuffer;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVBufferNotEmptyException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVDecodeErrorException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVInvalidDateException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVInvalidECPointLengthException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVInvalidOidException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVTagNotFoundException;
-import com.secunet.testbedutils.eac2.sm.SecureMessaging;
+import de.bsi.testbedutils.cvc.cvcertificate.CVCertificate;
+import de.bsi.testbedutils.cvc.cvcertificate.DataBuffer;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVBufferNotEmptyException;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVDecodeErrorException;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVInvalidDateException;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVInvalidECPointLengthException;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVInvalidOidException;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVTagNotFoundException;
+import de.bsi.testbedutils.eac2.sm.SecureMessaging;
 
 @SuppressWarnings("restriction")
 public class TestComputationHelper extends RunnerTestBase

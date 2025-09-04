@@ -20,7 +20,7 @@
 // import com.secunet.eidserver.testbed.common.types.step.StepToken;
 // import com.secunet.eidserver.testbed.model.entities.DefaultTestCaseEntity;
 // import com.secunet.eidserver.testbed.model.entities.TestCaseStepEntity;
-// import com.secunet.testbedutils.utilities.JaxBUtil;
+// import de.bsi.testbedutils.utilities.JaxBUtil;
 //
 // public class TestModuleMother
 // {

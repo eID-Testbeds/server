@@ -12,8 +12,8 @@ import com.secunet.eidserver.testbed.common.interfaces.beans.CertificateControll
 import com.secunet.eidserver.testbed.common.interfaces.beans.TestGenerator;
 import com.secunet.eidserver.testbed.common.interfaces.dao.*;
 import com.secunet.eidserver.testbed.common.interfaces.entities.*;
-import com.secunet.testbedutils.bouncycertgen.GeneratedCertificate;
-import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
+import de.bsi.testbedutils.bouncycertgen.GeneratedCertificate;
+import de.bsi.testbedutils.cvc.cvcertificate.CVCertificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
