@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<p:certificateDefinitions xmlns:p="http://www.secunet.com"
+<p:certificateDefinitions xmlns:p="https://www.bsi.bund.de"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.secunet.com tls_schema.xsd ">
+	xsi:schemaLocation="https://www.bsi.bund.de tls_schema.xsd ">
 	<p:certificateDefinition>
 		<p:name>CERT_ECARD_CSCA_1</p:name>
 		<p:serialNumber>1</p:serialNumber>

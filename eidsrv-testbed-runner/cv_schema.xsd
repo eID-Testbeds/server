@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<xs:schema xmlns="http://www.secunet.com" targetNamespace="https://www.bsi.bund.de" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+<xs:schema xmlns="https://www.bsi.bund.de" targetNamespace="https://www.bsi.bund.de" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 
 	<!-- types for the XML doc -->
 	<xs:simpleType name="algorithmtype">

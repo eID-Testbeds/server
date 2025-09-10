@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<root xmlns="http://www.secunet.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.secunet.com ../../../cv_schema.xsd">
+<root xmlns="https://www.bsi.bund.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.bsi.bund.de ../../../cv_schema.xsd">
 
 	<keys>
 		<key name="CVCA1_KEY">

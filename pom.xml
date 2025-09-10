@@ -24,7 +24,7 @@
 	</modules>
 
 	<properties>
-		<revision>1.0</revision>
+		<revision>1.0-beta-5</revision>
 
 		<opensaml-security-ext.version>4.1.1</opensaml-security-ext.version>
 		<opensaml.version>5.1.2</opensaml.version>
