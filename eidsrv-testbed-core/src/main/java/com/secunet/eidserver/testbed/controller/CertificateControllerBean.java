@@ -204,7 +204,7 @@ public class CertificateControllerBean implements CertificateController
 	}
 	private EntityDescriptor getMetadata(TestCandidate candidate) throws InitializationException, IOException, MarshallingException, SignatureException, NoSuchFieldException, IllegalAccessException, UnrecoverableKeyException, CertificateException, KeyStoreException, NoSuchAlgorithmException, SecurityException {
 			EidasAuthnRequestHandler.Init();
-			X509Credential signCreds = runnerBean.getSignatureCreds(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.ECDSA_ALG_ID, EService.F, candidate); //TODO: Why F?????
+			X509Credential signCreds = runnerBean.getSignatureCreds(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.ECDSA_ALG_ID, EService.F, candidate); //TODO: Why F?
 			X509Credential cryptCreds = runnerBean.getEncryptionCreds(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.RSA_ALG_ID, EService.F, candidate);
 			EntityDescriptor entityDescriptor = buildEntityDescriptor(signCreds, cryptCreds, candidate);
 
@@ -518,7 +518,7 @@ public class CertificateControllerBean implements CertificateController
 		}
 
 		//Metadata Signing certificate
-		X509Credential signCreds = runnerBean.getSignatureCreds(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.ECDSA_ALG_ID, EService.F, candidate); //TODO: Why F?????
+		X509Credential signCreds = runnerBean.getSignatureCreds(CryptoHelper.Protocol.SAML_PROT_ID, CryptoHelper.Algorithm.ECDSA_ALG_ID, EService.F, candidate); //TODO: Why F?
 		CertificateType signCertificate = new CertificateType();
 		signCertificate.setCertificate(signCreds.getEntityCertificate().getEncoded());
 		signCertificate.setName("metadata-signature-verification");

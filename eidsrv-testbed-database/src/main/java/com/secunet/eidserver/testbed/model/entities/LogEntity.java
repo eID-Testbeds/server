@@ -57,7 +57,7 @@ public class LogEntity extends BaseEntity implements Serializable, Log
 	@Override
 	public List<LogMessage> getLogMessages()
 	{
-		//TODO: Why on earth is this here, while the TestStepNumber is never set, so it runs into a NullPointerException every time???
+		//TODO: Why is this here? While the TestStepNumber is never set, so it runs into a NullPointerException every time???
 /*		Collections.sort(this.logMessages, new Comparator<LogMessage>()
 		{
 			public int compare(LogMessage o1, LogMessage o2)

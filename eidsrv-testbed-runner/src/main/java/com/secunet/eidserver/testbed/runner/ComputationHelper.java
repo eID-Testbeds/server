@@ -224,11 +224,11 @@ public class ComputationHelper
 			PublicKey certKey = null;
 			if (!keyHolder.isDomainParamPresent())
 			{
-				// check if the domain parameters are present. if not, add them (please, not the ones for TA in CA!!!!!)
+				// check if the domain parameters are present. if not, add them (please, not the ones for TA in CA!)
 				if (candidate != null) {
 					keyHolder.setDomainParam(getCvcaDomainParams(candidate));
 				} else {
-					keyHolder.setDomainParam(ecParameterSpec); //TODO: This is just crazy. We need domain parameters in our Terminal certificates !!!!!!!!! This is just used to keep the tests running, aaaaaaah
+					keyHolder.setDomainParam(ecParameterSpec); //TODO: We need domain parameters in our Terminal certificates ! This is just used to keep the tests running.
 				}
 				keyHolder.setIncludeDomainParam(true);
 			}
@@ -400,7 +400,7 @@ public class ComputationHelper
 	}
 
 	public ECParameterSpec getCvcaDomainParams(TestCandidate candidate) throws CVMissingKeyException, CVKeyTypeNotSupportedException, CVInvalidKeySourceException {
-		//TODO: This is just crazy. We need domain parameters in our Terminal certificates !!!!!!!!!
+		//TODO: We need domain parameters in our Terminal certificates!
 		CVCertificate cvca = CryptoHelper.loadCvFromFile("CVCertificates/certs/" + "CERT_ECARD_CV_CVCA_1.cvcert", candidate);
 		return cvca.getPublicKey().getDomainParam();
 	}

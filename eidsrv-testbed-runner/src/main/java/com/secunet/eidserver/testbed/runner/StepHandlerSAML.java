@@ -397,7 +397,7 @@ public class StepHandlerSAML extends StepHandler
 	private String encodeAndSign(AuthnRequest request, String signatureAlgorithm, CryptoHelper.Algorithm alg, boolean withSigAlg, boolean withSignature)
 			throws MarshallingException, IOException, NoSuchAlgorithmException, InvalidKeyException, java.security.SignatureException, TransformerException
 	{
-		// Marshaller marshaller = XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(request.getElementQName()); ????
+		// Marshaller marshaller = XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(request.getElementQName()); ?
 		Marshaller marshaller = XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(request);
 		Element authDOM = marshaller.marshall(request);
 		// StringWriter rspWrt = new StringWriter();
