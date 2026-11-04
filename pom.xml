@@ -447,6 +447,29 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- Software Bill of Materials of the whole project, from the root only:
+				writes target/sbom.json. Skipped by the plugin in offline mode (mvn -o). -->
+			<plugin>
+				<groupId>org.cyclonedx</groupId>
+				<artifactId>cyclonedx-maven-plugin</artifactId>
+				<version>2.9.3</version>
+				<inherited>false</inherited>
+				<configuration>
+					<outputName>sbom</outputName>
+					<outputFormat>json</outputFormat>
+					<includeProvidedScope>false</includeProvidedScope>
+					<skipAttach>true</skipAttach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>makeAggregateBom</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	
