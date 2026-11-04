@@ -242,7 +242,9 @@
 							<goal>clean</goal>
 							<goal>resources</goal>
 							<goal>update-theme</goal>
-							<goal>update-widgetset</goal>
+							<!-- update-widgetset is deliberately not run: its result depends on
+								the Maven phase (target/classes vs. jar on the classpath), which
+								rewrites TestbedWidgetSet.gwt.xml. Maintain that file by hand. -->
 							<goal>compile-theme</goal>
 							<goal>compile</goal>
 						</goals>

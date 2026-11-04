@@ -20,7 +20,9 @@ eID-Servers based on [BSI TR-03130-1](https://www.bsi.bund.de/DE/Themen/Unterneh
 + Payara 5 (v5.2022.5) Full (http://www.payara.fish/downloads)
 
 ## Build and Deployment
-The eID-Server can be build by executing `mvn clean install`.
+Build [common-testbed-utilities](https://github.com/eID-Testbeds/common-testbed-utilities) first with `mvn clean install`, as its artifacts aren't available from a public Maven repository.
+
+The eID-Server can then be built by executing `mvn clean install`. Add `-DskipTests` to skip the unit tests.
 The resulting `ear` file may be deployed on an application server. 
 
 A complete guideline for an eID-Testbed deployment is given in the handbook (`server/install/handbook.md`, available in German only).

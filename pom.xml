@@ -25,6 +25,7 @@
 
 	<properties>
 		<revision>1.0-beta-5</revision>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<opensaml-security-ext.version>4.1.1</opensaml-security-ext.version>
 		<opensaml.version>5.1.2</opensaml.version>
@@ -283,9 +284,6 @@
 					<!-- Sets the VM argument line used when unit tests are run. -->
 					<!--suppress UnresolvedMavenProperty -->
 					<argLine>${surefireArgLine} --illegal-access=permit</argLine>
-					<!-- Skips unit tests if the value of skip.unit.tests property is true -->
-					<!--suppress UnresolvedMavenProperty -->
-					<skipTests>${skip.unit.tests}</skipTests>
 					<!-- Excludes integration tests when unit tests are run. -->
 					<excludes>
 						<!-- Only valid naming convention for IT tests! -->
@@ -326,10 +324,6 @@
 								--add-exports org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED
 								--add-exports org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED
 							</argLine>
-							<!-- Skips integration tests if the value of skip.integration.tests
-								property is true -->
-							<!--suppress UnresolvedMavenProperty -->
-							<skipTests>${skip.integration.tests}</skipTests>
 							<includes>
 								<!--suppress UnresolvedMavenProperty -->
 								<include>${included.tests}</include>
@@ -352,9 +346,6 @@
 						<configuration>
 							<!-- Sets the VM argument line used when integration tests are run. -->
 							<argLine>${failsafeArgLine}</argLine>
-							<!-- Skips integration tests if the value of skip.integration.tests
-								property is true -->
-							<skipTests>${skip.integration.tests}</skipTests>
 							<includes>
 								<include>${included.tests}</include>
 							</includes>

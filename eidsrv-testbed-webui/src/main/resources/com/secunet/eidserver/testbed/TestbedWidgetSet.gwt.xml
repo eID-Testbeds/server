@@ -45,5 +45,5 @@
 
     
 
-    <inherits name="org.vaadin.resetbuttonfortextfield.WidgetSet" />
+    
 </module>
