@@ -339,28 +339,26 @@ public abstract class StepHandler
 			}
 		}
 
-		// create XML object out of the receivedMessage string
 		if (httpHeaders.get("HTTP_STATUS_CODE").startsWith("HTTP/1.1 200") && messageComponents.length > 1 && !messageComponents[1].isEmpty())
 		{
 			// check if we operate in attached mode
 			if (alternatives.get(0).getName().startsWith(TestStepType.IN_ATTACHED_WEBPAGE.value()))
 			{
 				logger.debug("IN_ATTACHED_WEBPAGE");
-
-				String jSessionId = parseJSessionId(receivedMessage);
-				if (jSessionId != null)
+				String sessionCookie = parseSessionCookie(receivedMessage);
+				if (sessionCookie != null)
 				{
-					String jsessionid_cookiewrapper = "\nCookie: JSESSIONID=";
-					knownValues.add(new KnownValue(Replaceable.ATTACHED_JSESSIONID.toString(), jSessionId));
+					String jsessionid_cookiewrapper = "\nCookie: ";
+					knownValues.add(new KnownValue(Replaceable.ATTACHED_JSESSIONID.toString(), sessionCookie));
 					knownValues.add(new KnownValue(Replaceable.ATTACHED_JSESSIONID_COOKIEWRAPPER.toString(), jsessionid_cookiewrapper));
-					resultMessage.append("Received JSESSIONID: ").append(jSessionId);
+					resultMessage.append("Received session cookie: ").append(sessionCookie);
 				}
 				else
 				{
 					String jsessionid_cookiewrapper = "";
 					knownValues.add(new KnownValue(Replaceable.ATTACHED_JSESSIONID.toString(), ""));
 					knownValues.add(new KnownValue(Replaceable.ATTACHED_JSESSIONID_COOKIEWRAPPER.toString(), jsessionid_cookiewrapper));
-					resultMessage.append("Could not parse a valid JSESSIONID from the received message");
+					resultMessage.append("Could not parse a session cookie from the received message");
 				}
 
 
@@ -1249,24 +1247,35 @@ public abstract class StepHandler
 	}
 
 	/**
-	 * Parses the JSessionId from HTTP header. The result will be stored in the ATTACHED_JSESSIONID
+	 * Parses the session cookie from the HTTP header. The result will be stored in the ATTACHED_JSESSIONID.
+	 * Name and value are kept as they are, because a cookie value is opaque to the client (RFC 6265, section 4.1.1)
+	 * and servers do not have to name their session cookie JSESSIONID (e.g. Spring Session uses SESSION).
+	 * A cookie with a known session name is preferred, otherwise the first cookie is used.
 	 * TODO JavaScript support
 	 *
 	 * @param message
 	 *
-	 * @return {String} The JSESSIONID
+	 * @return {String} The cookie as name=value, ready to be sent in a Cookie header, or null if no cookie was set
 	 */
-	protected String parseJSessionId(String message)
+	protected static String parseSessionCookie(String message)
 	{
-		Pattern p = Pattern.compile("Set-Cookie: JSESSIONID=([0-9a-fA-F]+)");
+		Pattern p = Pattern.compile("^Set-Cookie:[ \\t]*([^=;\\s]+)=([^;\\s]+)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(message);
-		String jSessionId = null;
-		if (m.find()) // find first occurrence of given pattern
+		String firstCookie = null;
+		while (m.find())
 		{
-			jSessionId = m.group(1);
+			String name = m.group(1);
+			String cookie = name + "=" + m.group(2);
+			if ("JSESSIONID".equalsIgnoreCase(name) || "SESSION".equalsIgnoreCase(name))
+			{
+				return cookie;
+			}
+			if (firstCookie == null)
+			{
+				firstCookie = cookie;
+			}
 		}
-		return jSessionId;
-
+		return firstCookie;
 	}
 
 	/**
