@@ -6,34 +6,40 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URL;
+import java.util.*;
 
 import javax.smartcardio.ResponseAPDU;
 import javax.xml.bind.DatatypeConverter;
 
+import com.secunet.eidserver.testbed.common.classes.EidCards;
+import com.secunet.eidserver.testbed.common.classes.GeneratedCertsContainer;
+import com.secunet.eidserver.testbed.common.helper.CryptoHelper;
+import com.secunet.eidserver.testbed.common.interfaces.entities.CryptoFile;
+import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
+import com.secunet.eidserver.testbed.testing.CryptoFileTestingPojo;
+import com.secunet.eidserver.testbed.testing.TestCandidateTestingPojo;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.secunet.eidserver.testbed.common.types.testcase.EService;
 import com.secunet.eidserver.testbed.common.types.testcase.EidCard;
 import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyException;
-import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
-import com.secunet.testbedutils.cvc.cvcertificate.DataBuffer;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVBufferNotEmptyException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVDecodeErrorException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVInvalidDateException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVInvalidECPointLengthException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVInvalidOidException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVTagNotFoundException;
-import com.secunet.testbedutils.eac2.sm.SecureMessaging;
+import de.bsi.testbedutils.cvc.cvcertificate.CVCertificate;
+import de.bsi.testbedutils.cvc.cvcertificate.DataBuffer;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVBufferNotEmptyException;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVDecodeErrorException;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVInvalidDateException;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVInvalidECPointLengthException;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVInvalidOidException;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.CVTagNotFoundException;
+import de.bsi.testbedutils.eac2.sm.SecureMessaging;
 
 @SuppressWarnings("restriction")
-public class TestComputationHelper
+public class TestComputationHelper extends RunnerTestBase
 {
 	public final String EF_CARD_ACCESS = "3181C13012060A04007F0007020204020202010202010D300D060804007F00070202020201023012060A04007F00070202030202020102020129301C060904007F000702020302300C060704007F0007010202010D020129303E060804007F000702020831323012060A04007F0007020203020202010202012D301C060904007F000702020302300C060704007F0007010202010D02012D302A060804007F0007020206161E687474703A2F2F6273692E62756E642E64652F6369662F6E70612E786D6C";
 
@@ -56,7 +62,7 @@ public class TestComputationHelper
 	public final String RESPONSE_DOC_VALIDITY = "990290008E083AEB9029B3492C009000";
 	public final String RESPONSE_OTHER = "990290008E08FA43FC30D02398A09000";
 	public final String RESPONSE_RI = "873101E790C3261AB8B2CEF4AF669073E162F135E167CD380F10A57ECECF418CE2FB00E8EE3908C62759F85CB104A23E79A216990290008E08FF28BA052AE4E3959000";
-	public final String RESPONSE_DG = "872101A7359451B1DBCB8CA7F5FF12B870C28E338EB5B29F9129686E7BE3A5C6F3D3F5990290008E08E2E6AF5B6BD9CDBD9000";
+	public final String RESPONSE_DG = "872101C11A87E0E9754B09B80A10ACA70302F69354F6DE9E8B912E4C3559134C988170990290008E08FDF09F3FFCC87E559000";
 
 	// signature
 	public final String SIGNATURE = "A6A1C16AFF69117F551BC14D2A064A723D059B0982FE14E0AE50FDCB4F088A6EA6F9C89BCC6B304AE6323DEE47D42BBE603C699E257FFEDD230337E9773952E3";
@@ -67,8 +73,21 @@ public class TestComputationHelper
 	// local
 	private ComputationHelper sim;
 
+	private TestCandidate testCandidate;
+
+	@BeforeClass
+	public void setUpBeforeClass() throws Exception {
+		GeneratedCertsContainer container = CryptoHelper.generateCertificatesAndKeys("123456".getBytes(),new URL("https://test.test.com/test"));
+		Set<CryptoFile> cryptoFiles = CryptoHelper.fileMapToCryptoFiles(container.getAllFiles());
+		testCandidate = new TestCandidateTestingPojo();
+		testCandidate.setCryptoFiles(cryptoFiles);
+		EidCards.initCards(testCandidate);
+	}
+
+
+
 	@Test
-	public void testECParameterSpecExtraction() throws Exception
+	public void testECParameterSpecExtraction()
 	{
 		sim = new ComputationHelper(EF_CARD_ACCESS, EAC2_NONCE, CA_PRIVATE);
 		Assert.assertNotNull(sim.getEcParameterSpec());
@@ -95,7 +114,7 @@ public class TestComputationHelper
 		Assert.assertTrue(data.length() > 0);
 		CVCertificate cert = new CVCertificate(new DataBuffer(Hex.decodeHex(data.toCharArray())));
 		sim.setTerminalCertificate(cert);
-		boolean valid = sim.isValidSignature(SIGNATURE, EAC1_IDPICC, EAC1_CHALLENGE, SERVER_KEY, AUXILARY_DATA);
+		boolean valid = sim.isValidSignature(SIGNATURE, EAC1_IDPICC, EAC1_CHALLENGE, SERVER_KEY, AUXILARY_DATA, null);
 		Assert.assertEquals(valid, true);
 	}
 
@@ -178,20 +197,21 @@ public class TestComputationHelper
 		Map<String, CVCertificate> cvCerts = new HashMap<>();
 		cvCerts.put("DV", loadFromHex("CERT_ECARD_CV_DV_1_A.cvcert"));
 		cvCerts.put("TERM", loadFromHex("CERT_ECARD_CV_TERM_1_A.cvcert"));
-		Result validateResult = sim.validateCVcertificates(cvCerts, 2, EService.A);
+		Result validateResult = sim.validateCVcertificates(cvCerts, 2, EService.A, testCandidate);
+		System.out.println(validateResult.getMessage());
 		Assert.assertNotNull(validateResult);
 		Assert.assertEquals(validateResult.wasSuccessful(), true);
 	}
 
 	private CVCertificate loadFromHex(String certificateName)
 	{
-		File f = new File(Thread.currentThread().getContextClassLoader().getResource("CVCertificates/certs/" + certificateName).getFile());
+		Map<String, byte[]> fileMap = CryptoHelper.getCryptoFileMap(testCandidate);
 		try
 		{
-			DataBuffer cvBuffer = new DataBuffer(IOUtils.toByteArray(new FileInputStream(f)));
+			DataBuffer cvBuffer = new DataBuffer(fileMap.get("CVCertificates/certs/" + certificateName));
 			return new CVCertificate(cvBuffer);
 		}
-		catch (CVTagNotFoundException | CVBufferNotEmptyException | CVInvalidOidException | CVDecodeErrorException | CVInvalidDateException | CVInvalidECPointLengthException | IOException e)
+		catch (CVTagNotFoundException | CVBufferNotEmptyException | CVInvalidOidException | CVDecodeErrorException | CVInvalidDateException | CVInvalidECPointLengthException e)
 		{
 			e.printStackTrace();
 		}

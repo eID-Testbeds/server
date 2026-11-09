@@ -1,22 +1,21 @@
 package com.secunet.eidserver.testbed.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
+import com.secunet.eidserver.testbed.common.classes.GeneratedCertsContainer;
+import com.secunet.eidserver.testbed.common.exceptions.CandidateException;
+import com.secunet.eidserver.testbed.common.exceptions.CertificateGenerationExcpetion;
+import com.secunet.eidserver.testbed.common.exceptions.ComponentNotInitializedException;
+import com.secunet.eidserver.testbed.common.exceptions.TestcaseNotFoundException;
+import com.secunet.eidserver.testbed.common.helper.CryptoHelper;
+import com.secunet.eidserver.testbed.common.ics.*;
+import com.secunet.eidserver.testbed.common.interfaces.beans.CandidateController;
+import com.secunet.eidserver.testbed.common.interfaces.beans.CertificateController;
+import com.secunet.eidserver.testbed.common.interfaces.beans.TestGenerator;
+import com.secunet.eidserver.testbed.common.interfaces.dao.*;
+import com.secunet.eidserver.testbed.common.interfaces.entities.*;
+import de.bsi.testbedutils.bouncycertgen.GeneratedCertificate;
+import de.bsi.testbedutils.cvc.cvcertificate.CVCertificate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -29,58 +28,20 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.secunet.eidserver.testbed.common.enumerations.Interface;
-import com.secunet.eidserver.testbed.common.exceptions.CandidateException;
-import com.secunet.eidserver.testbed.common.exceptions.ComponentNotInitializedException;
-import com.secunet.eidserver.testbed.common.exceptions.TestcaseNotFoundException;
-import com.secunet.eidserver.testbed.common.ics.Ics;
-import com.secunet.eidserver.testbed.common.ics.IcsCa;
-import com.secunet.eidserver.testbed.common.ics.IcsCaDomainparams;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoEcardapi;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoEcardapiPsktls;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoEidinterface;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoEidinterfaceTlsClientcertificate;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoEidinterfaceTlsTypeEcAndSignatureWithClientcertificates;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoSaml;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoSamlXmlencryptionKeyagreementAlgorithm;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoSamlXmlencryptionKeytransportAlgorithm;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoTls;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoTlsEllipticcurves;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoTlsSignaturealgorithms;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoTlsType;
-import com.secunet.eidserver.testbed.common.ics.IcsCryptoTlsTypeEcAndSignature;
-import com.secunet.eidserver.testbed.common.ics.IcsEllipticcurve;
-import com.secunet.eidserver.testbed.common.ics.IcsMandatoryprofile;
-import com.secunet.eidserver.testbed.common.ics.IcsOptionalprofile;
-import com.secunet.eidserver.testbed.common.ics.IcsTlsSignaturealgorithms;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionContentUri;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsignature;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsignatures;
-import com.secunet.eidserver.testbed.common.interfaces.beans.CandidateController;
-import com.secunet.eidserver.testbed.common.interfaces.beans.CertificateController;
-import com.secunet.eidserver.testbed.common.interfaces.beans.Runner;
-import com.secunet.eidserver.testbed.common.interfaces.beans.TestGenerator;
-import com.secunet.eidserver.testbed.common.interfaces.dao.DefaultTestCaseDAO;
-import com.secunet.eidserver.testbed.common.interfaces.dao.TestCandidateDAO;
-import com.secunet.eidserver.testbed.common.interfaces.dao.TestCaseStepDAO;
-import com.secunet.eidserver.testbed.common.interfaces.dao.TlsClientCertificateDAO;
-import com.secunet.eidserver.testbed.common.interfaces.dao.TlsDAO;
-import com.secunet.eidserver.testbed.common.interfaces.dao.XmlEncryptionKeyAgreementDAO;
-import com.secunet.eidserver.testbed.common.interfaces.dao.XmlEncryptionKeyTransportDAO;
-import com.secunet.eidserver.testbed.common.interfaces.dao.XmlSignatureAlgorithmDAO;
-import com.secunet.eidserver.testbed.common.interfaces.entities.CertificateX509;
-import com.secunet.eidserver.testbed.common.interfaces.entities.DefaultTestCase;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestCase;
-import com.secunet.eidserver.testbed.common.interfaces.entities.Tls;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TlsClientCertificate;
-import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyAgreement;
-import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyTransport;
-import com.secunet.eidserver.testbed.common.interfaces.entities.XmlSignature;
+import java.io.IOException;
+import java.io.StringReader;
+import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 @Stateful
 public class CandidateControllerBean implements CandidateController
@@ -103,22 +64,22 @@ public class CandidateControllerBean implements CandidateController
 	private XmlEncryptionKeyTransportDAO xmlEncryptionKeyTransportDAO;
 
 	@EJB
-	private TlsClientCertificateDAO tlsClientCertificateDAO;
-
-	@EJB
 	private DefaultTestCaseDAO defaultTestCaseDAO;
 
 	@EJB
 	private XmlSignatureAlgorithmDAO xmlSigDAO;
 
 	@EJB
-	private TlsDAO tlsDAO;
+	private CertificateX509DAO x509DAO;
 
 	@EJB
-	private TestCaseStepDAO testCaseStepDAO;
+	private CertificateCVDAO cvDAO;
 
 	@EJB
-	private Runner runner;
+	private BlacklistDAO blacklistDAO;
+
+	@EJB
+	private CryptoFileDAO cryptoFileDAO;
 
 	/**
 	 * @see com.secunet.eidserver.testbed.common.interfaces.beans.CandidateController#createCandidate(String)
@@ -147,6 +108,7 @@ public class CandidateControllerBean implements CandidateController
 		setMetadataFromIcs(ics, testCandidate);
 		setProfilesFromIcs(ics, testCandidate);
 		setCryptographyFromIcs(ics, testCandidate);
+
 		// Optional<String> base64EidasMetadata = runner.createEidasMetadata(testCandidate.getEcardapiUrl().toString());
 		// if (base64EidasMetadata.isPresent())
 		// {
@@ -160,7 +122,7 @@ public class CandidateControllerBean implements CandidateController
 	}
 
 	/**
-	 * @see com.secunet.eidserver.testbed.common.interfaces.beans.CandidateController#loadDefaultTestcases(TestCandidate)
+	 * @see com.secunet.eidserver.testbed.common.interfaces.beans.CandidateController#loadRelevantDefaultTestcases(TestCandidate)
 	 */
 	@Override
 	public Set<TestCase> loadRelevantDefaultTestcases(TestCandidate candidate) throws ComponentNotInitializedException, TestcaseNotFoundException
@@ -180,7 +142,7 @@ public class CandidateControllerBean implements CandidateController
 
 		// filter for the given candidate (by profile)
 		Set<TestCase> relevant = defaultTestcases.stream().filter(dtc -> candidate.getMandatoryProfiles().containsAll(dtc.getMandatoryProfiles()))
-				.filter(dtc -> candidate.getOptionalProfiles().containsAll(dtc.getOptionalProfiles())).collect(Collectors.toSet());
+				.filter(dtc -> candidate.getOptionalProfiles().containsAll(dtc.getOptionalProfiles())).filter(dtc -> !dtc.getVariables().containsKey("CA_ALGORITHM") || candidate.getChipAuthenticationAlgorithms().contains(IcsCa.fromValue(dtc.getVariables().get("CA_ALGORITHM")))).filter(dtc -> !dtc.getVariables().containsKey("CA_PARAMETERS") || candidate.getChipAuthenticationDomainParameters().contains(IcsCaDomainparams.fromValue(dtc.getVariables().get("CA_PARAMETERS")))).collect(Collectors.toSet());
 		return relevant;
 	}
 
@@ -328,48 +290,6 @@ public class CandidateControllerBean implements CandidateController
 	}
 
 	/**
-	 * Returns a {@link Tls} with pre-filled fields for version and ciphersuites
-	 * 
-	 * @param c
-	 * @return
-	 */
-	private Tls getTlsWithVersionAndCiphersuites(IcsCryptoTlsType c)
-	{
-		Tls t = tlsDAO.createNew();
-		t.setTlsVersion(c.getVersion());
-		t.setTlsCiphersuites(c.getCiphersuites().getCiphersuite());
-		return t;
-	}
-
-	/**
-	 * Set the fields for Elliptic Curves and Signature Algorithms for a given {@link Tls}
-	 * 
-	 * @param ec
-	 * @param t
-	 * @return
-	 */
-	private void setTlsWithCurvesAndSignatures(IcsCryptoTlsTypeEcAndSignature ec, Tls t)
-	{
-		Set<IcsEllipticcurve> curves = new HashSet<>();
-		Set<IcsTlsSignaturealgorithms> signatureAlgorithms = new HashSet<>();
-		for (Object es : ec.getEllipticCurvesOrSignatureAlgorithms())
-		{
-			if (es instanceof IcsCryptoTlsEllipticcurves)
-			{
-				IcsCryptoTlsEllipticcurves e = (IcsCryptoTlsEllipticcurves) es;
-				curves.addAll(e.getNamedCurve());
-			}
-			else
-			{
-				IcsCryptoTlsSignaturealgorithms s = (IcsCryptoTlsSignaturealgorithms) es;
-				signatureAlgorithms.addAll(s.getAlgorithm());
-			}
-		}
-		t.setEllipticCurves(curves);
-		t.setSignatureAlgorithms(signatureAlgorithms);
-	}
-
-	/**
 	 * Generate a {@link XmlSignature} from the given {@link IcsXmlsignature}
 	 * 
 	 * @param s
@@ -407,90 +327,16 @@ public class CandidateControllerBean implements CandidateController
 
 	private void setCryptographyFromIcs(final Ics ics, TestCandidate testCandidate)
 	{
-		if (null != ics.getCryptography().getECardApi())
-		{
-			IcsCryptoEcardapi eCardApi = ics.getCryptography().getECardApi();
-
-			// PSK channel
-			if (null != eCardApi.getPskChannel())
-			{
-				IcsCryptoEcardapiPsktls pskChannel = eCardApi.getPskChannel();
-				Set<Tls> pskTls = new HashSet<>();
-				for (IcsCryptoTlsType pskType : pskChannel.getTLS())
-				{
-					Tls t = getTlsWithVersionAndCiphersuites(pskType);
-					t.setInterface(Interface.ECARDAPI_PSK);
-					pskTls.add(t);
-				}
-				testCandidate.setTlsEcardApiPsk(pskTls);
-			}
-			else
-			{
-				logger.error("No cryptography information about the PSK channel has been provided in the ICS.");
-			}
-
-			// attached server
-			if (null != eCardApi.getAttachedServer())
-			{
-				IcsCryptoTls attachedChannel = eCardApi.getAttachedServer();
-				Set<Tls> attachedTls = new HashSet<>();
-				for (IcsCryptoTlsTypeEcAndSignature attachedType : attachedChannel.getTLS())
-				{
-					Tls t = getTlsWithVersionAndCiphersuites(attachedType);
-					setTlsWithCurvesAndSignatures(attachedType, t);
-					t.setInterface(Interface.ECARDAPI_ATTACHED);
-					attachedTls.add(t);
-				}
-				testCandidate.setTlsEcardApiAttached(attachedTls);
-			}
-			else
-			{
-				logger.warn("No cryptography information about the attached server mode has been provided in the ICS.");
-			}
-		}
-		else
-		{
-			logger.error("No eCard-API data has been provided in the ICS.");
-		}
-
 		// eid interface
 		if (null != ics.getCryptography().getEIDInterface())
 		{
 			IcsCryptoEidinterface eidChannel = ics.getCryptography().getEIDInterface();
-			Set<Tls> eidTls = new HashSet<>();
 			Set<XmlSignature> signatures = new HashSet<>();
-			for (Object tx : eidChannel.getTLSOrXmlSignature())
+			IcsXmlsignatures x = eidChannel.getXmlSignature();
+			for (IcsXmlsignature s : x.getSignature())
 			{
-				if (tx instanceof IcsCryptoEidinterfaceTlsTypeEcAndSignatureWithClientcertificates)
-				{
-					IcsCryptoEidinterfaceTlsTypeEcAndSignatureWithClientcertificates t = (IcsCryptoEidinterfaceTlsTypeEcAndSignatureWithClientcertificates) tx;
-					Tls tls = getTlsWithVersionAndCiphersuites(t);
-					setTlsWithCurvesAndSignatures(t, tls);
-					if (t.getClientCertificates() != null && t.getClientCertificates().getClientCertificate() != null)
-					{
-						Set<TlsClientCertificate> certificates = new HashSet<>();
-						for (IcsCryptoEidinterfaceTlsClientcertificate cert : t.getClientCertificates().getClientCertificate())
-						{
-							TlsClientCertificate clientCert = tlsClientCertificateDAO.createNew();
-							clientCert.setCertificateType(cert.getType());
-							clientCert.setSignatureAlgorithm(cert.getSignatureAlgorithm());
-							certificates.add(clientCert);
-						}
-						tls.setClientCertificates(certificates);
-					}
-					tls.setInterface(Interface.EIDINTERFACE);
-					eidTls.add(tls);
-				}
-				else
-				{
-					IcsXmlsignatures x = (IcsXmlsignatures) tx;
-					for (IcsXmlsignature s : x.getSignature())
-					{
-						signatures.add(createSignature(s));
-					}
-				}
+				signatures.add(createSignature(s));
 			}
-			testCandidate.setTlsEidInterface(eidTls);
 			testCandidate.setXmlSignatureAlgorithmsEid(signatures);
 		}
 		else
@@ -502,22 +348,6 @@ public class CandidateControllerBean implements CandidateController
 		if (null != ics.getCryptography().getSAML())
 		{
 			IcsCryptoSaml samlInterface = ics.getCryptography().getSAML();
-			if (null != samlInterface.getTransportSecurity() && null != samlInterface.getTransportSecurity().getTLS())
-			{
-				Set<Tls> samlTls = new HashSet<>();
-				for (IcsCryptoTlsTypeEcAndSignature tls : samlInterface.getTransportSecurity().getTLS())
-				{
-					Tls t = getTlsWithVersionAndCiphersuites(tls);
-					setTlsWithCurvesAndSignatures(tls, t);
-					t.setInterface(Interface.SAML);
-					samlTls.add(t);
-					testCandidate.setTlsSaml(samlTls);
-				}
-			}
-			else
-			{
-				logger.error("No information about the supported TLS cryptography was provided for the SAML channel.");
-			}
 
 			if (null != samlInterface.getXmlSignature() && null != samlInterface.getXmlSignature().getSignature())
 			{
@@ -544,12 +374,12 @@ public class CandidateControllerBean implements CandidateController
 				{
 					logger.error("No information about the supported XML content enryption algorithms was provided for the SAML channel.");
 				}
-				testCandidate.setXmlEncryptionAlgorithms(contentEncryptionAlgorithms);
+				testCandidate.setXmlEncryptionAlgorithmsSaml(contentEncryptionAlgorithms);
 
 				Set<XmlEncryptionKeyAgreement> xmlEncryptionKeyAgreement = new HashSet<>();
 				if (null != samlInterface.getXmlEncryption().getKeyAgreementAlgorithms())
 				{
-					for (IcsCryptoSamlXmlencryptionKeyagreementAlgorithm kaa : samlInterface.getXmlEncryption().getKeyAgreementAlgorithms().getAgreementAlgorithm())
+					for (IcsXmlencryptionKeyagreementAlgorithm kaa : samlInterface.getXmlEncryption().getKeyAgreementAlgorithms().getAgreementAlgorithm())
 					{
 						XmlEncryptionKeyAgreement agreement = xmlEncryptionKeyAgreementDAO.createNew();
 						agreement.setKeyAgreementAlgorithm(kaa.getURI());
@@ -576,12 +406,12 @@ public class CandidateControllerBean implements CandidateController
 				{
 					logger.error("No information about the supported XML key agreement algorithms was provided for the SAML channel.");
 				}
-				testCandidate.setXmlKeyAgreement(xmlEncryptionKeyAgreement);
+				testCandidate.setXmlKeyAgreementSaml(xmlEncryptionKeyAgreement);
 
 				Set<XmlEncryptionKeyTransport> xmlEncryptionKeyTransport = new HashSet<>();
 				if (null != samlInterface.getXmlEncryption().getKeyTransportAlgorithms())
 				{
-					for (IcsCryptoSamlXmlencryptionKeytransportAlgorithm kta : samlInterface.getXmlEncryption().getKeyTransportAlgorithms().getTransportAlgorithm())
+					for (IcsXmlencryptionKeytransportAlgorithm kta : samlInterface.getXmlEncryption().getKeyTransportAlgorithms().getTransportAlgorithm())
 					{
 						XmlEncryptionKeyTransport transport = xmlEncryptionKeyTransportDAO.createNew();
 						transport.setTransportAlgorithm(kta.getURI());
@@ -594,7 +424,7 @@ public class CandidateControllerBean implements CandidateController
 				{
 					logger.error("No information about the supported XML key transport algorithms was provided for the SAML channel.");
 				}
-				testCandidate.setXmlKeyTransport(xmlEncryptionKeyTransport);
+				testCandidate.setXmlKeyTransportSaml(xmlEncryptionKeyTransport);
 			}
 			else
 			{
@@ -604,6 +434,98 @@ public class CandidateControllerBean implements CandidateController
 		else
 		{
 			logger.warn("No cryptography information about the SAML interface communication has been provided in the ICS.");
+		}
+
+		// eIDAS
+		if (null != ics.getCryptography().getEIDAS())
+		{
+			IcsCryptoEidas eidasInterface = ics.getCryptography().getEIDAS();
+
+			if (null != eidasInterface.getXmlSignature() && null != eidasInterface.getXmlSignature().getSignature())
+			{
+				Set<XmlSignature> signatures = new HashSet<>();
+				for (IcsXmlsignature sig : eidasInterface.getXmlSignature().getSignature())
+				{
+					signatures.add(createSignature(sig));
+				}
+				testCandidate.setXmlSignatureAlgorithmsEidas(signatures);
+			}
+			else
+			{
+				logger.error("No information about the supported XML signature algorithms was provided for the eIDAS channel.");
+			}
+
+			if (null != eidasInterface.getXmlEncryption())
+			{
+				Set<IcsXmlsecEncryptionContentUri> contentEncryptionAlgorithms = new HashSet<>();
+				if (null != eidasInterface.getXmlEncryption().getContentEncryptionAlgorithms())
+				{
+					contentEncryptionAlgorithms.addAll(eidasInterface.getXmlEncryption().getContentEncryptionAlgorithms().getURI());
+				}
+				else
+				{
+					logger.error("No information about the supported XML content enryption algorithms was provided for the eIDAS channel.");
+				}
+				testCandidate.setXmlEncryptionAlgorithmsEidas(contentEncryptionAlgorithms);
+
+				Set<XmlEncryptionKeyAgreement> xmlEncryptionKeyAgreement = new HashSet<>();
+				if (null != eidasInterface.getXmlEncryption().getKeyAgreementAlgorithms())
+				{
+					for (IcsXmlencryptionKeyagreementAlgorithm kaa : eidasInterface.getXmlEncryption().getKeyAgreementAlgorithms().getAgreementAlgorithm())
+					{
+						XmlEncryptionKeyAgreement agreement = xmlEncryptionKeyAgreementDAO.createNew();
+						agreement.setKeyAgreementAlgorithm(kaa.getURI());
+						agreement.setKeyWrappingAlgorithm(kaa.getKeyWrappingUri());
+						Set<IcsEllipticcurve> curves = new HashSet<>();
+						Set<BigInteger> bitLength = new HashSet<>();
+						for (Object es : kaa.getParameters().getBitLengthOrNamedCurve())
+						{
+							if (es instanceof IcsEllipticcurve)
+							{
+								curves.add((IcsEllipticcurve) es);
+							}
+							else
+							{
+								bitLength.add((BigInteger) es);
+							}
+						}
+						agreement.setBitLengths(bitLength);
+						agreement.setEllipticCurves(curves);
+						xmlEncryptionKeyAgreement.add(agreement);
+					}
+				}
+				else
+				{
+					logger.error("No information about the supported XML key agreement algorithms was provided for the eIDAS channel.");
+				}
+				testCandidate.setXmlKeyAgreementEidas(xmlEncryptionKeyAgreement);
+
+				Set<XmlEncryptionKeyTransport> xmlEncryptionKeyTransport = new HashSet<>();
+				if (null != eidasInterface.getXmlEncryption().getKeyTransportAlgorithms())
+				{
+					for (IcsXmlencryptionKeytransportAlgorithm kta : eidasInterface.getXmlEncryption().getKeyTransportAlgorithms().getTransportAlgorithm())
+					{
+						XmlEncryptionKeyTransport transport = xmlEncryptionKeyTransportDAO.createNew();
+						transport.setTransportAlgorithm(kta.getURI());
+						Set<BigInteger> bitLength = new HashSet<>(kta.getParameter());
+						transport.setBitLengths(bitLength);
+						xmlEncryptionKeyTransport.add(transport);
+					}
+				}
+				else
+				{
+					logger.error("No information about the supported XML key transport algorithms was provided for the eIDAS channel.");
+				}
+				testCandidate.setXmlKeyTransportEidas(xmlEncryptionKeyTransport);
+			}
+			else
+			{
+				logger.error("No information about the supported XML encryption algorithms was provided for the eIDAS channel.");
+			}
+		}
+		else
+		{
+			logger.warn("No cryptography information about the eIDAS interface communication has been provided in the ICS.");
 		}
 
 		// chip authentication
@@ -640,7 +562,9 @@ public class CandidateControllerBean implements CandidateController
 	{
 		try
 		{
-			boolean exists = ((testCandidateDAO.findById(testCandidate.getId()) == null) ? false : true);
+			boolean exists = (testCandidateDAO.findById(testCandidate.getId()) != null);
+
+			//TODO: Only generate certs on creation, not on update (maybe discuss)
 
 			// load default testcases
 			Set<TestCase> relevantTestcases = loadRelevantDefaultTestcases(testCandidate);
@@ -648,8 +572,58 @@ public class CandidateControllerBean implements CandidateController
 
 			// generate a new certificate set and persists it aswell
 			certificateController.deleteCertificates(testCandidate);
-			Set<CertificateX509> x509Certificates = certificateController.generateCertificates(testCandidate);
-			testCandidate.setX509Certificates(x509Certificates);
+			GeneratedCertsContainer generatedCertificates = certificateController.generateCertificates(testCandidate);
+
+			Set<CertificateX509> certificates = new HashSet<>();
+			for (GeneratedCertificate x509 : generatedCertificates.getCerts())
+			{
+				CertificateX509 x = x509DAO.createNew();
+				x.setCertificateName(x509.getDefinition().fileName);
+				x.setX509certificate(x509.getCertificate());
+				x.setKeyPair(x509.getKeyPair());
+				x509DAO.persist(x);
+				certificates.add(x);
+			}
+			testCandidate.setX509Certificates(certificates);
+
+			Set<CertificateCV> certificatesCV = new HashSet<>();
+			for (CVCertificate cv : generatedCertificates.getCvCerts())
+			{
+				CertificateCV x = cvDAO.createNew();
+				x.setCertificateName(cv.getCertHolderRef());
+				x.setCvCertificate(cv);
+				cvDAO.persist(x);
+				certificatesCV.add(x);
+			}
+			testCandidate.setCvCertificates(certificatesCV);
+			testCandidate.setMasterlist(generatedCertificates.getMasterList());
+			testCandidate.setDefectlist(generatedCertificates.getDefectList());
+			Set<Blacklist> blacklists = new HashSet<>();
+			for (Map.Entry<Character, byte[]> entry : generatedCertificates.getBlackLists().entrySet())
+			{
+				Blacklist b = blacklistDAO.createNew();
+				b.setContent(entry.getValue());
+				b.setEserviceID(entry.getKey());
+				blacklistDAO.persist(b);
+				blacklists.add(b);
+			}
+			testCandidate.setBlacklists(blacklists);
+			Set<CryptoFile> cryptoFiles = new HashSet<>();
+			for (Map.Entry<String, byte[]> entry : generatedCertificates.getAllFiles().entrySet())
+			{
+				CryptoFile b = cryptoFileDAO.createNew();
+				b.setContent(entry.getValue());
+				b.setFilename(entry.getKey());
+				cryptoFileDAO.persist(b);
+				cryptoFiles.add(b);
+			}
+			testCandidate.setCryptoFiles(cryptoFiles);
+
+			String metadata = new String(certificateController.getMetadataBytes(testCandidate), StandardCharsets.UTF_8);
+			testCandidate.setEidasMetadata(metadata);
+			CryptoHelper.writeCryptoFiles(testCandidate);
+
+
 
 			// persist the candidate
 			if (exists)
@@ -660,13 +634,9 @@ public class CandidateControllerBean implements CandidateController
 			{
 				testCandidateDAO.persist(testCandidate);
 			}
-		}
-		catch (Exception e)
-		{
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			throw new CandidateException("Could not persist candidate due to: " + sw.toString());
+		} catch (CertificateGenerationExcpetion | IOException e) {
+			logger.error("Could not persist candidate due to: {}", e.getMessage(), e);
+			throw new CandidateException("Could not persist candidate due to an exception : " + e.getClass() + ", " +  e.getMessage());
 		}
 	}
 

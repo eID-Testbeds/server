@@ -4,22 +4,26 @@
 	<parent>
 		<groupId>com.secunet</groupId>
 		<artifactId>eidserver-testbed</artifactId>
-		<version>${project.version}</version>
+		<version>${revision}</version>
 	</parent>
 	<artifactId>eidsrv-testbed-core</artifactId>
 	<name>eID-Server Testbed Core</name>
-	<packaging>ejb</packaging>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+    <packaging>ejb</packaging>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-common</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-testing</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -29,9 +33,48 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ejb-plugin</artifactId>
+				<version>3.2.1</version>
 				<configuration>
 					<ejbVersion>3.1</ejbVersion>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>2.5.0</version>
+				<executions>
+					<execution>
+						<id>xjc</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<sources>
+						<source>src/main/resources/eumw-configuration.xsd</source>
+					</sources>
+					<outputDirectory>${basedir}/target/generated/src/main/java</outputDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${basedir}/target/generated/src/main/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

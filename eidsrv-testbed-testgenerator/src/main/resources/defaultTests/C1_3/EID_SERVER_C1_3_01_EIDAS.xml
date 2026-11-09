@@ -33,27 +33,42 @@
 		<p:step>IN_DID_AUTHENTICATE_EAC_1_INPUTTYPE</p:step>
 	</p:steps>
 	<p:variables>
-		<!-- request the minimum dataset -->
+		<!-- request ATTRIBUTE_SET_EIDAS -->
 		<p:variable name="EIDAS_ATTR_FirstName">REQUIRED</p:variable>
 		<p:variable name="PERSONAL_FirstName">ERIKA</p:variable>
 		<p:variable name="USEOP_GIVENNAMES">REQUIRED</p:variable>
 		<p:variable name="OABU_GIVENNAMES">ALLOWED</p:variable>
-		
+
 		<p:variable name="EIDAS_ATTR_FamilyName">REQUIRED</p:variable>
 		<p:variable name="PERSONAL_FamilyName">MUSTERMANN</p:variable>
 		<p:variable name="USEOP_FAMILYNAMES">REQUIRED</p:variable>
 		<p:variable name="OABU_FAMILYNAMES">ALLOWED</p:variable>
-		
+
 		<p:variable name="EIDAS_ATTR_DateOfBirth">REQUIRED</p:variable>
 		<p:variable name="PERSONAL_DateOfBirth">1964-08-12</p:variable>
 		<p:variable name="USEOP_DATEOFBIRTH">REQUIRED</p:variable>
 		<p:variable name="OABU_DATEOFBIRTH">ALLOWED</p:variable>
-		
+
 		<p:variable name="EIDAS_ATTR_PersonIdentifier">REQUIRED</p:variable>
 		<p:variable name="PERSONAL_PersonIdentifier">DE/DE/4242424242424242424242424242424242424242424242424242424242424242</p:variable>
 		<p:variable name="USEOP_RESTRICTEDID">REQUIRED</p:variable>
 		<p:variable name="OABU_RESTRICTEDID">ALLOWED</p:variable>
 
-		<p:variable name="REQUIREDCHAT">7F4C12060904007F00070301020253050000009804</p:variable> <!-- If present, the element "RequiredCHAT" contains the CHAT value for reading minimum dataset. -->
+		<p:variable name="EIDAS_ATTR_PlaceOfBirth">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_PlaceOfBirth">BERLIN</p:variable>
+		<p:variable name="USEOP_PLACEOFBIRTH">REQUIRED</p:variable>
+		<p:variable name="OABU_PLACEOFBIRTH">ALLOWED</p:variable>
+
+		<p:variable name="EIDAS_ATTR_BirthName">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_BirthName">ERIKA GABLER</p:variable>
+		<p:variable name="USEOP_BIRTHNAME">REQUIRED</p:variable>
+		<p:variable name="OABU_BIRTHNAME">ALLOWED</p:variable>
+
+		<p:variable name="EIDAS_ATTR_CurrentAddress">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_CurrentAddress">Thoroughfare=HEIDESTRASSE%2017;PostName=EMDEN;AdminunitFirstline=D;PostCode=51147</p:variable>
+		<p:variable name="USEOP_PLACEOFRESIDENCE">REQUIRED</p:variable>
+		<p:variable name="OABU_PLACEOFRESIDENCE">ALLOWED</p:variable>
+
+		<p:variable name="REQUIREDCHAT">7F4C12060904007F00070301020253050001119804</p:variable> <!-- If present, the element "RequiredCHAT" contains the CHAT value for reading ATTRIBUTE_SET_EIDAS. -->
 	</p:variables>
 </p:testcaseDefinition>

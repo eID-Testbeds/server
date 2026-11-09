@@ -14,6 +14,8 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
+import com.secunet.eidserver.testbed.testing.TestCandidateTestingPojo;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -33,10 +35,10 @@ import com.secunet.eidserver.testbed.common.types.testcase.Step;
 import com.secunet.eidserver.testbed.common.types.testcase.StepToken;
 import com.secunet.eidserver.testbed.testing.LogMessageTestingPojo;
 import com.secunet.eidserver.testbed.testing.TestCaseStepTestingPojo;
-import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
-import com.secunet.testbedutils.utilities.JaxBUtil;
+import de.bsi.testbedutils.cvc.cvcertificate.CVCertificate;
+import de.bsi.testbedutils.utilities.JaxBUtil;
 
-public class TestStepHandler
+public class TestStepHandler extends RunnerTestBase
 {
 	private LogMessageDAO logMessageDAO;
 
@@ -55,7 +57,7 @@ public class TestStepHandler
 	public void validatePositive() throws Exception
 	{
 		// create the test message
-		String incomingMessageSample = "HTTP/1.1 200 OK";
+		String incomingMessageSample = "HTTP/1.1 200 ";
 		incomingMessageSample += "\r\n";
 		incomingMessageSample += "accept-language: de-DE,en,*";
 		incomingMessageSample += "\r\n";
@@ -137,8 +139,12 @@ public class TestStepHandler
 		step.getProtocolStepToken().add(pathSecProtocolToken);
 		// create a handler
 		KnownValues values = new KnownValues();
-		StepHandler stepHandler = new StepHandlerSAML(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://eservice-idp-test.secunet.de:443/refresh",
-				new URL("https://eservice-idp-test.secunet.de:443/communicationerror"), null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setSamlUrl(new URL("https://eservice-idp-test.secunet.de:443/communicationerror"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler stepHandler = new StepHandlerSAML(candidate, "https://eservice-idp-test.secunet.de:443/refresh"
+				, null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
 		// validate the data
 		List<TestCaseStep> steps = new ArrayList<TestCaseStep>();
 		TestCaseStep tcStep = new TestCaseStepTestingPojo();
@@ -159,7 +165,7 @@ public class TestStepHandler
 	public void validateWrongHttpHeader() throws Exception
 	{
 		// create the test message
-		String incomingMessageSample = "HTTP/1.1 200 OK";
+		String incomingMessageSample = "HTTP/1.1 200 ";
 		incomingMessageSample += "\r\n";
 		incomingMessageSample += "accept-language: de-DE,en,*";
 		incomingMessageSample += "\r\n";
@@ -244,8 +250,12 @@ public class TestStepHandler
 		step.getProtocolStepToken().add(pathSecProtocolToken);
 		// create a handler
 		KnownValues values = new KnownValues();
-		StepHandler stepHandler = new StepHandlerSAML(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://eservice-idp-test.secunet.de:443/refresh",
-				new URL("https://eservice-idp-test.secunet.de:443/communicationerror"), null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setSamlUrl(new URL("https://eservice-idp-test.secunet.de:443/communicationerror"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler stepHandler = new StepHandlerSAML(candidate, "https://eservice-idp-test.secunet.de:443/refresh",
+				 null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
 		// validate the data
 		List<TestCaseStep> steps = new ArrayList<TestCaseStep>();
 		TestCaseStep tcStep = new TestCaseStepTestingPojo();
@@ -266,7 +276,7 @@ public class TestStepHandler
 	public void validateMissingHttpHeader() throws Exception
 	{
 		// create the test message
-		String incomingMessageSample = "HTTP/1.1 200 OK";
+		String incomingMessageSample = "HTTP/1.1 200 ";
 		incomingMessageSample += "\r\n";
 		incomingMessageSample += "accept-language: de-DE,en,*";
 		incomingMessageSample += "\r\n";
@@ -349,8 +359,12 @@ public class TestStepHandler
 		step.getProtocolStepToken().add(pathSecProtocolToken);
 		// create a handler
 		KnownValues values = new KnownValues();
-		StepHandler stepHandler = new StepHandlerSAML(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://eservice-idp-test.secunet.de:443/refresh",
-				new URL("https://eservice-idp-test.secunet.de:443/communicationerror"), null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setSamlUrl(new URL("https://eservice-idp-test.secunet.de:443/communicationerror"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler stepHandler = new StepHandlerSAML(candidate, "https://eservice-idp-test.secunet.de:443/refresh",
+				null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
 		// validate the data
 		List<TestCaseStep> steps = new ArrayList<TestCaseStep>();
 		TestCaseStep tcStep = new TestCaseStepTestingPojo();
@@ -371,7 +385,7 @@ public class TestStepHandler
 	public void validateWrongProtocolMessage() throws Exception
 	{
 		// create the test message
-		String incomingMessageSample = "HTTP/1.1 200 OK";
+		String incomingMessageSample = "HTTP/1.1 200 ";
 		incomingMessageSample += "\r\n";
 		incomingMessageSample += "accept-language: de-DE,en,*";
 		incomingMessageSample += "\r\n";
@@ -456,8 +470,12 @@ public class TestStepHandler
 		 * CHANGE IN THIS LINE, ARG RefreshAddress
 		 */
 		KnownValues values = new KnownValues();
-		StepHandler stepHandler = new StepHandlerSAML(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://wrong.de",
-				new URL("https://eservice-idp-test.secunet.de:443/communicationerror"), null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setSamlUrl(new URL("https://eservice-idp-test.secunet.de:443/communicationerror"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler stepHandler = new StepHandlerSAML(candidate, "https://wrong.de",
+				null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
 		// validate the data
 		List<TestCaseStep> steps = new ArrayList<TestCaseStep>();
 		TestCaseStep tcStep = new TestCaseStepTestingPojo();
@@ -478,7 +496,7 @@ public class TestStepHandler
 	public void validateMissingProcotolMessage() throws Exception
 	{
 		// create the test message
-		String incomingMessageSample = "HTTP/1.1 200 OK";
+		String incomingMessageSample = "HTTP/1.1 200 ";
 		incomingMessageSample += "\r\n";
 		incomingMessageSample += "accept-language: de-DE,en,*";
 		incomingMessageSample += "\r\n";
@@ -562,8 +580,12 @@ public class TestStepHandler
 		step.getProtocolStepToken().add(pathSecProtocolToken);
 		// create a handler
 		KnownValues values = new KnownValues();
-		StepHandler stepHandler = new StepHandlerSAML(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://eservice-idp-test.secunet.de:443/refresh",
-				new URL("https://eservice-idp-test.secunet.de:443/communicationerror"), null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setSamlUrl(new URL("https://eservice-idp-test.secunet.de:443/communicationerror"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler stepHandler = new StepHandlerSAML(candidate, "https://eservice-idp-test.secunet.de:443/refresh",
+				null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
 		// validate the data
 		List<TestCaseStep> steps = new ArrayList<TestCaseStep>();
 		TestCaseStep tcStep = new TestCaseStepTestingPojo();
@@ -584,7 +606,7 @@ public class TestStepHandler
 	public void validateWrongOptionalProtocolMessage() throws Exception
 	{
 		// create the test message
-		String incomingMessageSample = "HTTP/1.1 200 OK";
+		String incomingMessageSample = "HTTP/1.1 200 ";
 		incomingMessageSample += "\r\n";
 		incomingMessageSample += "accept-language: de-DE,en,*";
 		incomingMessageSample += "\r\n";
@@ -669,7 +691,11 @@ public class TestStepHandler
 		 * CHANGE IN THIS LINE, ARG CommunicationErrorAddress
 		 */
 		KnownValues values = new KnownValues();
-		StepHandler stepHandler = new StepHandlerSAML(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://eservice-idp-test.secunet.de:443/refresh", new URL("https://wrong.de"),
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setSamlUrl(new URL("https://wrong.de"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler stepHandler = new StepHandlerSAML(candidate, "https://eservice-idp-test.secunet.de:443/refresh",
 				null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
 		// validate the data
 		List<TestCaseStep> steps = new ArrayList<TestCaseStep>();
@@ -691,7 +717,7 @@ public class TestStepHandler
 	public void validateMissingOptionalProtocolMessage() throws Exception
 	{
 		// create the test message
-		String incomingMessageSample = "HTTP/1.1 200 OK";
+		String incomingMessageSample = "HTTP/1.1 200 ";
 		incomingMessageSample += "\r\n";
 		incomingMessageSample += "accept-language: de-DE,en,*";
 		incomingMessageSample += "\r\n";
@@ -778,7 +804,11 @@ public class TestStepHandler
 		 * CHANGE IN THIS LINE, ARG CommunicationErrorAddress
 		 */
 		KnownValues values = new KnownValues();
-		StepHandler stepHandler = new StepHandlerSAML(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://eservice-idp-test.secunet.de:443/refresh", new URL("https://wrong.de"),
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setSamlUrl(new URL("https://wrong.de"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler stepHandler = new StepHandlerSAML(candidate, "https://eservice-idp-test.secunet.de:443/refresh",
 				null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
 		// validate the data
 		List<TestCaseStep> steps = new ArrayList<TestCaseStep>();
@@ -802,7 +832,7 @@ public class TestStepHandler
 	public void validateOptionalMessage() throws Exception
 	{
 		// create the test message
-		String incomingMessageSample = "HTTP/1.1 200 OK";
+		String incomingMessageSample = "HTTP/1.1 200 ";
 		incomingMessageSample += "\r\n";
 		incomingMessageSample += "accept-language: de-DE,en,*";
 		incomingMessageSample += "\r\n";
@@ -904,8 +934,12 @@ public class TestStepHandler
 		wrongStep.getProtocolStepToken().add(pathSecProtocolToken);
 		// create a handler
 		KnownValues values = new KnownValues();
-		StepHandler stepHandler = new StepHandlerSAML(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://eservice-idp-test.secunet.de:443/refresh",
-				new URL("https://eservice-idp-test.secunet.de:443/communicationerror"), null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setSamlUrl(new URL("https://eservice-idp-test.secunet.de:443/communicationerror"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler stepHandler = new StepHandlerSAML(candidate, "https://eservice-idp-test.secunet.de:443/refresh",
+				null, values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
 
 		// now create the correct step
 		Step correctStep = factory.createStep();
@@ -961,8 +995,12 @@ public class TestStepHandler
 
 		List<String> certificateNames = new ArrayList<>();
 		certificateNames.add("CERT_EID_XMLSIG_ESERVICE_1_A");
-		StepHandler handler = new StepHandlerSOAP(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://eservice-idp-test.secunet.de:443/refresh",
-				new URL("https://eservice-idp-test.secunet.de:443/communicationerror"), values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setAttachedTcTokenUrl(new URL("https://eservice-idp-test.secunet.de:443/communicationerror"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler handler = new StepHandlerSOAP(candidate, "https://eservice-idp-test.secunet.de:443/refresh",
+				 values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0, true);
 
 		// init the computationHelper
 		ComputationHelper computationHelper = mock(ComputationHelper.class);
@@ -993,8 +1031,12 @@ public class TestStepHandler
 
 		List<String> certificateNames = new ArrayList<>();
 		certificateNames.add("CERT_EID_XMLSIG_ESERVICE_1_A");
-		StepHandler handler = new StepHandlerSOAP(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://eservice-idp-test.secunet.de:443/refresh",
-				new URL("https://eservice-idp-test.secunet.de:443/communicationerror"), values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setAttachedTcTokenUrl(new URL("https://eservice-idp-test.secunet.de:443/communicationerror"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler handler = new StepHandlerSOAP(candidate, "https://eservice-idp-test.secunet.de:443/refresh",
+				values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0, true);
 
 		// init the computationHelper
 		ComputationHelper computationHelper = mock(ComputationHelper.class);
@@ -1024,8 +1066,12 @@ public class TestStepHandler
 
 		List<String> certificateNames = new ArrayList<>();
 		certificateNames.add("CERT_EID_XMLSIG_ESERVICE_1_A");
-		StepHandler handler = new StepHandlerSOAP(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://eservice-idp-test.secunet.de:443/refresh",
-				new URL("https://eservice-idp-test.secunet.de:443/communicationerror"), values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setAttachedTcTokenUrl(new URL("https://eservice-idp-test.secunet.de:443/communicationerror"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler handler = new StepHandlerSOAP(candidate, "https://eservice-idp-test.secunet.de:443/refresh",
+				values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0, true);
 
 
 		// init the computationHelper
@@ -1057,8 +1103,12 @@ public class TestStepHandler
 
 		List<String> certificateNames = new ArrayList<>();
 		certificateNames.add("CERT_EID_XMLSIG_ESERVICE_1_A");
-		StepHandler handler = new StepHandlerSOAP(null, new URL("https://eidserver-idp-test.secunet.de:8443/test"), "https://eservice-idp-test.secunet.de:443/refresh",
-				new URL("https://eservice-idp-test.secunet.de:443/communicationerror"), values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0);
+		TestCandidate candidate = new TestCandidateTestingPojo();
+		candidate.setEcardapiUrl(new URL("https://eidserver-idp-test.secunet.de:8443/test"));
+		candidate.setAttachedTcTokenUrl(new URL("https://eservice-idp-test.secunet.de:443/communicationerror"));
+		candidate.setCryptoFiles(cryptoFiles);
+		StepHandler handler = new StepHandlerSOAP(candidate, "https://eservice-idp-test.secunet.de:443/refresh",
+				values, logMessageDAO, EService.A, EidCard.EIDCARD_1, 0, true);
 
 		String eac1input = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\"\r\n";
 		eac1input += "<soap:Header>\r\n";

@@ -31,7 +31,19 @@
     
     
     
-    <inherits name="org.vaadin.resetbuttonfortextfield.WidgetSet" />
+    
     
 	
+
+    <inherits name="com.vaadin.v7.Vaadin7WidgetSet" />
+
+    
+
+    
+
+    
+
+    
+
+    
 </module>

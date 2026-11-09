@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Ics xmlns="http://trdoccheck.bsi.bund.de/server/ics" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://trdoccheck.bsi.bund.de/server/ics eidsrv-testbed-common/src/main/resources/ics_schema.xsd ">
+
+	<Metadata>
+		<eCardApiUrl>https://localhost:8443/eidas-middleware/paosreceiver</eCardApiUrl>
+		<eIdInterfaceiUrl>https://localhost:8443/POSeIDAS/eID</eIdInterfaceiUrl>
+		<SamlUrl>https://localhost:8443/POSeIDAS/SAML</SamlUrl>
+		<AttachedTcTokenUrl>https://localhost:8443/eidas-middleware/RequestReceiver</AttachedTcTokenUrl>
+		<Vendor>Governikus</Vendor>
+		<Name>German eIDAS-Middleware 5.0.0-RC3</Name>
+		<VersionMajor>5</VersionMajor>
+		<VersionMinor>0</VersionMinor>
+		<VersionSubminor>0</VersionSubminor>
+	</Metadata>
+	
+	<API>
+		<ApiVersionMajor>2</ApiVersionMajor>
+		<ApiVersionMinor>4</ApiVersionMinor>
+		<ApiVersionSubminor>0</ApiVersionSubminor>
+	</API>
+
+	<Profiles>
+		<MandatoryProfile>CRYPTO</MandatoryProfile>
+		<MandatoryProfile>EAC</MandatoryProfile>
+		<MandatoryProfile>PAOS</MandatoryProfile>
+		<MandatoryProfile>EID_ACCESS</MandatoryProfile>
+		<MandatoryProfile>REVOKED_CARD</MandatoryProfile>
+		<MandatoryProfile>EXPIRED_CARD</MandatoryProfile>
+		<MandatoryProfile>NONAUTH_CARD</MandatoryProfile>
+		<MandatoryProfile>DG_VARIATIONS</MandatoryProfile>
+		<OptionalProfile>EIDAS_MW</OptionalProfile>
+	</Profiles>
+
+	<Cryptography>
+
+		<SAML>
+			<XmlSignature>
+				<Signature URI="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256">
+					<Digest>http://www.w3.org/2001/04/xmlenc#sha256</Digest>
+					<Canonicalization>http://www.w3.org/2001/10/xml-exc-c14n#</Canonicalization>
+					<Parameters>
+						<NamedCurve>secp256r1</NamedCurve>
+					</Parameters>
+				</Signature>
+				<Signature URI="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384">
+					<Digest>http://www.w3.org/2001/04/xmldsig-more#sha384</Digest>
+					<Canonicalization>http://www.w3.org/2001/10/xml-exc-c14n#</Canonicalization>
+					<Parameters>
+						<NamedCurve>secp384r1</NamedCurve>
+					</Parameters>
+				</Signature>
+			</XmlSignature>
+			<XmlEncryption>
+				<KeyTransportAlgorithms>
+					<TransportAlgorithm URI="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p">
+						<Parameter>3072</Parameter>
+					</TransportAlgorithm>
+					<TransportAlgorithm URI="http://www.w3.org/2009/xmlenc11#rsa-oaep">
+						<Parameter>3072</Parameter>
+					</TransportAlgorithm>
+				</KeyTransportAlgorithms>
+				<KeyAgreementAlgorithms>
+					<AgreementAlgorithm URI="http://www.w3.org/2009/xmlenc11#ECDH-ES">
+						<Parameters>
+							<NamedCurve>secp256r1</NamedCurve>
+							<NamedCurve>secp384r1</NamedCurve>
+							<NamedCurve>secp521r1</NamedCurve>
+						</Parameters>
+						<KeyWrappingUri>http://www.w3.org/2001/04/xmlenc#kw-aes256</KeyWrappingUri>
+					</AgreementAlgorithm>
+					<AgreementAlgorithm URI="http://www.w3.org/2009/xmlenc11#ECDH-ES">
+						<Parameters>
+							<NamedCurve>secp256r1</NamedCurve>
+							<NamedCurve>secp384r1</NamedCurve>
+							<NamedCurve>secp521r1</NamedCurve>
+						</Parameters>
+						<KeyWrappingUri>http://www.w3.org/2001/04/xmlenc#kw-aes128</KeyWrappingUri>
+					</AgreementAlgorithm>
+				</KeyAgreementAlgorithms>
+				<ContentEncryptionAlgorithms>
+					<URI>http://www.w3.org/2009/xmlenc11#aes256-gcm</URI>
+					<URI>http://www.w3.org/2009/xmlenc11#aes192-gcm</URI>
+					<URI>http://www.w3.org/2009/xmlenc11#aes128-gcm</URI>
+				</ContentEncryptionAlgorithms>
+			</XmlEncryption>
+		</SAML>
+
+		<ChipAuthentication>
+			<Algorithm>id-CA-ECDH-AES-CBC-CMAC-128</Algorithm>
+			<Algorithm>id-CA-ECDH-AES-CBC-CMAC-192</Algorithm>
+			<Algorithm>id-CA-ECDH-AES-CBC-CMAC-256</Algorithm>
+			<DomainParameter>brainpoolp256r1</DomainParameter>
+			<DomainParameter>brainpoolp384r1</DomainParameter>
+		</ChipAuthentication>
+
+	</Cryptography>
+
+</Ics>

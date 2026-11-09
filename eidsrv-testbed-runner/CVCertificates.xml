@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<root xmlns="http://www.secunet.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.secunet.com cv_schema.xsd">
+<root xmlns="https://www.bsi.bund.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://www.bsi.bund.de cv_schema.xsd">
 
 	<keys>
 		<key name="CVCA1_KEY" create="true">
@@ -178,7 +178,7 @@
 		<profileId>0</profileId>
 		<certAuthRef>DEESTDV1A00001</certAuthRef>
 		<publicKey>TERM1A_KEY</publicKey>
-		<certHolderRef>DEESTTERM1A00001</certHolderRef>
+		<certHolderRef>DET1A00001</certHolderRef>
 		<certHolderAuth type="AT">
 			<role>TERMINAL</role>
 			<writeDG17>true</writeDG17>
@@ -244,7 +244,7 @@
 		<profileId>0</profileId>
 		<certAuthRef>DEESTDV1A00001</certAuthRef>
 		<publicKey>TERM1B_KEY</publicKey>
-		<certHolderRef>DEESTTERM1B00001</certHolderRef>
+		<certHolderRef>DET1B00001</certHolderRef>
 		<certHolderAuth type="AT">
 			<role>TERMINAL</role>
 			<writeDG17>false</writeDG17>
@@ -310,7 +310,7 @@
 		<profileId>0</profileId>
 		<certAuthRef>DEESTDV1A00001</certAuthRef>
 		<publicKey>TERM1C_KEY</publicKey>
-		<certHolderRef>DEESTTERM1C00001</certHolderRef>
+		<certHolderRef>DET1C00001</certHolderRef>
 		<certHolderAuth type="AT">
 			<role>TERMINAL</role>
 			<writeDG17>false</writeDG17>
@@ -376,7 +376,7 @@
 		<profileId>0</profileId>
 		<certAuthRef>DEESTDV1A00001</certAuthRef>
 		<publicKey>TERM1D_KEY</publicKey>
-		<certHolderRef>DEESTTERM1D00001</certHolderRef>
+		<certHolderRef>DET1D00001</certHolderRef>
 		<certHolderAuth type="AT">
 			<role>TERMINAL</role>
 			<writeDG17>false</writeDG17>

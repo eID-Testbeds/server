@@ -1,40 +1,27 @@
 package com.secunet.eidserver.testbed.runner;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.math.BigInteger;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Security;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.spec.ECPublicKeySpec;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyAgreement;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import javax.smartcardio.CommandAPDU;
-import javax.smartcardio.ResponseAPDU;
-import javax.xml.bind.DatatypeConverter;
-
+import com.secunet.eidserver.testbed.common.classes.EidCards;
+import com.secunet.eidserver.testbed.common.classes.Singletons;
+import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
+import com.secunet.eidserver.testbed.common.enumerations.*;
+import com.secunet.eidserver.testbed.common.helper.CryptoHelper;
+import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
+import com.secunet.eidserver.testbed.common.types.testcase.EService;
+import com.secunet.eidserver.testbed.common.types.testcase.EidCard;
+import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyException;
+import de.bsi.testbedutils.cvc.cvcertificate.CVAuthorization;
+import de.bsi.testbedutils.cvc.cvcertificate.CVCertificate;
+import de.bsi.testbedutils.cvc.cvcertificate.CVPubKeyHolder;
+import de.bsi.testbedutils.cvc.cvcertificate.CertHolderRole;
+import de.bsi.testbedutils.cvc.cvcertificate.exception.*;
+import de.bsi.testbedutils.eac2.DHDomainParameter.Type;
+import de.bsi.testbedutils.eac2.EAC2ObjectIdentifiers;
+import de.bsi.testbedutils.eac2.cv.TLVObject;
+import de.bsi.testbedutils.eac2.sm.AuthenticationToken;
+import de.bsi.testbedutils.eac2.sm.EIDCryptoException;
+import de.bsi.testbedutils.eac2.sm.KeyDerivationFunction;
+import de.bsi.testbedutils.eac2.sm.SecureMessaging;
+import de.bsi.testbedutils.utilities.CommonUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -43,41 +30,31 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.ECPointUtil;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.bouncycastle.jce.spec.ECParameterSpec;
 
-import com.secunet.eidserver.testbed.common.classes.EidCards;
-import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
-import com.secunet.eidserver.testbed.common.enumerations.EidCardFiles;
-import com.secunet.eidserver.testbed.common.enumerations.EidRequestApdu;
-import com.secunet.eidserver.testbed.common.enumerations.EidResponseApdu;
-import com.secunet.eidserver.testbed.common.enumerations.RequestAttribute;
-import com.secunet.eidserver.testbed.common.enumerations.SignatureAlgorithm;
-import com.secunet.eidserver.testbed.common.enumerations.SpecialFunction;
-import com.secunet.eidserver.testbed.common.enumerations.StandardizedDomainParameter;
-import com.secunet.eidserver.testbed.common.helper.CryptoHelper;
-import com.secunet.eidserver.testbed.common.types.testcase.EService;
-import com.secunet.eidserver.testbed.common.types.testcase.EidCard;
-import com.secunet.eidserver.testbed.runner.exceptions.SharedSecretNotYetReadyException;
-import com.secunet.testbedutils.cvc.cvcertificate.CVAuthorization;
-import com.secunet.testbedutils.cvc.cvcertificate.CVCertificate;
-import com.secunet.testbedutils.cvc.cvcertificate.CVPubKeyHolder;
-import com.secunet.testbedutils.cvc.cvcertificate.CertHolderRole;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVInvalidKeySourceException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVKeyTypeNotSupportedException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVMissingKeyException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVUnknownAlgorithmException;
-import com.secunet.testbedutils.cvc.cvcertificate.exception.CVUnknownCryptoProviderException;
-import com.secunet.testbedutils.eac2.DHDomainParameter.Type;
-import com.secunet.testbedutils.eac2.EAC2ObjectIdentifiers;
-import com.secunet.testbedutils.eac2.cv.TLVObject;
-import com.secunet.testbedutils.eac2.sm.AuthenticationToken;
-import com.secunet.testbedutils.eac2.sm.EIDCryptoException;
-import com.secunet.testbedutils.eac2.sm.KeyDerivationFunction;
-import com.secunet.testbedutils.eac2.sm.SecureMessaging;
-import com.secunet.testbedutils.utilities.CommonUtil;
+import javax.crypto.Cipher;
+import javax.crypto.KeyAgreement;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import javax.smartcardio.CommandAPDU;
+import javax.smartcardio.ResponseAPDU;
+import javax.xml.bind.DatatypeConverter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.math.BigInteger;
+import java.security.*;
+import java.security.spec.ECPublicKeySpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.*;
 
 @SuppressWarnings("restriction")
 public class ComputationHelper
@@ -111,7 +88,6 @@ public class ComputationHelper
 	 * 
 	 * @param efCardAccessHex
 	 * @param nonceHex
-	 * @param serverPublicKey
 	 */
 	public ComputationHelper(String efCardAccessHex, String nonceHex, String testbedPrivateKeyHex)
 	{
@@ -149,12 +125,12 @@ public class ComputationHelper
 		KeyFactory factory;
 		try
 		{
-			Security.addProvider(new BouncyCastleProvider());
-			factory = KeyFactory.getInstance("ECDH", "BC");
+			//Security.addProvider(new BouncyCastleProvider());
+			factory = KeyFactory.getInstance("ECDH", Singletons.BC_PROVIDER);
 			PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(testbedPrivateKey);
 			privK = factory.generatePrivate(ks);
 		}
-		catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException e)
+		catch (NoSuchAlgorithmException | InvalidKeySpecException e)
 		{
 			StringWriter trace = new StringWriter();
 			e.printStackTrace(new PrintWriter(trace));
@@ -231,16 +207,15 @@ public class ComputationHelper
 	/**
 	 * Validates the signature using the given parameters including auxilary
 	 * data provided in EAC1
-	 * 
-	 * @param authenticationSimulator
+	 *
 	 * @param hexSignature
 	 * @param hexIDpicc
 	 * @param hexNonce
 	 * @param hexServerCAkey
 	 * @param hexAuxilaryData
-	 * @return
+	 * @return boolean
 	 */
-	public boolean isValidSignature(String hexSignature, String hexIDpicc, String hexNonce, String hexServerCAkey, String hexAuxilaryData)
+	public boolean isValidSignature(String hexSignature, String hexIDpicc, String hexNonce, String hexServerCAkey, String hexAuxilaryData, TestCandidate candidate)
 	{
 		// now start signature computation
 		CVPubKeyHolder keyHolder = terminalCertificate.getPublicKey();
@@ -249,8 +224,12 @@ public class ComputationHelper
 			PublicKey certKey = null;
 			if (!keyHolder.isDomainParamPresent())
 			{
-				// check if the domain parameters are present. if not, add them
-				keyHolder.setDomainParam(ecParameterSpec);
+				// check if the domain parameters are present. if not, add them (please, not the ones for TA in CA!)
+				if (candidate != null) {
+					keyHolder.setDomainParam(getCvcaDomainParams(candidate));
+				} else {
+					keyHolder.setDomainParam(ecParameterSpec); //TODO: We need domain parameters in our Terminal certificates ! This is just used to keep the tests running.
+				}
 				keyHolder.setIncludeDomainParam(true);
 			}
 			certKey = keyHolder.getPublicKey();
@@ -269,7 +248,7 @@ public class ComputationHelper
 			byte[] signed = CommonUtil.concatArrays(idPicc, challenge, serverCAkey, auxData);
 
 			// verify the signature
-			Signature signature = Signature.getInstance(SignatureAlgorithm.getFromEnumName(keyHolder.getAlgorithm().toString()).getAlgorithmName(), "BC");
+			Signature signature = Signature.getInstance(SignatureAlgorithm.getFromEnumName(keyHolder.getAlgorithm().toString()).getAlgorithmName(), Singletons.BC_PROVIDER);
 			signature.initVerify(certKey);
 			signature.update(signed);
 
@@ -309,12 +288,11 @@ public class ComputationHelper
 	 * @param hexIDpicc
 	 * @param hexNonce
 	 * @param hexServerCAkey
-	 * @param terminalCertificate
 	 * @return
 	 */
-	public boolean isValidSignature(String hexSignature, String hexIDpicc, String hexNonce, String hexServerCAkey)
+	public boolean isValidSignature(String hexSignature, String hexIDpicc, String hexNonce, String hexServerCAkey, TestCandidate candidate)
 	{
-		return isValidSignature(hexSignature, hexIDpicc, hexNonce, hexServerCAkey, null);
+		return isValidSignature(hexSignature, hexIDpicc, hexNonce, hexServerCAkey, null, candidate);
 	}
 
 	/**
@@ -337,12 +315,12 @@ public class ComputationHelper
 			try
 			{
 				// initialize key agreement
-				KeyAgreement keyAgreement = KeyAgreement.getInstance(Type.ECDH.toString());
+				KeyAgreement keyAgreement = KeyAgreement.getInstance(Type.ECDH.toString(), Singletons.BC_PROVIDER);
 				keyAgreement.init(privK);
 
 				// finish key agreement
-				Security.addProvider(new BouncyCastleProvider());
-				KeyFactory factory = KeyFactory.getInstance("ECDH", "BC");
+				//Security.addProvider(new BouncyCastleProvider());
+				KeyFactory factory = KeyFactory.getInstance("ECDH", Singletons.BC_PROVIDER);
 				ECNamedCurveParameterSpec spec = (ECNamedCurveParameterSpec) ecParameterSpec;
 				ECNamedCurveSpec params = new ECNamedCurveSpec("BrainpoolP256r1", spec.getCurve(), spec.getG(), spec.getN());
 				java.security.spec.ECPoint point = ECPointUtil.decodePoint(params.getCurve(), DatatypeConverter.parseHexBinary(hexServerCAkey));
@@ -352,7 +330,7 @@ public class ComputationHelper
 				keyAgreement.doPhase(pubK, true);
 				shared = keyAgreement.generateSecret();
 			}
-			catch (NoSuchAlgorithmException | InvalidKeyException | NoSuchProviderException | InvalidKeySpecException e)
+			catch (NoSuchAlgorithmException | InvalidKeyException | InvalidKeySpecException e)
 			{
 				StringWriter trace = new StringWriter();
 				e.printStackTrace(new PrintWriter(trace));
@@ -421,7 +399,13 @@ public class ComputationHelper
 		}
 	}
 
-	public Result validateCVcertificates(Map<String, CVCertificate> knownCvCertificates, int expectedAmountOfCvCertificates, EService service)
+	public ECParameterSpec getCvcaDomainParams(TestCandidate candidate) throws CVMissingKeyException, CVKeyTypeNotSupportedException, CVInvalidKeySourceException {
+		//TODO: We need domain parameters in our Terminal certificates!
+		CVCertificate cvca = CryptoHelper.loadCvFromFile("CVCertificates/certs/" + "CERT_ECARD_CV_CVCA_1.cvcert", candidate);
+		return cvca.getPublicKey().getDomainParam();
+	}
+
+	public Result validateCVcertificates(Map<String, CVCertificate> knownCvCertificates, int expectedAmountOfCvCertificates, EService service, TestCandidate candidate)
 	{
 		String resultMessage = "";
 		boolean isValid = true;
@@ -439,7 +423,7 @@ public class ComputationHelper
 		{
 			expectedCvcaName = "CERT_ECARD_CV_CVCA_1.cvcert";
 		}
-		CVCertificate expectedCvca = CryptoHelper.loadCvFromFile("CVCertificates/certs/" + expectedCvcaName);
+		CVCertificate expectedCvca = CryptoHelper.loadCvFromFile("CVCertificates/certs/" + expectedCvcaName, candidate);
 
 		// load the expected DV certificate
 		String expectedDvName = null;
@@ -451,7 +435,7 @@ public class ComputationHelper
 		{
 			expectedDvName = "CERT_ECARD_CV_DV_1_A.cvcert";
 		}
-		CVCertificate expectedDV = CryptoHelper.loadCvFromFile("CVCertificates/certs/" + expectedDvName);
+		CVCertificate expectedDV = CryptoHelper.loadCvFromFile("CVCertificates/certs/" + expectedDvName, candidate);
 
 		// iterate over the received certificates
 		for (String key : knownCvCertificates.keySet())
@@ -648,7 +632,7 @@ public class ComputationHelper
 				sm.nextAPDU();
 
 				boolean useDecreasedSSCForMAC = false;
-				if ((EidCard.EIDCARD_15.equals(card)) && (EidRequestApdu.READ_DG5.equals(requestedApdu)))
+				if ((EidCard.EIDCARD_1_INVMAC.equals(card)) && (EidRequestApdu.READ_DG5.equals(requestedApdu)))
 				{
 					useDecreasedSSCForMAC = true;
 				}
@@ -662,7 +646,7 @@ public class ComputationHelper
 					// status ok - don't encrypt, just compute checksum
 					if (EidResponseApdu.STATUS_OK.equals(responseApdu))
 					{
-						if ((EidCard.EIDCARD_14.equals(card)) && (EidRequestApdu.READ_DG5.equals(requestedApdu)))
+						if ((EidCard.EIDCARD_1_NOMAC.equals(card)) && (EidRequestApdu.READ_DG5.equals(requestedApdu)))
 						{
 							finalResponse = encryptAndOrMac(plainResponse, false, false, useDecreasedSSCForMAC);
 						}
@@ -679,7 +663,7 @@ public class ComputationHelper
 					else
 					{
 						// encrypt
-						if ((EidCard.EIDCARD_14.equals(card)) && (EidRequestApdu.READ_DG5.equals(requestedApdu)))
+						if ((EidCard.EIDCARD_1_NOMAC.equals(card)) && (EidRequestApdu.READ_DG5.equals(requestedApdu)))
 						{
 							finalResponse = encryptAndOrMac(plainResponse, true, false, useDecreasedSSCForMAC);
 						}

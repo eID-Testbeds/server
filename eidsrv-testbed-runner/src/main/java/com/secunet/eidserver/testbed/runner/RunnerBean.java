@@ -1,51 +1,43 @@
 package com.secunet.eidserver.testbed.runner;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.security.PrivateKey;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.bouncycastle.tls.Certificate;
+import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
+import com.secunet.eidserver.testbed.common.eidas.EidasUtils;
+import com.secunet.eidserver.testbed.common.enumerations.Replaceable;
+import com.secunet.eidserver.testbed.common.exceptions.TestrunException;
+import com.secunet.eidserver.testbed.common.helper.CryptoHelper;
+import com.secunet.eidserver.testbed.common.helper.CryptoHelper.Algorithm;
+import com.secunet.eidserver.testbed.common.helper.CryptoHelper.Protocol;
+import com.secunet.eidserver.testbed.common.ics.IcsMandatoryprofile;
+import com.secunet.eidserver.testbed.common.ics.IcsOptionalprofile;
+import com.secunet.eidserver.testbed.common.interfaces.beans.Runner;
+import com.secunet.eidserver.testbed.common.interfaces.dao.LogMessageDAO;
+import com.secunet.eidserver.testbed.common.interfaces.entities.*;
+import com.secunet.eidserver.testbed.common.types.testcase.EService;
+import com.secunet.eidserver.testbed.common.types.testcase.TargetInterfaceType;
+import com.secunet.eidserver.testbed.tlsclient.TLSConnectionClient;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.tls.crypto.TlsCertificate;
+import org.bouncycastle.tls.crypto.impl.bc.BcTlsCertificate;
+import org.bouncycastle.tls.crypto.impl.bc.BcTlsCrypto;
+import org.opensaml.security.x509.BasicX509Credential;
+import org.opensaml.security.x509.X509Credential;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.crypto.tls.Certificate;
-import org.bouncycastle.crypto.util.PrivateKeyFactory;
-
-import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
-import com.secunet.eidserver.testbed.common.enumerations.Replaceable;
-import com.secunet.eidserver.testbed.common.exceptions.TestrunException;
-import com.secunet.eidserver.testbed.common.helper.BcTlsHelper;
-import com.secunet.eidserver.testbed.common.helper.CryptoHelper;
-import com.secunet.eidserver.testbed.common.ics.IcsMandatoryprofile;
-import com.secunet.eidserver.testbed.common.ics.IcsOptionalprofile;
-import com.secunet.eidserver.testbed.common.ics.IcsTlsVersion;
-import com.secunet.eidserver.testbed.common.interfaces.beans.Runner;
-import com.secunet.eidserver.testbed.common.interfaces.beans.TlsTester;
-import com.secunet.eidserver.testbed.common.interfaces.dao.LogMessageDAO;
-import com.secunet.eidserver.testbed.common.interfaces.entities.CertificateX509;
-import com.secunet.eidserver.testbed.common.interfaces.entities.LogMessage;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestCase;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestCaseStep;
-import com.secunet.eidserver.testbed.common.interfaces.entities.Tls;
-import com.secunet.eidserver.testbed.common.types.testcase.EService;
-import com.secunet.eidserver.testbed.common.types.testcase.TargetInterfaceType;
-import com.secunet.eidserver.testbed.runner.eidas.StepHandlerEidas;
-import com.secunet.eidserver.testbed.tlsclient.TLSConnectionClient;
+import java.io.*;
+import java.security.*;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.*;
 
 @Stateless
 public class RunnerBean implements Runner
@@ -55,13 +47,10 @@ public class RunnerBean implements Runner
 	@EJB
 	private LogMessageDAO logMessageDAO;
 
-	@EJB
-	private TlsTester tlsTester;
-
 	@Override
 	public List<LogMessage> runTest(TestCandidate candidate, TestCase testCase) throws TestrunException
 	{
-		List<LogMessage> result = new ArrayList<LogMessage>();
+		List<LogMessage> result = new ArrayList<>();
 
 		try
 		{
@@ -76,7 +65,7 @@ public class RunnerBean implements Runner
 				logger.fatal("Profile must not be null");
 				return result;
 			}
-			if (testCase.getTestCaseSteps().size() == 0)
+			if (testCase.getTestCaseSteps().isEmpty())
 			{
 				logger.fatal("Testcase must contain test steps.");
 				return result;
@@ -94,31 +83,8 @@ public class RunnerBean implements Runner
 			Certificate clientAuthCertificate = loadTlsClientAuthenticationCertificate(candidate, testCase);
 			AsymmetricKeyParameter clientAuthKey = loadTlsClientAuthenticationPrivateKey(candidate, testCase);
 
-			// it is a non-psk tls test case
-			if ((!testCase.getTestCaseSteps().isEmpty() && testCase.getTestCaseSteps().get(0).getMessage().contains(("TlsStepToken"))) ? true : false)
-			{
-				RunnerTLS runnerTls = new RunnerTLS(tlsTester);
-				List<LogMessage> resultTls = runnerTls.runTest(candidate, testCase, values, clientAuthCertificate, clientAuthKey);
-				result.addAll(resultTls);
-			}
-			// it is a PSK TLS test case, so we need to initialize the PSK channel via SOAP
-			else if (testCase.getMandatoryProfiles().contains(IcsMandatoryprofile.CRYPTO) && testCase.getOptionalProfiles().contains(IcsOptionalprofile.TLS_PSK))
-			{
-				if (null != candidate.getEidinterfaceUrl() && null != candidate.getEcardapiUrl())
-				{
-					runTlsPskViaSoap(result, candidate, testCase, values, x509Certificates, clientAuthCertificate, clientAuthKey);
-				}
-				else
-				{
-					LogMessage failMsg = logMessageDAO.createNew();
-					failMsg.setSuccess(false);
-					failMsg.setMessage("No eID SOAP / eCardAPI URL has been provided for the given profile.");
-					result.add(failMsg);
-					logger.fatal("No eID SOAP / eCardAPI URL has been provided for the given profile, aborting.");
-				}
-			}
-			// Check whether SAML should be used
-			else if (testCase.getOptionalProfiles().contains(IcsOptionalprofile.SAML))
+
+			if (testCase.getOptionalProfiles().contains(IcsOptionalprofile.SAML))
 			{
 				if (null != candidate.getSamlUrl())
 				{
@@ -225,8 +191,8 @@ public class RunnerBean implements Runner
 		logger.debug("Starting eIDAS middleware testcase");
 
 		// create the handler
-		StepHandler handler = new StepHandlerEidas(candidate.getCandidateName(), candidate.getEcardapiUrl(), values, logMessageDAO, testCase.getEservice(), testCase.getCard(),
-				getNumberOfCvCertificates(testCase.getEservice()), candidate.getAttachedTcTokenUrl());
+		StepHandler handler = new StepHandlerEidas(candidate, values, logMessageDAO, testCase.getEservice(), testCase.getCard(),
+				getNumberOfCvCertificates(testCase.getEservice()));
 
 		int lastProcessedStepIndex = processSteps(result, candidate, testCase, values, false, handler, x509Certificates, clientAuthCertificate, clientAuthKey);
 
@@ -262,8 +228,8 @@ public class RunnerBean implements Runner
 		try
 		{
 			// TLSConnectionClient connection = new TLSConnectionClient(cert, candidate.getEidinterfaceUrl().getHost(), candidate.getEidinterfaceUrl().getPort());
-			soapConnection = new TLSConnectionClient(candidate.getEidinterfaceUrl().getHost(), candidate.getEidinterfaceUrl().getPort(), clientAuthCertificate, clientAuthKey);
-			soapConnection.setCipherSuites(getCipherSuites(candidate.getTlsEidInterface()));
+			PrivateKey pk = (PrivateKey) clientAuthKey;
+			soapConnection = new TLSConnectionClient(candidate.getEidinterfaceUrl().getHost(), candidate.getEidinterfaceUrl().getPort(), clientAuthCertificate.getCertificateAt(0).getEncoded(), pk.getEncoded());
 			soapConnection.connect();
 		}
 		catch (Exception e)
@@ -290,7 +256,6 @@ public class RunnerBean implements Runner
 		try
 		{
 			attachedServerConnection = new TLSConnectionClient(candidate.getAttachedTcTokenUrl().getHost(), candidate.getAttachedTcTokenUrl().getPort());
-			attachedServerConnection.setCipherSuites(getCipherSuites(candidate.getTlsEcardApiAttached()));
 			attachedServerConnection.connect();
 		}
 		catch (Exception e)
@@ -318,8 +283,6 @@ public class RunnerBean implements Runner
 		try
 		{
 			TLSConnectionClient connection = new TLSConnectionClient(candidate.getSamlUrl().getHost(), candidate.getSamlUrl().getPort());
-			int[] ciphersuites = getCipherSuites(candidate.getTlsSaml());
-			connection.setCipherSuites(ciphersuites);
 			connection.connect();
 			samlConnection = connection;
 		}
@@ -351,7 +314,6 @@ public class RunnerBean implements Runner
 				byte[] pskBytes = Hex.decodeHex(handler.getKnownValues().get(Replaceable.PSK.toString()).getValue().toCharArray());
 				TLSConnectionClient connection = new TLSConnectionClient(candidate.getEcardapiUrl().getHost(), candidate.getEcardapiUrl().getPort(),
 						handler.getKnownValues().get(Replaceable.SESSIONIDENTIFIER.toString()).getValue().getBytes(), pskBytes);
-				connection.setCipherSuites(getCipherSuites(candidate.getTlsEcardApiPsk()));
 				connection.connect();
 				eCardApiConnection = connection;
 			}
@@ -371,25 +333,6 @@ public class RunnerBean implements Runner
 		return eCardApiConnection;
 	}
 
-	// run a TLS-PSK test case, initialize via SOAP interface
-	private void runTlsPskViaSoap(List<LogMessage> result, TestCandidate candidate, TestCase testCase, KnownValues values, Map<String, X509Certificate> x509Certificates,
-			Certificate clientAuthCertificate, AsymmetricKeyParameter clientAuthKey)
-	{
-		int lastSoapStepIndex = runSoap(result, candidate, testCase, values, true, x509Certificates, false, clientAuthCertificate, clientAuthKey);
-
-		if (lastSoapStepIndex > -1)
-		{
-			int firstTlsStepIndex = lastSoapStepIndex + 1;
-
-			if (firstTlsStepIndex < testCase.getTestCaseSteps().size())
-			{
-				RunnerTLS runnerTls = new RunnerTLS(tlsTester);
-				List<LogMessage> resultTls = runnerTls.runTest(candidate, testCase, values, clientAuthCertificate, clientAuthKey, firstTlsStepIndex);
-				result.addAll(resultTls);
-			}
-		}
-	}
-
 	/**
 	 * Run a SOAP test case
 	 * 
@@ -405,17 +348,8 @@ public class RunnerBean implements Runner
 		int numCv = getNumberOfCvCertificates(testCase.getEservice());
 
 		// create the handler
-		StepHandler handler;
-		if (testAttached)
-		{
-			handler = new StepHandlerSOAP(candidate.getCandidateName(), candidate.getAttachedTcTokenUrl(), GeneralConstants.TESTBED_REFRESH_URL, values, logMessageDAO, testCase.getEservice(),
-					testCase.getCard(), numCv);
-		}
-		else
-		{
-			handler = new StepHandlerSOAP(candidate.getCandidateName(), candidate.getEcardapiUrl(), GeneralConstants.TESTBED_REFRESH_URL, candidate.getEidinterfaceUrl(), values, logMessageDAO,
-					testCase.getEservice(), testCase.getCard(), numCv);
-		}
+		StepHandler handler = new StepHandlerSOAP(candidate, GeneralConstants.TESTBED_REFRESH_URL, values, logMessageDAO, testCase.getEservice(),
+				testCase.getCard(), numCv, testAttached);
 
 		int lastProcessedStepIndex = processSteps(result, candidate, testCase, values, useOnlyEidInterface, handler, x509Certificates, clientAuthCertificate, clientAuthKey);
 
@@ -638,6 +572,21 @@ public class RunnerBean implements Runner
 				// if it is an outbound message, we generate the string
 				String outBoundMsg = handler.generateMsg(currentStep.getMessage());
 
+				if (outBoundMsg.startsWith("TLS_RENEGOTIATE_")) {
+					connection.close();
+					try {
+						connection.connect();
+					} catch (Exception e) {
+						LogMessage sendMsg = logMessageDAO.createNew();
+						sendMsg.setTestStepName(currentStep.getName());
+						sendMsg.setSuccess(!outBoundMsg.equals("TLS_RENEGOTIATE_TRUE"));
+						sendMsg.setMessage("Failure while reconnecting to Server(" + connection.getTargetInfo() + ")");
+						logger.warn("Sending via TLS Connection failed: " + outBoundMsg);
+						result.add(sendMsg);
+					}
+					continue;
+				}
+
 				// check if we have to repeat a step
 				if (outBoundMsg.contains("OutputAPDU"))
 				{
@@ -700,7 +649,7 @@ public class RunnerBean implements Runner
 		int numCv = getNumberOfCvCertificates(testCase.getEservice());
 
 		// create the handler
-		StepHandler handler = new StepHandlerSAML(candidate.getCandidateName(), candidate.getEcardapiUrl(), GeneralConstants.TESTBED_REFRESH_URL, candidate.getSamlUrl(), values, logMessageDAO,
+		StepHandler handler = new StepHandlerSAML(candidate, GeneralConstants.TESTBED_REFRESH_URL, values, logMessageDAO,
 				testCase.getEservice(), testCase.getCard(), numCv);
 
 		int lastProcessedStepIndex = processSteps(result, candidate, testCase, values, false, handler, x509Certificates, clientAuthCertificate, clientAuthKey);
@@ -772,85 +721,24 @@ public class RunnerBean implements Runner
 		}
 	}
 
-	/**
-	 * This method returns the ciphersuites supported by the <i>highest</i> available TLS version.
-	 * 
-	 * @param input
-	 * @return
-	 */
-	private int[] getCipherSuites(Set<Tls> input)
-	{
-		if (input != null && input.size() > 0)
-		{
-			// find the highest TLS version first
-			Tls highest = null;
-			for (Tls t : input)
-			{
-				if (t.getTlsVersion() == IcsTlsVersion.TL_SV_12)
-				{
-					highest = t;
-					break;
-				}
-				else if (t.getTlsVersion() == IcsTlsVersion.TL_SV_11)
-				{
-					highest = t;
-				}
-				else if (t.getTlsVersion() == IcsTlsVersion.TL_SV_10 && highest.getTlsVersion() != IcsTlsVersion.TL_SV_11)
-				{
-					highest = t;
-				}
-				else if (highest.getTlsVersion() == null)
-				{
-					highest = t;
-				}
-			}
-
-			try
-			{
-				return BcTlsHelper.convertCipherSuiteSetToIntArray(highest.getTlsCiphersuites());
-			}
-			catch (IllegalAccessException e)
-			{
-				StringWriter trace = new StringWriter();
-				e.printStackTrace(new PrintWriter(trace));
-				logger.error("Error while converting ciphersuites into RFC format: " + System.getProperty("line.separator") + trace.toString());
-			}
-		}
-		// input was empty, return empty array as well
-		return new int[] {};
-	}
-
-	private String getClientCertificateName(TestCase tc)
-	{
-		for (String baseName : tc.getCertificateBaseNames())
-		{
-			if (baseName.toUpperCase().startsWith("CERT_EID_TLS_ESERVICE_"))
-			{
-				return baseName;
-			}
-		}
-		logger.warn("No TLS client certificate name found in the list of certificate base names used by the test case.");
-		return null;
-	}
-
 	private Certificate loadTlsClientAuthenticationCertificate(TestCandidate candidate, TestCase testCase)
 	{
 		Certificate cert = null;
 		try
 		{
-			CryptoHelper.Protocol port = CryptoHelper.Protocol.SOAP_PROT_ID;
+			Protocol port = Protocol.SOAP_PROT_ID;
 			EService service = candidate.isMultiClientCapable() ? testCase.getEservice() : GeneralConstants.DEFAULT_ESERVICE;
 			// TODO ECDSA does not work for the EU Middleware, remove this workaround once it is fixed
 			if (service == EService.F || service == EService.EECDSA)
 			{
 				service = EService.A;
 			}
-			CryptoHelper.Algorithm alg = CryptoHelper.getAlgorithmFromService(service);
-			X509Certificate x509Cert = CryptoHelper.loadCertificate(port, alg, service.toString() + "_clientauth");
-			org.bouncycastle.asn1.x509.Certificate bcCert = org.bouncycastle.asn1.x509.Certificate.getInstance(x509Cert.getEncoded());
-			cert = new Certificate(new org.bouncycastle.asn1.x509.Certificate[] { bcCert });
+			Algorithm alg = CryptoHelper.getAlgorithmFromService(service);
+			X509Certificate x509Cert = CryptoHelper.loadCertificate(port, alg, service.toString() + "_clientauth", candidate);
+			BcTlsCertificate bcCert = new BcTlsCertificate(new BcTlsCrypto(new SecureRandom()), x509Cert.getEncoded());
+			cert = new Certificate(new TlsCertificate[] { bcCert });
 		}
-		catch (CertificateEncodingException ignore)
+		catch (CertificateEncodingException | IOException ignore)
 		{
 			StringWriter trace = new StringWriter();
 			ignore.printStackTrace(new PrintWriter(trace));
@@ -864,15 +752,15 @@ public class RunnerBean implements Runner
 		AsymmetricKeyParameter keyParam = null;
 		try
 		{
-			CryptoHelper.Protocol prot = CryptoHelper.Protocol.SOAP_PROT_ID;
+			Protocol prot = Protocol.SOAP_PROT_ID;
 			EService service = candidate.isMultiClientCapable() ? testCase.getEservice() : GeneralConstants.DEFAULT_ESERVICE;
 			// TODO ECDSA does not work for the EU Middleware, remove this workaround once it is fixed
 			if (service == EService.F || service == EService.EECDSA)
 			{
 				service = EService.A;
 			}
-			CryptoHelper.Algorithm alg = CryptoHelper.getAlgorithmFromService(service);
-			PrivateKey privateKey = CryptoHelper.loadKey(prot, alg, service.toString() + "_clientauth");
+			Algorithm alg = CryptoHelper.getAlgorithmFromService(service);
+			PrivateKey privateKey = CryptoHelper.loadKey(prot, alg, service.toString() + "_clientauth", candidate);
 			keyParam = PrivateKeyFactory.createKey(privateKey.getEncoded());
 		}
 		catch (IOException ignore)
@@ -884,57 +772,59 @@ public class RunnerBean implements Runner
 		return keyParam;
 	}
 
-
 	/**
-	 * @see com.secunet.eidserver.testbed.common.interfaces.beans.Runner#getStaticCertificatesAndKeys()
+	 * Retrieves the signature credentials as an X509Credential object for the given protocol, algorithm, and service.
+	 * Loads a certificate and a private key from a specified location based on the algorithm and service.
+	 * The method expects the private key to be stored in PEM format.
+	 *
+	 * @param protocol The protocol used.
+	 * @param algorithm The cryptographic algorithm.
+	 * @param service The service for which credentials are needed.
+	 * @return An X509Credential object containing the loaded certificate and private key.
+	 * @throws IOException If there's an issue reading the key file.
+	 * @throws UnrecoverableKeyException If the key cannot be recovered.
+	 * @throws CertificateException If there's an issue with the certificate.
+	 * @throws KeyStoreException If there's an issue with the keystore.
+	 * @throws NoSuchAlgorithmException If the algorithm is not supported.
 	 */
 	@Override
-	public Map<String, byte[]> getStaticCertificatesAndKeys() throws IOException
-	{
-		Map<String, byte[]> certificatesAndKeys = new HashMap<>();
+	public X509Credential getSignatureCreds(Protocol protocol, Algorithm algorithm, EService service, TestCandidate candidate) throws IOException, UnrecoverableKeyException, CertificateException, KeyStoreException, NoSuchAlgorithmException {
 
-		// x509 certificates
-		insertFiles("certificates/CSCA", certificatesAndKeys);
-		insertFiles("certificates/RSA", certificatesAndKeys);
-		insertFiles("certificates/DSA", certificatesAndKeys);
-		insertFiles("certificates/ECDSA", certificatesAndKeys);
-		insertFiles("certificates", certificatesAndKeys);
+		X509Certificate signCertificate = CryptoHelper.loadCertificate(protocol, algorithm, service.value(), candidate);
+		PrivateKey signKey = null;
 
-		// x509 keys
-		insertFiles("keys/RSA", certificatesAndKeys);
-		insertFiles("keys/DSA", certificatesAndKeys);
-		insertFiles("keys/ECDSA", certificatesAndKeys);
-		insertFiles("keys", certificatesAndKeys);
+		try (InputStream input = new ByteArrayInputStream(CryptoHelper.getCryptoFileMap(candidate).get("keys/" + algorithm.getAlgorithmName() + "/" + service.value() + ".pem")); InputStreamReader isr = new InputStreamReader(input);
+			 PEMParser pemParser = new PEMParser(isr);)
+		{
+			Object parsed = pemParser.readObject();
 
-		// CV
-		insertFiles("CVCertificates/certs", certificatesAndKeys);
-		insertFiles("CVCertificates/desc", certificatesAndKeys);
-		insertFiles("CVCertificates/keys", certificatesAndKeys);
-
-		// eIDAS metadata
-		insertFiles("eIDAS", certificatesAndKeys);
-
-		// x509 keys
-		return certificatesAndKeys;
+			PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo) parsed;
+			JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
+			signKey = converter.getPrivateKey(privateKeyInfo);
+		}
+		return new BasicX509Credential(signCertificate,signKey);
 	}
 
 	/**
-	 * Insert all the files in a given subfolder into the given map. Does not work recusively.
-	 * 
-	 * @param path
-	 * @param fileMap
-	 * @throws IOException
+	 * Retrieves the encryption credentials as an X509Credential object for the given protocol, algorithm, and service.
+	 * This method specifically reads a PKCS12 key store to extract the certificate and private key used for encryption.
+	 *
+	 * @param protocol The protocol used.
+	 * @param algorithm The cryptographic algorithm, expected to be RSA for encryption.
+	 * @param service The service for which encryption credentials are needed.
+	 * @return An X509Credential object containing the loaded certificate and private key for encryption.
+	 * @throws UnrecoverableKeyException If the private key cannot be recovered.
+	 * @throws CertificateException If there's an issue with the certificate.
+	 * @throws KeyStoreException If there's an issue with the keystore.
+	 * @throws NoSuchAlgorithmException If the algorithm is not supported.
+	 * @throws IOException If there's an issue reading the key store file.
 	 */
-	private void insertFiles(String path, Map<String, byte[]> fileMap) throws IOException
-	{
-		File folder = new File(Thread.currentThread().getContextClassLoader().getResource(path).getFile());
-		for (File f : folder.listFiles())
-		{
-			if (f.isFile())
-			{
-				fileMap.put(path + "/" + f.getName(), IOUtils.toByteArray(new FileInputStream(f)));
-			}
-		}
+	@Override
+	public X509Credential getEncryptionCreds(Protocol protocol, Algorithm algorithm, EService service, TestCandidate candidate) throws UnrecoverableKeyException, CertificateException, KeyStoreException, NoSuchAlgorithmException, IOException {
+		InputStream encryptionInput = new ByteArrayInputStream(CryptoHelper.getCryptoFileMap(candidate).get("keystores/" + Algorithm.RSA_ALG_ID.getAlgorithmName() + "/" + service.value() + GeneralConstants.ENCRYPTION_SUFFIX + ".p12"));
+
+		EidasUtils.X509KeyPair encryptionPair = EidasUtils.readPKCS12(encryptionInput, "123456".toCharArray(), "ENC");
+		return new BasicX509Credential(encryptionPair.getCert(), encryptionPair.getKey());
 	}
 
 }

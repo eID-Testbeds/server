@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="attributes" type="{http://www.secunet.com}attributes" minOccurs="0"/>
  *         &lt;element name="maxNumberOfOccurences" type="{http://www.w3.org/2001/XMLSchema}positiveInteger" minOccurs="0"/>
  *         &lt;element name="isMandatory" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="isReallyMandatory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="negate" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     &lt;/restriction>
@@ -49,7 +50,8 @@ import javax.xml.bind.annotation.XmlType;
     "value",
     "attributes",
     "maxNumberOfOccurences",
-    "isMandatory"
+    "isMandatory",
+    "isReallyMandatory"
 })
 public class StepToken {
 
@@ -61,6 +63,7 @@ public class StepToken {
     @XmlSchemaType(name = "positiveInteger")
     protected BigInteger maxNumberOfOccurences;
     protected boolean isMandatory;
+    protected String isReallyMandatory;
     @XmlAttribute(name = "negate")
     protected Boolean negate;
 
@@ -198,6 +201,18 @@ public class StepToken {
      */
     public void setIsMandatory(boolean value) {
         this.isMandatory = value;
+    }
+
+    public String isIsReallyMandatory() {
+        return isReallyMandatory;
+    }
+
+    /**
+     * Legt den Wert der isMandatory-Eigenschaft fest.
+     *
+     */
+    public void setIsReallyMandatory(String value) {
+        this.isReallyMandatory = value;
     }
 
     /**

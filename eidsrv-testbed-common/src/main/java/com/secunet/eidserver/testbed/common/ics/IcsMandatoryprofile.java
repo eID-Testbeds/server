@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="REVOKED_CARD"/>
  *     &lt;enumeration value="EXPIRED_CARD"/>
  *     &lt;enumeration value="NONAUTH_CARD"/>
- *     &lt;enumeration value="RI_MIGRATION"/>
  *     &lt;enumeration value="CRYPTO"/>
  *     &lt;enumeration value="DG_VARIATIONS"/>
  *   &lt;/restriction>
@@ -44,7 +43,6 @@ public enum IcsMandatoryprofile {
     REVOKED_CARD,
     EXPIRED_CARD,
     NONAUTH_CARD,
-    RI_MIGRATION,
     CRYPTO,
     DG_VARIATIONS;
 

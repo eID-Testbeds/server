@@ -47,6 +47,7 @@ public enum EService {
     ERSA("ERSA"),
     EECDSA("EECDSA"),
     F("F"),
+    G("G"),
     @XmlEnumValue("A2")
     A_2("A2");
     private final String value;

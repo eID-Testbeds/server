@@ -2,7 +2,7 @@
 
 TARGET=/opt
 PAYARA_DIR=$TARGET/payara41
-TESTBED_APP=eidsrv-testbed-application-1.0-beta-4.ear
+TESTBED_APP=eidsrv-testbed-application-1.0-beta-5.ear
 TESTCA=ca1.war
 
 # -- changes below this line may require further changes in the script --

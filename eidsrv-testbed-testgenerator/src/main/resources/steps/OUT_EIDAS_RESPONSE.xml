@@ -6,7 +6,7 @@
     <p:HttpStepToken>
         <p:name>message</p:name>
         <p:value>GET [[REFRESHADDRESS_PATH]] HTTP/1.1
-Host: [ATTACHED_WEBPAGE_HOSTNAME]
+Host: [ATTACHED_WEBPAGE_HOSTNAME][ATTACHED_JSESSIONID_COOKIEWRAPPER][ATTACHED_JSESSIONID]
 User-Agent: [TESTBED_USER_AGENT_NAME]/[TESTBED_USER_AGENT_MAJOR].[TESTBED_USER_AGENT_MINOR].[TESTBED_USER_AGENT_SUBMINOR]
 Content-Type: text/xml;charset=utf-8</p:value>
 		<p:isMandatory>true</p:isMandatory>

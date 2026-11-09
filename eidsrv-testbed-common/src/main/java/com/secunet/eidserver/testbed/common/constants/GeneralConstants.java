@@ -43,16 +43,6 @@ public interface GeneralConstants
 	public final static String IDPICC = "2CB7775C2D0D85BEE09A2962F39D8E34FBC5F4AA8FFDB7ABD46A4B41B90E25A8";
 	public final static String NONCE = "B7E75E9053DACF69";
 
-	// TLS testing data
-	public final static String TLS_STEP_MARKER = "OUT_TLS";
-	public final static String TLS_VERSION = "TLS_VERSION";
-	public final static String TLS_VERSION_SELECTED = "TLS_SELECTED_VERSION";
-	public final static String TLS_CIPHER_SUITES = "TLS_CIPHER_SUITES";
-	public final static String TLS_SELECTED_CIPHER_SUITE = "TLS_SELECTED_CIPHER_SUITE";
-	public final static String TLS_ELLIPTIC_CURVES = "TLS_ELLIPTIC_CURVES";
-	public final static String TLS_SUPPORTED_SIGNATURE_ALGORITHMS = "TLS_SUPPORTED_SIGNATURE_ALGORITHMS";
-	public final static String TLS_ALERT_LEVEL_RECEIVED = "TLS_ALERT_LEVEL_RECEIVED";
-
 	// XML Signature
 	public final static String XML_SIGNATURE = "XML_SIGNATURE";
 	public final static String XML_SIGNATURE_URI = "XML_SIGNATURE_URI";
@@ -89,9 +79,13 @@ public interface GeneralConstants
 	public final static String SAML_ENCRYPTION_BLOCK_CIPHER = "SAML_ENCRYPTION_BLOCK_CIPHER";
 	public final static String SAML_ENCRYPTION_KEY_TRANSPORT = "SAML_ENCRYPTION_KEY_TRANSPORT";
 
+	// eIDAS encryption algorithms
+	public final static String EIDAS_ENCRYPTION_BLOCK_CIPHER = "EIDAS_ENCRYPTION_BLOCK_CIPHER";
+	public final static String EIDAS_ENCRYPTION_KEY_TRANSPORT = "EIDAS_ENCRYPTION_KEY_TRANSPORT";
+
 	// default comparison values
 	public final static String AGE_COMPARISON_VALUE = "18";
-	public final static String PLACE_COMPARISON_VALUE = "0276420420";
+	public final static String PLACE_COMPARISON_VALUE = "02764204200123";
 
 	public final static String ENCRYPTION_SUFFIX = "_ENC";
 
@@ -99,5 +93,6 @@ public interface GeneralConstants
 
 	// default eservice
 	public final static EService DEFAULT_ESERVICE = EService.A;
+	public final static String TEMP_DIR = System.getProperty("java.io.tmpdir") + "/eID-Testbed/";
 
 }

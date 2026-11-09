@@ -8,7 +8,7 @@
 	<!-- HTTP Tokens -->
 	<p:HttpStepToken>
 		<p:name>HTTP_STATUS_CODE</p:name>
-		<p:value>HTTP/1.1 200 OK</p:value>
+		<p:value>HTTP/1.1 200 </p:value>
 		<p:isMandatory>true</p:isMandatory>
 	</p:HttpStepToken>
 	<p:HttpStepToken>
@@ -66,11 +66,13 @@
 		<p:name>RequiredCHAT</p:name>
 		<p:value>[REQUIREDCHAT]</p:value>
 		<p:isMandatory>false</p:isMandatory>
+		<p:isReallyMandatory>[RCHATMANDATORY]</p:isReallyMandatory>
 	</p:ProtocolStepToken>
 	<p:ProtocolStepToken>
 		<p:name>OptionalCHAT</p:name>
 		<p:value>[OPTIONALCHAT]</p:value>
 		<p:isMandatory>false</p:isMandatory>
+		<p:isReallyMandatory>[OCHATMANDATORY]</p:isReallyMandatory>
 	</p:ProtocolStepToken>
 	<p:ProtocolStepToken>
 		<p:name>AuthenticatedAuxiliaryData</p:name>

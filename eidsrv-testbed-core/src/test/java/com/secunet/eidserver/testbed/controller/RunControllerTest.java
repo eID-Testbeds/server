@@ -17,31 +17,23 @@ import java.util.Set;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.mockito.quality.Strictness;
+import org.mockito.testng.MockitoSettings;
+import org.mockito.testng.MockitoTestNGListener;
+import org.testng.annotations.*;
 
-import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
-import com.secunet.eidserver.testbed.common.enumerations.Interface;
-import com.secunet.eidserver.testbed.common.ics.IcsEllipticcurve;
-import com.secunet.eidserver.testbed.common.ics.IcsTlsCiphersuite;
-import com.secunet.eidserver.testbed.common.ics.IcsTlsSignaturealgorithms;
-import com.secunet.eidserver.testbed.common.ics.IcsTlsVersion;
 import com.secunet.eidserver.testbed.common.interfaces.dao.DefaultTestCaseDAO;
 import com.secunet.eidserver.testbed.common.interfaces.entities.DefaultTestCase;
 import com.secunet.eidserver.testbed.common.interfaces.entities.LogMessage;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCase;
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCaseStep;
-import com.secunet.eidserver.testbed.common.interfaces.entities.Tls;
-import com.secunet.eidserver.testbed.common.types.testcase.TargetInterfaceType;
 import com.secunet.eidserver.testbed.testing.DefaultTestCaseTestingPojo;
 import com.secunet.eidserver.testbed.testing.LogMessageTestingPojo;
-import com.secunet.eidserver.testbed.testing.TestCandidateTestingPojo;
 import com.secunet.eidserver.testbed.testing.TestCaseStepTestingPojo;
-import com.secunet.eidserver.testbed.testing.TlsTestingTestingPojo;
-import com.secunet.testbedutils.helperclasses.Pair;
+import de.bsi.testbedutils.helperclasses.Pair;
 
+@Listeners(MockitoTestNGListener.class)
+@MockitoSettings(strictness = Strictness.WARN)
 public class RunControllerTest
 {
 	@InjectMocks
@@ -50,173 +42,12 @@ public class RunControllerTest
 	@Mock
 	private DefaultTestCaseDAO defaultTestcaseDAOMock;
 
-	private TestCandidate candidate;
-
-	@BeforeClass
+	@BeforeMethod
 	public void setup() throws Exception
 	{
-		// mocks themselves
-		MockitoAnnotations.initMocks(this);
-
 		// empty POJOs
 		DefaultTestCase testCase = new DefaultTestCaseTestingPojo();
 		when(defaultTestcaseDAOMock.createNew()).thenReturn(testCase);
-
-		// create the candidate
-		candidate = new TestCandidateTestingPojo();
-		Set<Tls> ecardTls = new HashSet<>();
-
-		// 1.2
-		Tls tls = new TlsTestingTestingPojo();
-		List<IcsTlsCiphersuite> tlsCiphersuites = new ArrayList<>();
-		tlsCiphersuites.add(IcsTlsCiphersuite.TLS_DH_DSS_WITH_3_DES_EDE_CBC_SHA);
-		tlsCiphersuites.add(IcsTlsCiphersuite.TLS_DH_DSS_WITH_AES_128_CBC_SHA);
-		tlsCiphersuites.add(IcsTlsCiphersuite.TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA_384);
-		tls.setTlsCiphersuites(tlsCiphersuites);
-		Set<IcsEllipticcurve> ellipticCurves = new HashSet<>();
-		ellipticCurves.add(IcsEllipticcurve.SECP_256_R_1);
-		ellipticCurves.add(IcsEllipticcurve.SECT_239_K_1);
-		tls.setEllipticCurves(ellipticCurves);
-		Set<IcsTlsSignaturealgorithms> signatureAlgorithms = new HashSet<>();
-		signatureAlgorithms.add(IcsTlsSignaturealgorithms.SHA_1_WITH_RSA);
-		signatureAlgorithms.add(IcsTlsSignaturealgorithms.SHA_256_WITH_ECDSA);
-		tls.setSignatureAlgorithms(signatureAlgorithms);
-		tls.setInterface(Interface.ECARDAPI_PSK);
-		tls.setTlsVersion(IcsTlsVersion.TL_SV_12);
-		ecardTls.add(tls);
-
-		// 1.1, going to be ignored
-		Tls tlsOld = new TlsTestingTestingPojo();
-		List<IcsTlsCiphersuite> tlsCiphersuitesOld = new ArrayList<>();
-		tlsCiphersuitesOld.add(IcsTlsCiphersuite.TLS_DH_DSS_WITH_3_DES_EDE_CBC_SHA);
-		tlsCiphersuitesOld.add(IcsTlsCiphersuite.TLS_DH_DSS_WITH_AES_128_CBC_SHA);
-		tlsCiphersuitesOld.add(IcsTlsCiphersuite.TLS_DH_DSS_WITH_AES_128_CBC_SHA_256);
-		tlsOld.setTlsCiphersuites(tlsCiphersuitesOld);
-		tlsOld.setInterface(Interface.ECARDAPI_PSK);
-		tlsOld.setTlsVersion(IcsTlsVersion.TL_SV_11);
-		ecardTls.add(tlsOld);
-
-		candidate.setTlsEcardApiPsk(ecardTls);
-	}
-
-	@AfterClass
-	public void teardown() throws Exception
-	{
-	}
-
-	@Test(enabled = true)
-	public void testIterateAll() throws Exception
-	{
-		Date startDate = new Date();
-		// testcase
-		TestCase tlsTestCase = new DefaultTestCaseTestingPojo();
-		TestCaseStep outTls = new TestCaseStepTestingPojo();
-		outTls.setName(GeneralConstants.TLS_STEP_MARKER);
-		outTls.setTarget(TargetInterfaceType.E_CARD_API);
-		List<TestCaseStep> testCaseSteps = new ArrayList<>();
-		testCaseSteps.add(outTls);
-		tlsTestCase.setTestCaseSteps(testCaseSteps);
-
-		// run the expansion and verify the results
-		List<TestCase> tcs = runController.expandCryptoTasks(candidate, tlsTestCase, startDate);
-		assertNotNull(tcs);
-		assertEquals(11, tcs.size());
-	}
-
-	@Test(enabled = true)
-	public void testIterateSuites() throws Exception
-	{
-		Date startDate = new Date();
-		// testcase
-		TestCase tlsTestCase = new DefaultTestCaseTestingPojo();
-		TestCaseStep outTls = new TestCaseStepTestingPojo();
-		outTls.setName(GeneralConstants.TLS_STEP_MARKER);
-		outTls.setTarget(TargetInterfaceType.E_CARD_API);
-		List<TestCaseStep> testCaseSteps = new ArrayList<>();
-		testCaseSteps.add(outTls);
-		tlsTestCase.setTestCaseSteps(testCaseSteps);
-		Map<String, String> variables = new HashMap<>();
-		variables.put(GeneralConstants.TLS_VERSION, "TLSv12");
-		variables.put(GeneralConstants.TLS_ELLIPTIC_CURVES, "secp256k1,secp256r1");
-		variables.put(GeneralConstants.TLS_SUPPORTED_SIGNATURE_ALGORITHMS, "SHA1withECDSA,SHA512withRSA");
-		tlsTestCase.setVariables(variables);
-
-		// run the expansion and verify the results
-		List<TestCase> tcs = runController.expandCryptoTasks(candidate, tlsTestCase, startDate);
-		assertNotNull(tcs);
-		assertEquals(3, tcs.size());
-	}
-
-	@Test(enabled = true)
-	public void testIterateVersions() throws Exception
-	{
-		Date startDate = new Date();
-		// testcase
-		TestCase tlsTestCase = new DefaultTestCaseTestingPojo();
-		TestCaseStep outTls = new TestCaseStepTestingPojo();
-		outTls.setName(GeneralConstants.TLS_STEP_MARKER);
-		outTls.setTarget(TargetInterfaceType.E_CARD_API);
-		List<TestCaseStep> testCaseSteps = new ArrayList<>();
-		testCaseSteps.add(outTls);
-		tlsTestCase.setTestCaseSteps(testCaseSteps);
-		Map<String, String> variables = new HashMap<>();
-		variables.put(GeneralConstants.TLS_CIPHER_SUITES, "TLS_DH_DSS_WITH_3_DES_EDE_CBC_SHA,TLS_DH_DSS_WITH_AES_128_CBC_SHA");
-		variables.put(GeneralConstants.TLS_ELLIPTIC_CURVES, "secp256k1,secp256r1");
-		variables.put(GeneralConstants.TLS_SUPPORTED_SIGNATURE_ALGORITHMS, "SHA1withECDSA,SHA512withRSA");
-		tlsTestCase.setVariables(variables);
-
-		// run the expansion and verify the results
-		List<TestCase> tcs = runController.expandCryptoTasks(candidate, tlsTestCase, startDate);
-		assertNotNull(tcs);
-		assertEquals(2, tcs.size());
-	}
-
-	@Test(enabled = true)
-	public void testIterateCurves() throws Exception
-	{
-		Date startDate = new Date();
-		// testcase
-		TestCase tlsTestCase = new DefaultTestCaseTestingPojo();
-		TestCaseStep outTls = new TestCaseStepTestingPojo();
-		outTls.setName(GeneralConstants.TLS_STEP_MARKER);
-		outTls.setTarget(TargetInterfaceType.E_CARD_API);
-		List<TestCaseStep> testCaseSteps = new ArrayList<>();
-		testCaseSteps.add(outTls);
-		tlsTestCase.setTestCaseSteps(testCaseSteps);
-		Map<String, String> variables = new HashMap<>();
-		variables.put(GeneralConstants.TLS_VERSION, "TLSv12");
-		variables.put(GeneralConstants.TLS_CIPHER_SUITES, "TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA_384,TLS_DH_DSS_WITH_AES_128_CBC_SHA");
-		variables.put(GeneralConstants.TLS_SUPPORTED_SIGNATURE_ALGORITHMS, "SHA1withECDSA,SHA512withRSA");
-		tlsTestCase.setVariables(variables);
-
-		// run the expansion and verify the results
-		List<TestCase> tcs = runController.expandCryptoTasks(candidate, tlsTestCase, startDate);
-		assertNotNull(tcs);
-		assertEquals(2, tcs.size());
-	}
-
-	@Test(enabled = true)
-	public void testIterateSignatureAlgorithms() throws Exception
-	{
-		Date startDate = new Date();
-		// testcase
-		TestCase tlsTestCase = new DefaultTestCaseTestingPojo();
-		TestCaseStep outTls = new TestCaseStepTestingPojo();
-		outTls.setName(GeneralConstants.TLS_STEP_MARKER);
-		outTls.setTarget(TargetInterfaceType.E_CARD_API);
-		List<TestCaseStep> testCaseSteps = new ArrayList<>();
-		testCaseSteps.add(outTls);
-		tlsTestCase.setTestCaseSteps(testCaseSteps);
-		Map<String, String> variables = new HashMap<>();
-		variables.put(GeneralConstants.TLS_VERSION, "TLSv12");
-		variables.put(GeneralConstants.TLS_CIPHER_SUITES, "TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA_384,TLS_DH_DSS_WITH_AES_128_CBC_SHA");
-		variables.put(GeneralConstants.TLS_ELLIPTIC_CURVES, "secp256k1,secp256r1");
-		tlsTestCase.setVariables(variables);
-
-		// run the expansion and verify the results
-		List<TestCase> tcs = runController.expandCryptoTasks(candidate, tlsTestCase, startDate);
-		assertNotNull(tcs);
-		assertEquals(2, tcs.size());
 	}
 
 	@Test(enabled = true)

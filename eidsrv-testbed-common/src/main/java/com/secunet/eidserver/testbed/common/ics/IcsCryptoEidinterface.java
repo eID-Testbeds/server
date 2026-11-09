@@ -8,8 +8,6 @@
 
 package com.secunet.eidserver.testbed.common.ics;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -39,44 +37,37 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ics.crypto.eidinterface", propOrder = {
-    "tlsOrXmlSignature"
+
 })
 public class IcsCryptoEidinterface {
 
     @XmlElements({
-        @XmlElement(name = "TLS", type = IcsCryptoEidinterfaceTlsTypeEcAndSignatureWithClientcertificates.class),
         @XmlElement(name = "XmlSignature", type = IcsXmlsignatures.class)
     })
-    protected List<Object> tlsOrXmlSignature;
+    protected IcsXmlsignatures xmlSignature;
 
     /**
-     * Gets the value of the tlsOrXmlSignature property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the tlsOrXmlSignature property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTLSOrXmlSignature().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link IcsCryptoEidinterfaceTlsTypeEcAndSignatureWithClientcertificates }
-     * {@link IcsXmlsignatures }
-     * 
-     * 
+     * Ruft den Wert der xmlSignature-Eigenschaft ab.
+     *
+     * @return
+     *     possible object is
+     *     {@link IcsXmlsignatures }
+     *
      */
-    public List<Object> getTLSOrXmlSignature() {
-        if (tlsOrXmlSignature == null) {
-            tlsOrXmlSignature = new ArrayList<Object>();
-        }
-        return this.tlsOrXmlSignature;
+    public IcsXmlsignatures getXmlSignature() {
+        return xmlSignature;
+    }
+
+    /**
+     * Legt den Wert der xmlSignature-Eigenschaft fest.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link IcsXmlsignatures }
+     *
+     */
+    public void setXmlSignature(IcsXmlsignatures value) {
+        this.xmlSignature = value;
     }
 
 }

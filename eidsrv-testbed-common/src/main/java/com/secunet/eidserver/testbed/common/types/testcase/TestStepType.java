@@ -53,10 +53,10 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="IN_START_PAOS_RESPONSE"/>
  *     &lt;enumeration value="IN_START_PAOS_RESPONSE_INTERNAL_ERROR"/>
  *     &lt;enumeration value="IN_START_PAOS_RESPONSE_CUSTOM_ERROR"/>
+ *     &lt;enumeration value="IN_START_PAOS_RESPONSE_ANY_ERROR"/>
  *     &lt;enumeration value="IN_TC_TOKEN"/>
  *     &lt;enumeration value="IN_TC_TOKEN_ATTACHED"/>
  *     &lt;enumeration value="IN_TC_TOKEN_SAML_ATTACHED"/>
- *     &lt;enumeration value="IN_TLS"/>
  *     &lt;enumeration value="IN_TRANSMIT"/>
  *     &lt;enumeration value="IN_USEID_RESPONSE"/>
  *     &lt;enumeration value="IN_USEID_RESPONSE_NO_PSK"/>
@@ -105,10 +105,6 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="OUT_SAML_ASSERTION"/>
  *     &lt;enumeration value="OUT_START_PAOS"/>
  *     &lt;enumeration value="OUT_START_PAOS_DIDPROTOCOLS"/>
- *     &lt;enumeration value="OUT_TLS_ATTACHED"/>
- *     &lt;enumeration value="OUT_TLS_ECARDAPI"/>
- *     &lt;enumeration value="OUT_TLS_EID"/>
- *     &lt;enumeration value="OUT_TLS_SAML"/>
  *     &lt;enumeration value="OUT_TRANSMIT"/>
  *     &lt;enumeration value="OUT_TRANSMIT_INVALID_MAC"/>
  *     &lt;enumeration value="OUT_TRANSMIT_NO_APDUS"/>
@@ -166,6 +162,7 @@ public enum TestStepType {
     IN_START_PAOS_RESPONSE("IN_START_PAOS_RESPONSE"),
     IN_START_PAOS_RESPONSE_INTERNAL_ERROR("IN_START_PAOS_RESPONSE_INTERNAL_ERROR"),
     IN_START_PAOS_RESPONSE_CUSTOM_ERROR("IN_START_PAOS_RESPONSE_CUSTOM_ERROR"),
+    IN_START_PAOS_RESPONSE_ANY_ERROR("IN_START_PAOS_RESPONSE_ANY_ERROR"),
     IN_TC_TOKEN("IN_TC_TOKEN"),
     IN_TC_TOKEN_ATTACHED("IN_TC_TOKEN_ATTACHED"),
     IN_TC_TOKEN_SAML_ATTACHED("IN_TC_TOKEN_SAML_ATTACHED"),
@@ -218,10 +215,6 @@ public enum TestStepType {
     OUT_SAML_ASSERTION("OUT_SAML_ASSERTION"),
     OUT_START_PAOS("OUT_START_PAOS"),
     OUT_START_PAOS_DIDPROTOCOLS("OUT_START_PAOS_DIDPROTOCOLS"),
-    OUT_TLS_ATTACHED("OUT_TLS_ATTACHED"),
-    OUT_TLS_ECARDAPI("OUT_TLS_ECARDAPI"),
-    OUT_TLS_EID("OUT_TLS_EID"),
-    OUT_TLS_SAML("OUT_TLS_SAML"),
     OUT_TRANSMIT("OUT_TRANSMIT"),
     OUT_TRANSMIT_INVALID_MAC("OUT_TRANSMIT_INVALID_MAC"),
     OUT_TRANSMIT_NO_APDUS("OUT_TRANSMIT_NO_APDUS"),

@@ -4,17 +4,21 @@
 	<parent>
 		<groupId>com.secunet</groupId>
 		<artifactId>eidserver-testbed</artifactId>
-		<version>${project.version}</version>
+		<version>${revision}</version>
 	</parent>
 	<artifactId>eidsrv-testbed-testing</artifactId>
 	<name>eID-Server Testbed Test Support</name>
 	<description>This project is only used for testing purposes. None of the resources may be used in production code.</description>
-	
-	<dependencies>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+
+    <dependencies>
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-common</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 		</dependency>
 	</dependencies>
 </project>

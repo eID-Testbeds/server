@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCaseStep;
 import com.secunet.eidserver.testbed.common.types.testcase.Variables;
-import com.secunet.testbedutils.helperclasses.Pair;
+import de.bsi.testbedutils.helperclasses.Pair;
 
 public class ProcessedSteps
 {

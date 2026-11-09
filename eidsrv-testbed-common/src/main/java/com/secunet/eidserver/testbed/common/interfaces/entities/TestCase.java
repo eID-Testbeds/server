@@ -8,7 +8,7 @@ import com.secunet.eidserver.testbed.common.ics.IcsMandatoryprofile;
 import com.secunet.eidserver.testbed.common.ics.IcsOptionalprofile;
 import com.secunet.eidserver.testbed.common.types.testcase.EService;
 import com.secunet.eidserver.testbed.common.types.testcase.EidCard;
-import com.secunet.testbedutils.helperclasses.Pair;
+import de.bsi.testbedutils.helperclasses.Pair;
 
 public interface TestCase
 {

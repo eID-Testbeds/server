@@ -12,7 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-import com.secunet.eidserver.testbed.common.helper.BcTlsHelper;
+import com.secunet.eidserver.testbed.common.helper.CryptoHelper;
 import com.secunet.eidserver.testbed.common.ics.IcsEllipticcurve;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionKeyAgreementUri;
 import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionKeyAgreementWrappingUri;
@@ -78,7 +78,7 @@ public class XmlEncryptionKeyAgreementEntity extends BaseEntity implements Seria
 	@Override
 	public void setBitLengths(Set<BigInteger> bitLengths) throws NumberFormatException
 	{
-		if (!BcTlsHelper.checkOnlyAllowedBitlengths(bitLengths))
+		if (!CryptoHelper.checkOnlyAllowedBitlengths(bitLengths))
 		{
 			throw new NumberFormatException("The provided set contained unallowed values");
 		}

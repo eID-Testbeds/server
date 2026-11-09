@@ -31,7 +31,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="TargetInterface" type="{http://www.secunet.com}targetInterfaceType"/>
  *         &lt;element name="Optional" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="Schema" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="TlsStepToken" type="{http://www.secunet.com}stepToken" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="HttpStepToken" type="{http://www.secunet.com}stepToken" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="ProtocolStepToken" type="{http://www.secunet.com}stepToken" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="ToSave" type="{http://www.secunet.com}optAttrString" maxOccurs="unbounded" minOccurs="0"/>
@@ -48,7 +47,6 @@ import javax.xml.bind.annotation.XmlType;
     "targetInterface",
     "optional",
     "schema",
-    "tlsStepToken",
     "httpStepToken",
     "protocolStepToken",
     "toSave"
@@ -63,8 +61,6 @@ public class Step {
     protected Boolean optional;
     @XmlElement(name = "Schema")
     protected String schema;
-    @XmlElement(name = "TlsStepToken")
-    protected List<StepToken> tlsStepToken;
     @XmlElement(name = "HttpStepToken")
     protected List<StepToken> httpStepToken;
     @XmlElement(name = "ProtocolStepToken")
@@ -142,35 +138,6 @@ public class Step {
      */
     public void setSchema(String value) {
         this.schema = value;
-    }
-
-    /**
-     * Gets the value of the tlsStepToken property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the tlsStepToken property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTlsStepToken().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link StepToken }
-     * 
-     * 
-     */
-    public List<StepToken> getTlsStepToken() {
-        if (tlsStepToken == null) {
-            tlsStepToken = new ArrayList<StepToken>();
-        }
-        return this.tlsStepToken;
     }
 
     /**

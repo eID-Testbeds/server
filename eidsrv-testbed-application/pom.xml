@@ -2,24 +2,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
 		<groupId>com.secunet</groupId>
 		<artifactId>eidserver-testbed</artifactId>
-		<version>${project.version}</version>
+		<version>${revision}</version>
 	</parent>
 
 	<artifactId>eidsrv-testbed-application</artifactId>
 	<name>eID-Server Testbed Application</name>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
 
-	<packaging>ear</packaging>
+    <packaging>ear</packaging>
 
 	<dependencies>
 		<!-- UI -->
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-webui</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 			<type>war</type>
 		</dependency>
 
@@ -27,7 +30,7 @@
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-common</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 			<type>jar</type>
 		</dependency>
 
@@ -35,42 +38,35 @@
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-database</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 			<type>ejb</type>
 		</dependency>
 
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-core</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 			<type>ejb</type>
 		</dependency>
 
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-reportgenerator</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 			<type>ejb</type>
 		</dependency>
 
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-testgenerator</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 			<type>ejb</type>
 		</dependency>
 
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-runner</artifactId>
-			<version>${project.version}</version>
-			<type>ejb</type>
-		</dependency>
-
-		<dependency>
-			<groupId>com.secunet</groupId>
-			<artifactId>eidsrv-testbed-tls</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 			<type>ejb</type>
 		</dependency>
 	</dependencies>
@@ -81,7 +77,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ear-plugin</artifactId>
-				<version>2.10.1</version>
+				<version>3.2.0</version>
 				<configuration>
 					<defaultLibBundleDir>lib</defaultLibBundleDir>
 					<skinnyWars>true</skinnyWars>
@@ -120,12 +116,8 @@
 							<artifactId>eidsrv-testbed-runner</artifactId>
 							<bundleFileName>eidsrv-testbed-runner.jar</bundleFileName>
 						</ejbModule>
-						<ejbModule>
-							<groupId>com.secunet</groupId>
-							<artifactId>eidsrv-testbed-tls</artifactId>
-							<bundleFileName>eidsrv-testbed-tls.jar</bundleFileName>
-						</ejbModule>
 					</modules>
+					<version>8</version>
 					<displayName>eID-Server Testbed</displayName>
 					<generateApplicationXml>true</generateApplicationXml>
 				</configuration>

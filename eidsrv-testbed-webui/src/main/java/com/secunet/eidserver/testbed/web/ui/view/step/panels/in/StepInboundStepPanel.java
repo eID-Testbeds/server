@@ -13,9 +13,9 @@ import com.secunet.eidserver.testbed.common.types.testcase.StepToken;
 import com.secunet.eidserver.testbed.web.i18n.I18NHandler;
 import com.secunet.eidserver.testbed.web.i18n.I18NText;
 import com.secunet.eidserver.testbed.web.ui.view.step.TeststepEditModel;
-import com.secunet.testbedutils.utilities.JaxBUtil;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.ui.VerticalLayout;
+import de.bsi.testbedutils.utilities.JaxBUtil;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.ui.VerticalLayout;
 
 public class StepInboundStepPanel extends VerticalLayout implements PropertyChangeListener
 {

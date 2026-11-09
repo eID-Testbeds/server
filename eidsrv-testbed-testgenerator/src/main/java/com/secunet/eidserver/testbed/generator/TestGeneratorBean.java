@@ -3,6 +3,7 @@ package com.secunet.eidserver.testbed.generator;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,8 +39,8 @@ import com.secunet.eidserver.testbed.common.types.testcase.TargetInterfaceType;
 import com.secunet.eidserver.testbed.common.types.testcase.TestStepType;
 import com.secunet.eidserver.testbed.common.types.testcase.TestcaseDefinition;
 import com.secunet.eidserver.testbed.common.types.testcase.Variables;
-import com.secunet.testbedutils.helperclasses.Pair;
-import com.secunet.testbedutils.utilities.JaxBUtil;
+import de.bsi.testbedutils.helperclasses.Pair;
+import de.bsi.testbedutils.utilities.JaxBUtil;
 
 @Named
 @Singleton
@@ -65,7 +66,7 @@ public class TestGeneratorBean implements TestGenerator
 	{
 		// load known testcase definitions
 		testcaseDefinitions = new HashMap<>();
-		File testcaseFolder = new File(Thread.currentThread().getContextClassLoader().getResource("defaultTests").getFile());
+		File testcaseFolder = new File(Thread.currentThread().getContextClassLoader().getResource("defaultTests/A1_1/..").getFile());
 		processTestcaseFile(testcaseFolder);
 
 		// known testcase steps

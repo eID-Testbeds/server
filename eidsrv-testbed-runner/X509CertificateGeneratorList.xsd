@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="https://www.bsi.bund.de" targetNamespace="https://www.bsi.bund.de" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="Certificates">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" name="Certificate">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="IssuerName" type="xs:string" minOccurs="0" />
+                            <xs:element name="SubjectName" type="xs:string" />
+                            <xs:element name="FileName" type="xs:string" />
+                            <xs:element name="Key">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Algorithm" type="xs:string" />
+                                        <xs:choice>
+                                            <xs:element name="Size" type="xs:int" />
+                                            <xs:element name="Curve" type="xs:string" />
+                                        </xs:choice>
+                                        <xs:element name="AsPEM" type="xs:boolean" />
+                                        <xs:element name="WithKey" type="xs:boolean" />
+                                        <xs:element name="AsKey" type="xs:boolean" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="CertAlgorithm" type="xs:string" />
+                            <xs:element name="Storage">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Directory">
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:minLength value="0"/>
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                        </xs:element>
+                                        <xs:element name="AsPEM" type="xs:boolean" />
+                                        <xs:element name="AsCRT" type="xs:boolean" />
+                                        <xs:element name="StorePublicKey" type="xs:boolean" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="Usage">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="ExtensionCritical" type="xs:boolean" />
+                                        <xs:element name="KeyUsageIsCritical" type="xs:boolean" />
+                                        <xs:element name="DigitalSignature" type="xs:boolean" />
+                                        <xs:element name="KeyEncipherment" type="xs:boolean" />
+                                        <xs:element name="KeyAgreement" type="xs:boolean" />
+                                        <xs:element name="CertificateSigning" type="xs:boolean" />
+                                        <xs:element name="CrlSign" type="xs:boolean" />
+                                        <xs:element name="NonRepudiation" type="xs:boolean" />
+                                        <xs:element name="AuthorityKeyIdentifier" type="xs:boolean" />
+                                        <xs:element name="SubjectKeyIdentifier" type="xs:boolean" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="ExtendedKeyUsage" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element maxOccurs="unbounded" name="KeyPurposeId" type="xs:string" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="IncludeSubjectAlternativeName" minOccurs="0" type="xs:boolean" />
+                            <xs:element name="ExplicitCurveParams" minOccurs="0" type="xs:boolean" />
+                            <xs:element name="Netscape">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="CertificateType" type="xs:boolean" />
+                                        <xs:element name="Comment" type="xs:string" minOccurs="0" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

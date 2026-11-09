@@ -14,9 +14,9 @@ import com.secunet.eidserver.testbed.web.ui.comp.SortedMultiValueListSelection;
 import com.secunet.eidserver.testbed.web.ui.comp.TogglePanelLayout;
 import com.secunet.eidserver.testbed.web.ui.util.Humanizer;
 import com.secunet.eidserver.testbed.web.ui.view.testcase.TestCaseEditModel;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.fieldgroup.PropertyId;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.annotations.PropertyId;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.FormLayout;
 

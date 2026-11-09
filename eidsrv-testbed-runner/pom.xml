@@ -6,122 +6,64 @@
 	<parent>
 		<groupId>com.secunet</groupId>
 		<artifactId>eidserver-testbed</artifactId>
-		<version>${project.version}</version>
+		<version>${revision}</version>
 	</parent>
 
 	<artifactId>eidsrv-testbed-runner</artifactId>
 	<name>eID-Server Testbed TestRunner</name>
-	<packaging>ejb</packaging>
-
-	<repositories>
-		<repository>
-			<id>libs</id>
-			<url>file://${basedir}/src/lib</url>
-		</repository>
-	</repositories>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+    <packaging>ejb</packaging>
 
 	<dependencies>
 		<!-- Common utils -->
 		<dependency>
-			<groupId>com.secunet</groupId>
+			<groupId>de.bsi</groupId>
 			<artifactId>testbedutils-EAC2</artifactId>
-			<version>1.2</version>
+			<version>1.3</version>
 		</dependency>
 		<dependency>
-			<groupId>com.secunet</groupId>
+			<groupId>de.bsi</groupId>
 			<artifactId>testbedutils-CVC</artifactId>
-			<version>1.2</version>
+			<version>1.3</version>
 		</dependency>
 
 		<!-- Own libraries -->
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-common</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-testing</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- 3rd party libraries -->
-		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-core -->
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-core</artifactId>
-			<version>${opensaml.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-saml-api -->
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-saml-api</artifactId>
-			<version>${opensaml.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-saml-impl -->
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-saml-impl</artifactId>
-			<version>${opensaml.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-security-api -->
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-security-api</artifactId>
-			<version>${opensaml.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-security-impl -->
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-security-impl</artifactId>
-			<version>${opensaml.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-soap-api -->
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-soap-api</artifactId>
-			<version>${opensaml.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-soap-impl -->
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-soap-impl</artifactId>
-			<version>${opensaml.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-xmlsec-api -->
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-xmlsec-api</artifactId>
-			<version>${opensaml.version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-xmlsec-impl -->
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-xmlsec-impl</artifactId>
-			<version>${opensaml.version}</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.apache.santuario/xmlsec -->
 		<dependency>
 			<groupId>org.apache.santuario</groupId>
 			<artifactId>xmlsec</artifactId>
-			<version>${xmlsec.version}</version>
+			<version>3.0.2</version>
 		</dependency>
 
-		<!-- Governikus eIDAS Middleware Starterkit -->
-		<!-- THIS IS A PATCHED VERSION BY SECUNET -->
 		<dependency>
-			<groupId>com.secunet</groupId>
-			<artifactId>eidas-starterkit</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.glassfish.metro</groupId>
+			<artifactId>webservices-api-osgi</artifactId>
+			<version>2.4.3</version>
 		</dependency>
-		
-		<!-- TO BE REMOVED - ONLY NECESSARY AS A WORKAROUND MEASURE -->
 		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.8.0</version>
+			<groupId>org.glassfish.metro</groupId>
+			<artifactId>webservices-osgi</artifactId>
+			<version>2.4.3</version>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet.staxex</groupId>
+			<artifactId>stax-ex</artifactId>
+			<version>2.1.0</version>
 		</dependency>
 
 	</dependencies>
@@ -131,27 +73,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ejb-plugin</artifactId>
+				<version>3.2.1</version>
 				<configuration>
 					<ejbVersion>3.1</ejbVersion>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-						</manifest>
-						<manifestEntries>
-							<Class-Path>lib/opensaml-core-3.3.0.jar</Class-Path>
-							<Class-Path>lib/opensaml-saml-api-3.3.0.jar</Class-Path>
-							<Class-Path>lib/opensaml-saml-impl-3.3.0.jar</Class-Path>
-							<Class-Path>lib/opensaml-security-api-3.3.0.jar</Class-Path>
-							<Class-Path>lib/opensaml-security-impl-3.3.0.jar</Class-Path>
-							<Class-Path>lib/opensaml-soap-api-3.3.0.jar</Class-Path>
-							<Class-Path>lib/opensaml-soap-impl-3.3.0.jar</Class-Path>
-							<Class-Path>lib/opensaml-xmlsec-api-3.3.0.jar</Class-Path>
-							<Class-Path>lib/opensaml-xmlsec-impl-3.3.0.jar</Class-Path>
-							<Class-Path>lib/commons-logging-1.1.1.jar</Class-Path>
-							<!-- <Class-Path>lib/starterkit-2.0.0.jar</Class-Path> -->
-							<Class-Path>lib/xmlsec-2.0.8.jar</Class-Path>
-						</manifestEntries>
-					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

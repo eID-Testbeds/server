@@ -1,43 +1,17 @@
 package com.secunet.eidserver.testbed.model.entities;
 
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
+import com.secunet.eidserver.testbed.common.ics.*;
+import com.secunet.eidserver.testbed.common.interfaces.entities.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.secunet.eidserver.testbed.common.ics.IcsCa;
-import com.secunet.eidserver.testbed.common.ics.IcsCaDomainparams;
-import com.secunet.eidserver.testbed.common.ics.IcsMandatoryprofile;
-import com.secunet.eidserver.testbed.common.ics.IcsOptionalprofile;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionContentUri;
-import com.secunet.eidserver.testbed.common.interfaces.entities.CertificateX509;
-import com.secunet.eidserver.testbed.common.interfaces.entities.Report;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestCase;
-import com.secunet.eidserver.testbed.common.interfaces.entities.TestRun;
-import com.secunet.eidserver.testbed.common.interfaces.entities.Tls;
-import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyAgreement;
-import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyTransport;
-import com.secunet.eidserver.testbed.common.interfaces.entities.XmlSignature;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "TEST_CANDIDATE")
@@ -104,22 +78,6 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	@OneToMany(fetch = FetchType.EAGER, targetEntity = TestRunEntity.class)
 	private Set<TestRun> testRuns = new HashSet<>();
 
-	@JoinColumn(name = "TLS_ECARDAPI_PSK")
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = TlsEntity.class)
-	private Set<Tls> tlsEcardApiPsk = new HashSet<>();
-
-	@JoinColumn(name = "TLS_ECARDAPI_ATTACHED")
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = TlsEntity.class)
-	private Set<Tls> tlsEcardApiAttached = new HashSet<>();
-
-	@JoinColumn(name = "TLS_EIDINTERFACE")
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = TlsEntity.class)
-	private Set<Tls> tlsEidInterface = new HashSet<>();
-
-	@JoinColumn(name = "TLS_SAML")
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = TlsEntity.class)
-	private Set<Tls> tlsSaml = new HashSet<>();
-
 	private String vendor;
 
 	@Column(name = "VERSION_MAJOR")
@@ -131,20 +89,35 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	@Column(name = "VERSION_SUBMINOR")
 	private int versionSubminor;
 
-	@Column(name = "XML_CONTENT_ENCRYPTION_ALGORITHM")
+	@Column(name = "XML_CONTENT_ENCRYPTION_ALGORITHM_SAML")
 	@ElementCollection
 	@Enumerated(EnumType.STRING)
-	private Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithms = new HashSet<>();
+	private Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithmsSaml = new HashSet<>();
+
+	@Column(name = "XML_CONTENT_ENCRYPTION_ALGORITHM_EIDAS")
+	@ElementCollection
+	@Enumerated(EnumType.STRING)
+	private Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithmsEidas = new HashSet<>();
 
 	@ManyToMany(fetch = FetchType.EAGER, targetEntity = XmlEncryptionKeyAgreementEntity.class, cascade = CascadeType.ALL)
-	@JoinTable(name = "Candidate_KeyAgreement", joinColumns = { @JoinColumn(name = "CANDIDATE_ID", referencedColumnName = "id") }, inverseJoinColumns = {
+	@JoinTable(name = "Candidate_KeyAgreementSaml", joinColumns = { @JoinColumn(name = "CANDIDATE_ID", referencedColumnName = "id") }, inverseJoinColumns = {
 			@JoinColumn(name = "AGREEMENT_ID", referencedColumnName = "id") })
-	private Set<XmlEncryptionKeyAgreement> xmlKeyAgreement = new HashSet<>();
+	private Set<XmlEncryptionKeyAgreement> xmlKeyAgreementSaml = new HashSet<>();
+
+	@ManyToMany(fetch = FetchType.EAGER, targetEntity = XmlEncryptionKeyAgreementEntity.class, cascade = CascadeType.ALL)
+	@JoinTable(name = "Candidate_KeyAgreementEidas", joinColumns = { @JoinColumn(name = "CANDIDATE_ID", referencedColumnName = "id") }, inverseJoinColumns = {
+			@JoinColumn(name = "AGREEMENT_ID", referencedColumnName = "id") })
+	private Set<XmlEncryptionKeyAgreement> xmlKeyAgreementEidas = new HashSet<>();
 
 	@ManyToMany(fetch = FetchType.EAGER, targetEntity = XmlEncryptionKeyTransportEntity.class, cascade = CascadeType.ALL)
-	@JoinTable(name = "Candidate_KeyTransport", joinColumns = { @JoinColumn(name = "CANDIDATE_ID", referencedColumnName = "id") }, inverseJoinColumns = {
+	@JoinTable(name = "Candidate_KeyTransportSaml", joinColumns = { @JoinColumn(name = "CANDIDATE_ID", referencedColumnName = "id") }, inverseJoinColumns = {
 			@JoinColumn(name = "TRANSPORT_ID", referencedColumnName = "id") })
-	private Set<XmlEncryptionKeyTransport> xmlKeyTransport = new HashSet<>();
+	private Set<XmlEncryptionKeyTransport> xmlKeyTransportSaml = new HashSet<>();
+
+	@ManyToMany(fetch = FetchType.EAGER, targetEntity = XmlEncryptionKeyTransportEntity.class, cascade = CascadeType.ALL)
+	@JoinTable(name = "Candidate_KeyTransportEidas", joinColumns = { @JoinColumn(name = "CANDIDATE_ID", referencedColumnName = "id") }, inverseJoinColumns = {
+			@JoinColumn(name = "TRANSPORT_ID", referencedColumnName = "id") })
+	private Set<XmlEncryptionKeyTransport> xmlKeyTransportEidas = new HashSet<>();
 
 	@JoinColumn(name = "XML_SIGNATURE_ALGORITHM_EID")
 	@OneToMany(fetch = FetchType.EAGER, targetEntity = XmlSignatureEntity.class, cascade = CascadeType.ALL)
@@ -154,9 +127,25 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	@OneToMany(fetch = FetchType.EAGER, targetEntity = XmlSignatureEntity.class, cascade = CascadeType.ALL)
 	private Set<XmlSignature> xmlSignatureAlgorithmsSaml = new HashSet<>();
 
+	@JoinColumn(name = "XML_SIGNATURE_ALGORITHM_EIDAS")
+	@OneToMany(fetch = FetchType.EAGER, targetEntity = XmlSignatureEntity.class, cascade = CascadeType.ALL)
+	private Set<XmlSignature> xmlSignatureAlgorithmsEidas = new HashSet<>();
+
 	@JoinColumn(name = "X509_CERTIFICATE")
 	@OneToMany(fetch = FetchType.EAGER, targetEntity = CertificateX509Entity.class, cascade = CascadeType.ALL)
 	private Set<CertificateX509> x509Certificates = new HashSet<>();
+
+	@JoinColumn(name = "CV_CERTIFICATE")
+	@OneToMany(fetch = FetchType.EAGER, targetEntity = CertificateCVEntity.class, cascade = CascadeType.ALL)
+	private Set<CertificateCV> cvCertificates = new HashSet<>();
+
+	@JoinColumn(name = "BLACKLIST_LNK")
+	@OneToMany(fetch = FetchType.EAGER, targetEntity = BlacklistEntity.class, cascade = CascadeType.ALL)
+	private Set<Blacklist> blacklists = new HashSet<>();
+
+	@JoinColumn(name = "CRYPTO_FILE")
+	@OneToMany(fetch = FetchType.EAGER, targetEntity = CryptoFileEntity.class, cascade = CascadeType.ALL)
+	private Set<CryptoFile> cryptoFiles = new HashSet<>();
 
 	@JoinColumn(name = "Report")
 	@OneToMany(fetch = FetchType.EAGER, targetEntity = ReportEntity.class)
@@ -167,6 +156,16 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 
 	@Column(name = "EIDAS_METADATA")
 	private String eidasMetadata;
+
+	@Lob
+	@Column(length = 500000)
+	private byte[] masterList;
+
+	@Lob
+	@Column(length = 500000)
+	private byte[] defectlist;
+
+	//TODO: Add storage for certificates
 
 	public TestCandidateEntity()
 	{
@@ -313,16 +312,26 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 		this.chipAuthenticationAlgorithms = chipAuthenticationAlgorithms;
 	}
 
-	@Override
-	public Set<IcsXmlsecEncryptionContentUri> getXmlEncryptionAlgorithms()
+	public Set<IcsXmlsecEncryptionContentUri> getXmlEncryptionAlgorithmsSaml()
 	{
-		return xmlEncryptionAlgorithms;
+		return xmlEncryptionAlgorithmsSaml;
 	}
 
 	@Override
-	public void setXmlEncryptionAlgorithms(Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithms)
+	public void setXmlEncryptionAlgorithmsSaml(Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithmsSaml)
 	{
-		this.xmlEncryptionAlgorithms = xmlEncryptionAlgorithms;
+		this.xmlEncryptionAlgorithmsSaml = xmlEncryptionAlgorithmsSaml;
+	}
+
+	public Set<IcsXmlsecEncryptionContentUri> getXmlEncryptionAlgorithmsEidas()
+	{
+		return xmlEncryptionAlgorithmsEidas;
+	}
+
+	@Override
+	public void setXmlEncryptionAlgorithmsEidas(Set<IcsXmlsecEncryptionContentUri> xmlEncryptionAlgorithmsEidas)
+	{
+		this.xmlEncryptionAlgorithmsEidas = xmlEncryptionAlgorithmsEidas;
 	}
 
 	@Override
@@ -350,6 +359,18 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	}
 
 	@Override
+	public Set<XmlSignature> getXmlSignatureAlgorithmsEidas()
+	{
+		return xmlSignatureAlgorithmsEidas;
+	}
+
+	@Override
+	public void setXmlSignatureAlgorithmsEidas(Set<XmlSignature> xmlSignatureAlgorithmsEidas)
+	{
+		this.xmlSignatureAlgorithmsEidas = xmlSignatureAlgorithmsEidas;
+	}
+
+	@Override
 	public Set<TestCase> getTestCases()
 	{
 		return testCases;
@@ -371,6 +392,18 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	public void setX509Certificates(Set<CertificateX509> x509Certificates)
 	{
 		this.x509Certificates = x509Certificates;
+	}
+
+	@Override
+	public Set<CertificateCV> getCvCertificates()
+	{
+		return cvCertificates;
+	}
+
+	@Override
+	public void setCvCertificates(Set<CertificateCV> cvCertificates)
+	{
+		this.cvCertificates = cvCertificates;
 	}
 
 	@Override
@@ -407,7 +440,7 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	}
 
 	/**
-	 * @see com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate#setCandidateName()
+	 * @see com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate#setCandidateName(String)
 	 */
 	@Override
 	public void setCandidateName(String candidateName)
@@ -416,75 +449,51 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 	}
 
 	@Override
-	public Set<Tls> getTlsEcardApiPsk()
+	public Set<XmlEncryptionKeyAgreement> getXmlKeyAgreementSaml()
 	{
-		return tlsEcardApiPsk;
+		return xmlKeyAgreementSaml;
 	}
 
 	@Override
-	public void setTlsEcardApiPsk(Set<Tls> tlsEcardApiPsk)
+	public void setXmlKeyAgreementSaml(Set<XmlEncryptionKeyAgreement> xmlKeyAgreement)
 	{
-		this.tlsEcardApiPsk = tlsEcardApiPsk;
+		this.xmlKeyAgreementSaml = xmlKeyAgreement;
 	}
 
 	@Override
-	public Set<Tls> getTlsEcardApiAttached()
+	public Set<XmlEncryptionKeyAgreement> getXmlKeyAgreementEidas()
 	{
-		return tlsEcardApiAttached;
+		return xmlKeyAgreementEidas;
 	}
 
 	@Override
-	public void setTlsEcardApiAttached(Set<Tls> tlsEcardApiAttached)
+	public void setXmlKeyAgreementEidas(Set<XmlEncryptionKeyAgreement> xmlKeyAgreementEidas)
 	{
-		this.tlsEcardApiAttached = tlsEcardApiAttached;
+		this.xmlKeyAgreementEidas = xmlKeyAgreementEidas;
 	}
 
 	@Override
-	public Set<Tls> getTlsEidInterface()
+	public Set<XmlEncryptionKeyTransport> getXmlKeyTransportSaml()
 	{
-		return tlsEidInterface;
+		return xmlKeyTransportSaml;
 	}
 
 	@Override
-	public void setTlsEidInterface(Set<Tls> tlsEidInterface)
+	public void setXmlKeyTransportSaml(Set<XmlEncryptionKeyTransport> xmlKeyTransport)
 	{
-		this.tlsEidInterface = tlsEidInterface;
+		this.xmlKeyTransportSaml = xmlKeyTransport;
 	}
 
 	@Override
-	public Set<Tls> getTlsSaml()
+	public Set<XmlEncryptionKeyTransport> getXmlKeyTransportEidas()
 	{
-		return tlsSaml;
+		return xmlKeyTransportEidas;
 	}
 
 	@Override
-	public void setTlsSaml(Set<Tls> tlsSaml)
+	public void setXmlKeyTransportEidas(Set<XmlEncryptionKeyTransport> xmlKeyTransportEidas)
 	{
-		this.tlsSaml = tlsSaml;
-	}
-
-	@Override
-	public Set<XmlEncryptionKeyAgreement> getXmlKeyAgreement()
-	{
-		return xmlKeyAgreement;
-	}
-
-	@Override
-	public void setXmlKeyAgreement(Set<XmlEncryptionKeyAgreement> xmlKeyAgreement)
-	{
-		this.xmlKeyAgreement = xmlKeyAgreement;
-	}
-
-	@Override
-	public Set<XmlEncryptionKeyTransport> getXmlKeyTransport()
-	{
-		return xmlKeyTransport;
-	}
-
-	@Override
-	public void setXmlKeyTransport(Set<XmlEncryptionKeyTransport> xmlKeyTransport)
-	{
-		this.xmlKeyTransport = xmlKeyTransport;
+		this.xmlKeyTransportEidas = xmlKeyTransportEidas;
 	}
 
 	@Override
@@ -584,20 +593,21 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 		result = prime * result + ((reports == null) ? 0 : reports.hashCode());
 		result = prime * result + ((samlUrl == null) ? 0 : samlUrl.hashCode());
 		result = prime * result + ((testCases == null) ? 0 : testCases.hashCode());
-		result = prime * result + ((tlsEcardApiAttached == null) ? 0 : tlsEcardApiAttached.hashCode());
-		result = prime * result + ((tlsEcardApiPsk == null) ? 0 : tlsEcardApiPsk.hashCode());
-		result = prime * result + ((tlsEidInterface == null) ? 0 : tlsEidInterface.hashCode());
-		result = prime * result + ((tlsSaml == null) ? 0 : tlsSaml.hashCode());
 		result = prime * result + ((vendor == null) ? 0 : vendor.hashCode());
 		result = prime * result + versionMajor;
 		result = prime * result + versionMinor;
 		result = prime * result + versionSubminor;
 		result = prime * result + ((x509Certificates == null) ? 0 : x509Certificates.hashCode());
-		result = prime * result + ((xmlEncryptionAlgorithms == null) ? 0 : xmlEncryptionAlgorithms.hashCode());
-		result = prime * result + ((xmlKeyAgreement == null) ? 0 : xmlKeyAgreement.hashCode());
-		result = prime * result + ((xmlKeyTransport == null) ? 0 : xmlKeyTransport.hashCode());
+		result = prime * result + ((xmlEncryptionAlgorithmsSaml == null) ? 0 : xmlEncryptionAlgorithmsSaml.hashCode());
+		result = prime * result + ((xmlKeyAgreementSaml == null) ? 0 : xmlKeyAgreementSaml.hashCode());
+		result = prime * result + ((xmlKeyTransportSaml == null) ? 0 : xmlKeyTransportSaml.hashCode());
 		result = prime * result + ((xmlSignatureAlgorithmsEid == null) ? 0 : xmlSignatureAlgorithmsEid.hashCode());
 		result = prime * result + ((xmlSignatureAlgorithmsSaml == null) ? 0 : xmlSignatureAlgorithmsSaml.hashCode());
+		result = prime * result + ((blacklists == null) ? 0 : blacklists.hashCode());
+		result = prime * result + ((cvCertificates == null) ? 0 : cvCertificates.hashCode());
+		result = prime * result + ((cryptoFiles == null) ? 0 : cryptoFiles.hashCode());
+		result = prime * result + ((masterList == null) ? 0 : Arrays.hashCode(masterList));
+		result = prime * result + ((defectlist == null) ? 0 : Arrays.hashCode(defectlist));
 		return result;
 	}
 
@@ -706,34 +716,6 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 		}
 		else if (!testCases.equals(other.testCases))
 			return false;
-		if (tlsEcardApiAttached == null)
-		{
-			if (other.tlsEcardApiAttached != null)
-				return false;
-		}
-		else if (!tlsEcardApiAttached.equals(other.tlsEcardApiAttached))
-			return false;
-		if (tlsEcardApiPsk == null)
-		{
-			if (other.tlsEcardApiPsk != null)
-				return false;
-		}
-		else if (!tlsEcardApiPsk.equals(other.tlsEcardApiPsk))
-			return false;
-		if (tlsEidInterface == null)
-		{
-			if (other.tlsEidInterface != null)
-				return false;
-		}
-		else if (!tlsEidInterface.equals(other.tlsEidInterface))
-			return false;
-		if (tlsSaml == null)
-		{
-			if (other.tlsSaml != null)
-				return false;
-		}
-		else if (!tlsSaml.equals(other.tlsSaml))
-			return false;
 		if (vendor == null)
 		{
 			if (other.vendor != null)
@@ -754,26 +736,26 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 		}
 		else if (!x509Certificates.equals(other.x509Certificates))
 			return false;
-		if (xmlEncryptionAlgorithms == null)
+		if (xmlEncryptionAlgorithmsSaml == null)
 		{
-			if (other.xmlEncryptionAlgorithms != null)
+			if (other.xmlEncryptionAlgorithmsSaml != null)
 				return false;
 		}
-		else if (!xmlEncryptionAlgorithms.equals(other.xmlEncryptionAlgorithms))
+		else if (!xmlEncryptionAlgorithmsSaml.equals(other.xmlEncryptionAlgorithmsSaml))
 			return false;
-		if (xmlKeyAgreement == null)
+		if (xmlKeyAgreementSaml == null)
 		{
-			if (other.xmlKeyAgreement != null)
+			if (other.xmlKeyAgreementSaml != null)
 				return false;
 		}
-		else if (!xmlKeyAgreement.equals(other.xmlKeyAgreement))
+		else if (!xmlKeyAgreementSaml.equals(other.xmlKeyAgreementSaml))
 			return false;
-		if (xmlKeyTransport == null)
+		if (xmlKeyTransportSaml == null)
 		{
-			if (other.xmlKeyTransport != null)
+			if (other.xmlKeyTransportSaml != null)
 				return false;
 		}
-		else if (!xmlKeyTransport.equals(other.xmlKeyTransport))
+		else if (!xmlKeyTransportSaml.equals(other.xmlKeyTransportSaml))
 			return false;
 		if (xmlSignatureAlgorithmsEid == null)
 		{
@@ -788,6 +770,31 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 				return false;
 		}
 		else if (!xmlSignatureAlgorithmsSaml.equals(other.xmlSignatureAlgorithmsSaml))
+			return false;
+		if (blacklists == null)
+		{
+			if (other.blacklists != null)
+				return false;
+		}
+		else if (!blacklists.equals(other.blacklists))
+			return false;
+		if (cvCertificates == null)
+		{
+			if (other.cvCertificates != null)
+				return false;
+		}
+		else if (!cvCertificates.equals(other.cvCertificates))
+			return false;
+		if (cryptoFiles == null)
+		{
+			if (other.cryptoFiles != null)
+				return false;
+		}
+		else if (!cryptoFiles.equals(other.cryptoFiles))
+			return false;
+		if (!Arrays.equals(masterList, other.masterList))
+			return false;
+		if (!Arrays.equals(defectlist, other.defectlist))
 			return false;
 		return true;
 	}
@@ -844,4 +851,41 @@ public class TestCandidateEntity extends BaseEntity implements Serializable, Tes
 		return this.eidasMetadata;
 	}
 
+	@Override
+	public Set<Blacklist> getBlacklists() {
+		return blacklists;
+	}
+
+	@Override
+	public void setBlacklists(Set<Blacklist> blacklists) {
+		this.blacklists = blacklists;
+	}
+
+	@Override
+	public Set<CryptoFile> getCryptoFiles() {
+		return cryptoFiles;
+	}
+
+	@Override
+	public void setCryptoFiles(Set<CryptoFile> cryptoFiles) {
+		this.cryptoFiles = cryptoFiles;
+	}
+
+	public byte[] getMasterlist() {
+		return masterList;
+	}
+
+	public void setMasterlist(byte[] masterList) {
+		this.masterList = masterList;
+	}
+
+	@Override
+	public byte[] getDefectlist() {
+		return defectlist;
+	}
+
+	@Override
+	public void setDefectlist(byte[] defectlist) {
+		this.defectlist = defectlist;
+	}
 }

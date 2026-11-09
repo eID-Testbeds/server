@@ -24,15 +24,15 @@ import com.secunet.eidserver.testbed.web.ui.view.step.panels.in.StepDetailsPanel
 import com.secunet.eidserver.testbed.web.ui.view.step.panels.in.StepInboundStepPanel;
 import com.secunet.eidserver.testbed.web.ui.view.step.panels.out.StepOutboundStepPanel;
 import com.vaadin.cdi.CDIView;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
 import com.vaadin.ui.Notification;
 
 @CDIView("teststeps")

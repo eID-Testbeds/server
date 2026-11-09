@@ -8,7 +8,7 @@
 	<!-- HTTP Tokens -->
 	<p:HttpStepToken>
 		<p:name>HTTP_STATUS_CODE</p:name>
-		<p:value>HTTP/1.1 200 OK</p:value>
+		<p:value>HTTP/1.1 200 </p:value>
 		<p:isMandatory>true</p:isMandatory>
 	</p:HttpStepToken>
 	<p:HttpStepToken>

@@ -7,7 +7,7 @@ import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
 import com.secunet.eidserver.testbed.common.enumerations.RequestAttribute;
 import com.secunet.eidserver.testbed.common.enumerations.SpecialFunction;
 
-public class TestCHATOperations
+public class TestCHATOperations extends RunnerTestBase
 {
 	private final String expectedCHAT = "000F13FF03";
 	private final String dgChat = "0000001200";

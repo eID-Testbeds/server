@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-import org.vaadin.viritin.ListContainer;
+import org.vaadin.viritinv7.ListContainer;
 
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
@@ -12,10 +12,10 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Component.Focusable;
-import com.vaadin.ui.CustomField;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.ListSelect;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.CustomField;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.ListSelect;
+import com.vaadin.v7.ui.VerticalLayout;
 
 public class SortedMultiValueListSelection<T> extends CustomField<List<T>> implements Focusable
 {

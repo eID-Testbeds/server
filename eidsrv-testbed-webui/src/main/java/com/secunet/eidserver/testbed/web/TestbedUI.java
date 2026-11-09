@@ -1,8 +1,6 @@
 package com.secunet.eidserver.testbed.web;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
+import com.secunet.eidserver.testbed.common.classes.Singletons;
 import com.secunet.eidserver.testbed.web.i18n.I18NHandler;
 import com.secunet.eidserver.testbed.web.i18n.I18NText;
 import com.secunet.eidserver.testbed.web.ui.comp.ExceptionWindow;
@@ -10,15 +8,22 @@ import com.secunet.eidserver.testbed.web.ui.comp.MainLayout;
 import com.secunet.eidserver.testbed.web.ui.comp.NavigationLayout;
 import com.secunet.eidserver.testbed.web.ui.view.error.ErrorView;
 import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.Widgetset;
 import com.vaadin.cdi.CDIUI;
 import com.vaadin.cdi.CDIViewProvider;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinServletRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.UI;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.net.URL;
+
 @Theme("testbed")
+@Widgetset("com.secunet.eidserver.testbed.TestbedWidgetSet")
 @CDIUI("")
 public class TestbedUI extends UI
 {
@@ -73,6 +78,9 @@ public class TestbedUI extends UI
 			setNavigator(navigator);
 			navigator.setErrorView(ErrorView.class);
 			navigator.navigateTo(navigator.getState());
+			VaadinServletRequest req = (VaadinServletRequest) vaadinRequest;
+			StringBuffer uriString = req.getRequestURL();
+			Singletons.currentUrl = new URL(uriString.toString());
 		}
 		catch (Exception exc)
 		{

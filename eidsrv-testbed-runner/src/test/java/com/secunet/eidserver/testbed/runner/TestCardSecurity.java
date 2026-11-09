@@ -1,68 +1,18 @@
 package com.secunet.eidserver.testbed.runner;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.Security;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.crypto.spec.DHParameterSpec;
-import javax.xml.bind.DatatypeConverter;
-
+import com.secunet.eidserver.testbed.common.enumerations.EidCardFiles;
+import de.bsi.testbedutils.eac2.EAC2ObjectIdentifiers;
+import de.bsi.testbedutils.eac2.StandardizedDomainParameters;
+import de.bsi.testbedutils.eac2.StandardizedDomainParameters.Table_Type;
+import de.bsi.testbedutils.utilities.BouncyCastleTlsHelper;
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.ASN1Enumerated;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.cms.CMSAttributes;
-import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.cms.SignedData;
-import org.bouncycastle.asn1.cms.SignerIdentifier;
+import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.cms.*;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
+import org.bouncycastle.cms.*;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
@@ -76,15 +26,20 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.Store;
 
-import com.secunet.eidserver.testbed.common.constants.GeneralConstants;
-import com.secunet.eidserver.testbed.common.enumerations.EidCardFiles;
-import com.secunet.testbedutils.cvc.cvcertificate.TAAlgorithm;
-import com.secunet.testbedutils.eac2.EAC2ObjectIdentifiers;
-import com.secunet.testbedutils.eac2.StandardizedDomainParameters;
-import com.secunet.testbedutils.eac2.StandardizedDomainParameters.Table_Type;
-import com.secunet.testbedutils.utilities.BouncyCastleTlsHelper;
+import javax.crypto.spec.DHParameterSpec;
+import javax.xml.bind.DatatypeConverter;
+import java.io.*;
+import java.security.*;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.*;
 
-public class TestCardSecurity
+public class TestCardSecurity extends RunnerTestBase
 {
 
 	/**
@@ -182,7 +137,7 @@ public class TestCardSecurity
 		try
 		{
 			byte[] listID = new byte[] { 0x22 }; //TODO
-//			byte[] sectorID = new byte[] { (byte) 0xF1, (byte) 0xFB, (byte) 0xB3, (byte) 0x0A, (byte) 0xE3, (byte) 0xA9, (byte) 0xBF, (byte) 0x2B, (byte) 0x34, (byte) 0x05, (byte) 0x4B, (byte) 0x5E, (byte) 0x1C, (byte) 0x9A, (byte) 0x3F, (byte) 0x9D, (byte) 0x07, (byte) 0xAB, (byte) 0x32, (byte) 0xFB, (byte) 0x2F, (byte) 0x8F, (byte) 0x95, (byte) 0x9A, (byte) 0x77, (byte) 0x95, (byte) 0x3C, (byte) 0x33, (byte) 0x2F, (byte) 0xB5, (byte) 0xD5, (byte) 0xB3}; //TODO !!!Hash of sector public key!!!!! Should be read and calculated directly from key file
+//			byte[] sectorID = new byte[] { (byte) 0xF1, (byte) 0xFB, (byte) 0xB3, (byte) 0x0A, (byte) 0xE3, (byte) 0xA9, (byte) 0xBF, (byte) 0x2B, (byte) 0x34, (byte) 0x05, (byte) 0x4B, (byte) 0x5E, (byte) 0x1C, (byte) 0x9A, (byte) 0x3F, (byte) 0x9D, (byte) 0x07, (byte) 0xAB, (byte) 0x32, (byte) 0xFB, (byte) 0x2F, (byte) 0x8F, (byte) 0x95, (byte) 0x9A, (byte) 0x77, (byte) 0x95, (byte) 0x3C, (byte) 0x33, (byte) 0x2F, (byte) 0xB5, (byte) 0xD5, (byte) 0xB3}; //TODO Hash of sector public key! Should be read and calculated directly from key file
 //			byte[] sectorID = new byte[] { (byte) 0xFC, (byte) 0xB9, (byte) 0xA9, (byte) 0x0C, (byte) 0xC1, (byte) 0xE6, (byte) 0x75, (byte) 0xD8, (byte) 0x3E, (byte) 0x87, (byte) 0x44, (byte) 0x30, (byte) 0x97, (byte) 0x2A, (byte) 0x8B, (byte) 0xDE, (byte) 0xA0, (byte) 0xC5, (byte) 0xB0, (byte) 0xB9, (byte) 0xFB, (byte) 0x3A, (byte) 0x4F, (byte) 0x67, (byte) 0x29, (byte) 0x01, (byte) 0xEF, (byte) 0xDC, (byte) 0xD6, (byte) 0xC6, (byte) 0x99, (byte) 0x54};
 //			byte[] sectorID = new byte[] { (byte) 0xD7, (byte) 0x5D, (byte) 0xD8, (byte) 0x0D, (byte) 0x69, (byte) 0xB1, (byte) 0x8C, (byte) 0x7B, (byte) 0xAC, (byte) 0xBD, (byte) 0x40, (byte) 0x2A, (byte) 0x62, (byte) 0x00, (byte) 0xBA, (byte) 0x29, (byte) 0x8D, (byte) 0xD5, (byte) 0x74, (byte) 0x2F, (byte) 0x59, (byte) 0x69, (byte) 0x79, (byte) 0xD1, (byte) 0xB1, (byte) 0x2D, (byte) 0x71, (byte) 0x0C, (byte) 0x37, (byte) 0xE1, (byte) 0xC2, (byte) 0xEB};
 			
@@ -220,7 +175,7 @@ public class TestCardSecurity
 	{
 		try
 		{
-			byte[] cardSecurityBytes = DatatypeConverter.parseHexBinary(EidCardFiles.EFCARDSECURITY.getContent());
+			byte[] cardSecurityBytes = DatatypeConverter.parseHexBinary(EidCardFiles.EFCARDSECURITY_TEST.getContent());
 			byte[] siBytes = getSecurityInfoBytes(cardSecurityBytes);
 //			LinkedList<X509Certificate> certsFromOrig = getCertificates(cardSecurityBytes);
 //			byte[] siOriginalBytes = DatatypeConverter.parseHexBinary("318201723012060A04007F0007020204020202010202010D300D060804007F00070202020201023017060A04007F0007020205020330090201010201010101003019060904007F000702020502300C060704007F0007010202010D3017060A04007F0007020205020330090201010201020101FF3012060A04007F00070202030202020102020129301C060904007F000702020302300C060704007F0007010202010D0201293062060904007F0007020201023052300C060704007F0007010202010D0342000419D4B7447788B0E1993DB35500999627E739A4E5E35F02D8FB07D6122E76567F17758D7A3AA6943EF23E5E2909B3E8B31BFAA4544C2CBF1FB487F31FF239C8F8020129303E060804007F000702020831323012060A04007F0007020203020202010202012D301C060904007F000702020302300C060704007F0007010202010D02012D302A060804007F0007020206161E687474703A2F2F6273692E62756E642E64652F6369662F6E70612E786D6C");
@@ -234,7 +189,7 @@ public class TestCardSecurity
 
 			byte[] efCardSecurityBytes = generateEfCardSecurity(privKey, signCert, siBytes);
 			
-			System.out.println("EFCARDSECURITY orig: " + EidCardFiles.EFCARDSECURITY.getContent());
+			System.out.println("EFCARDSECURITY orig: " + EidCardFiles.EFCARDSECURITY_TEST.getContent());
 			System.out.println("securityInfoBytes  : " + DatatypeConverter.printHexBinary(siBytes));
 //			System.out.println("signCert           : " + DatatypeConverter.printHexBinary(writeFile("signCert.cer", signCert.getEncoded())));
 //			System.out.println("privKey            : " + DatatypeConverter.printHexBinary(writeFile("privKey.der", privKey.getEncoded())));
@@ -556,7 +511,7 @@ public class TestCardSecurity
 			certList.add(signCert);
 			Store certs = new JcaCertStore(certList);
 
-			ContentSigner signer = new JcaContentSignerBuilder(signatureAlgorithm).setProvider("BC").build(privKey);
+			ContentSigner signer = new JcaContentSignerBuilder(signatureAlgorithm).setProvider(new BouncyCastleProvider()).build(privKey);
 			DefaultSignedAttributeTableGenerator signedAttrGen = new DefaultSignedAttributeTableGenerator() {
 
 				@Override
@@ -578,7 +533,7 @@ public class TestCardSecurity
 
 			CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
 			gen.addSignerInfoGenerator(
-					new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build()).setSignedAttributeGenerator(signedAttrGen).build(signer, signCert));
+					new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider(new BouncyCastleProvider()).build()).setSignedAttributeGenerator(signedAttrGen).build(signer, signCert));
 			gen.addCertificates(certs);
 
 			CMSSignedData sigData = gen.generate(new CMSProcessableByteArray(contentType, contentBytes), true);
@@ -601,7 +556,7 @@ public class TestCardSecurity
 				if(sdp.getType() == Table_Type.ECP)
 				{
 					ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(sdp.getBcName());
-					KeyPairGenerator g = KeyPairGenerator.getInstance("EC", "BC");
+					KeyPairGenerator g = KeyPairGenerator.getInstance("EC", new BouncyCastleProvider());
 					g.initialize(ecSpec, new SecureRandom());
 					return g.generateKeyPair();
 				}
@@ -609,13 +564,13 @@ public class TestCardSecurity
 				{
 					DHParameters dhParameters = BouncyCastleTlsHelper.convertDHStandardGroupsStringToDHParametersObject(sdp.getBcName());
 					DHParameterSpec dhSpec = new DHParameterSpec(dhParameters.getP(), dhParameters.getG(), dhParameters.getL());
-					KeyPairGenerator g = KeyPairGenerator.getInstance("DH", "BC");
+					KeyPairGenerator g = KeyPairGenerator.getInstance("DH", new BouncyCastleProvider());
 					g.initialize(dhSpec, new SecureRandom());
 					return g.generateKeyPair();
 				}
 			}
 		}
-		catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException e)
+		catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e)
 		{
 			e.printStackTrace();
 		}
@@ -627,12 +582,12 @@ public class TestCardSecurity
 		try
 		{
 			ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("brainpoolP224r1");
-			KeyPairGenerator g = KeyPairGenerator.getInstance("ECDSA", "BC");
+			KeyPairGenerator g = KeyPairGenerator.getInstance("ECDSA", new BouncyCastleProvider());
 			g.initialize(ecSpec, new SecureRandom());
 			KeyPair pair = g.generateKeyPair();
 			return pair.getPrivate();
 		}
-		catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException e)
+		catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e)
 		{
 			e.printStackTrace();
 		}
@@ -689,8 +644,6 @@ public class TestCardSecurity
 	 * 
 	 * @see com.secunet.eidserver.testbed.common.constants.GeneralConstants for valid parameter values
 	 *
-	 * @param protocol
-	 *            Protocol identifier
 	 * @param alg
 	 *            Algorithm identifier
 	 * @param name

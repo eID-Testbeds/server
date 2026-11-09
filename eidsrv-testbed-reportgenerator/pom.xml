@@ -4,21 +4,25 @@
 	<parent>
 		<groupId>com.secunet</groupId>
 		<artifactId>eidserver-testbed</artifactId>
-		<version>${project.version}</version>
+		<version>${revision}</version>
 	</parent>
 	<name>eID-Server Testbed ReportGenerator</name>
-	<artifactId>eidsrv-testbed-reportgenerator</artifactId>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+    <artifactId>eidsrv-testbed-reportgenerator</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-common</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.secunet</groupId>
 			<artifactId>eidsrv-testbed-testing</artifactId>
-			<version>${project.version}</version>
+			<version>${revision}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -55,16 +59,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ejb-plugin</artifactId>
+				<version>3.2.1</version>
 				<configuration>
 					<ejbVersion>3.1</ejbVersion>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-						</manifest>
-						<manifestEntries>
-							<Class-Path>lib/jasperreports-6.2.0.jar</Class-Path>
-						</manifestEntries>
-					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

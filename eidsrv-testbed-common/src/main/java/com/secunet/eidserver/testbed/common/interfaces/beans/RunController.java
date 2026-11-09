@@ -20,8 +20,6 @@ public interface RunController
 
 	public List<String> getTestCaseNames(final String canidateId);
 
-	public void startTestCasesForProfile(String profileName, List<String> testCaseNames) throws Exception;
-
 	/**
 	 * 
 	 * 

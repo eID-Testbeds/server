@@ -16,15 +16,15 @@ import com.secunet.eidserver.testbed.web.ui.comp.CollectionComponentField;
 import com.secunet.eidserver.testbed.web.ui.comp.ExceptionWindow;
 import com.secunet.eidserver.testbed.web.ui.core.TestbedTheme;
 import com.secunet.eidserver.testbed.web.ui.util.CommitHandler;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Field;
+import com.vaadin.v7.ui.Field;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 public class StepTokenEditor extends Window

@@ -1,56 +1,15 @@
 package com.secunet.eidserver.testbed.web.ui.view.candidate;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.vaadin.viritin.ListContainer;
-
 import com.secunet.eidserver.testbed.common.constants.Bitlengths;
 import com.secunet.eidserver.testbed.common.exceptions.InvalidObjectException;
-import com.secunet.eidserver.testbed.common.ics.IcsCa;
-import com.secunet.eidserver.testbed.common.ics.IcsCaDomainparams;
-import com.secunet.eidserver.testbed.common.ics.IcsEllipticcurve;
-import com.secunet.eidserver.testbed.common.ics.IcsMandatoryprofile;
-import com.secunet.eidserver.testbed.common.ics.IcsOptionalprofile;
-import com.secunet.eidserver.testbed.common.ics.IcsTlsCiphersuite;
-import com.secunet.eidserver.testbed.common.ics.IcsTlsSignaturealgorithms;
-import com.secunet.eidserver.testbed.common.ics.IcsTlsVersion;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionContentUri;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionKeyAgreementUri;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionKeyAgreementWrappingUri;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsecEncryptionKeyTransportUri;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsecSignatureCanonicalization;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsecSignatureDigest;
-import com.secunet.eidserver.testbed.common.ics.IcsXmlsecSignatureUri;
+import com.secunet.eidserver.testbed.common.ics.*;
 import com.secunet.eidserver.testbed.common.interfaces.beans.CandidateController;
 import com.secunet.eidserver.testbed.common.interfaces.beans.CertificateController;
 import com.secunet.eidserver.testbed.common.interfaces.dao.TestCandidateDAO;
-import com.secunet.eidserver.testbed.common.interfaces.dao.TlsDAO;
 import com.secunet.eidserver.testbed.common.interfaces.dao.XmlEncryptionKeyAgreementDAO;
 import com.secunet.eidserver.testbed.common.interfaces.dao.XmlEncryptionKeyTransportDAO;
-import com.secunet.eidserver.testbed.common.interfaces.entities.CertificateX509;
+import com.secunet.eidserver.testbed.common.interfaces.dao.XmlSignatureAlgorithmDAO;
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
-import com.secunet.eidserver.testbed.common.interfaces.entities.Tls;
 import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyAgreement;
 import com.secunet.eidserver.testbed.common.interfaces.entities.XmlEncryptionKeyTransport;
 import com.secunet.eidserver.testbed.common.interfaces.entities.XmlSignature;
@@ -59,23 +18,13 @@ import com.secunet.eidserver.testbed.web.i18n.I18NHandler;
 import com.secunet.eidserver.testbed.web.i18n.I18NText;
 import com.secunet.eidserver.testbed.web.i18n.Icon;
 import com.secunet.eidserver.testbed.web.nav.TestBedView;
-import com.secunet.eidserver.testbed.web.ui.comp.AbstractTestbedView;
-import com.secunet.eidserver.testbed.web.ui.comp.CollectionComponentField;
-import com.secunet.eidserver.testbed.web.ui.comp.ExceptionWindow;
-import com.secunet.eidserver.testbed.web.ui.comp.SortedMultiValueListSelection;
-import com.secunet.eidserver.testbed.web.ui.comp.StringToIntegerParameterConverter;
-import com.secunet.eidserver.testbed.web.ui.comp.TogglePanelLayout;
+import com.secunet.eidserver.testbed.web.ui.comp.*;
 import com.secunet.eidserver.testbed.web.ui.core.TestbedTheme;
 import com.secunet.eidserver.testbed.web.ui.util.CommitHandler;
 import com.secunet.eidserver.testbed.web.ui.util.NavigatorHelper;
 import com.secunet.eidserver.testbed.web.ui.util.ParameterHandler;
+import com.vaadin.annotations.PropertyId;
 import com.vaadin.cdi.CDIView;
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.fieldgroup.PropertyId;
-import com.vaadin.data.util.converter.Converter;
-import com.vaadin.event.FieldEvents.TextChangeEvent;
-import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.event.UIEvents.PollEvent;
 import com.vaadin.event.UIEvents.PollListener;
 import com.vaadin.navigator.View;
@@ -87,21 +36,41 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.UserError;
 import com.vaadin.shared.ui.MarginInfo;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Field;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.ProgressBar;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.TwinColSelect;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.Upload;
+import com.vaadin.ui.*;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.data.util.converter.Converter;
+import com.vaadin.v7.event.FieldEvents.TextChangeEvent;
+import com.vaadin.v7.event.FieldEvents.TextChangeListener;
+import com.vaadin.v7.ui.CheckBox;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.ProgressBar;
+import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.TwinColSelect;
+import com.vaadin.v7.ui.Upload;
+import com.vaadin.v7.ui.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.vaadin.viritinv7.ListContainer;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.Serial;
+import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+@SuppressWarnings("deprecation")
 @CDIView("candidate")
 public class TestCandidateView extends AbstractTestbedView implements View, PropertyChangeListener
 {
@@ -109,9 +78,6 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 
 	@EJB
 	private TestCandidateDAO testCandidateDAO;
-
-	@EJB
-	private TlsDAO tlsDAO;
 
 	@EJB
 	private XmlEncryptionKeyAgreementDAO encKeyAgreeDAO;
@@ -125,15 +91,18 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 	@EJB
 	private CertificateController certificateController;
 
+	@EJB
+	private XmlSignatureAlgorithmDAO xmlSignatureAlgorithmDAO;
+
 	/** generated */
-	protected static final long serialVersionUID = -2505308085488410482L;
+	@Serial
+	private static final long serialVersionUID = -2505308085488410482L;
 
 	protected TestCandidateModel candidateViewModel;
 	protected BeanFieldGroup<TestCandidate> fieldGroup;
 
 	// fields: add
 	protected Upload uploadICS;
-
 	// fields: edit/add
 	@PropertyId("profileName")
 	protected TextField profileName;
@@ -167,28 +136,25 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 	protected TwinColSelect mandatoryProfiles;
 	@PropertyId("optionalProfiles")
 	protected TwinColSelect optionalProfiles;
-	@PropertyId("xmlEncryptionAlgorithms")
-	protected TwinColSelect xmlEncryptionAlgorithms;
+	@PropertyId("xmlEncryptionAlgorithmsSaml")
+	protected TwinColSelect xmlEncryptionAlgorithmsSaml;
+	@PropertyId("xmlEncryptionAlgorithmsEidas")
+	protected TwinColSelect xmlEncryptionAlgorithmsEidas;
 	@PropertyId("chipAuthenticationAlgorithms")
 	protected TwinColSelect chipAuthIcsAlgos;
 	@PropertyId("chipAuthenticationDomainParameters")
 	protected TwinColSelect chipAuthIcsCADomainParas;
 
 	// self handling fields
-	protected CollectionComponentField<Set<Tls>, Tls> pskTLSCollCompField;
-	protected CollectionComponentField<Set<Tls>, Tls> tlsEcardApiAttachedCollCompField;
-	protected CollectionComponentField<Set<Tls>, Tls> tlsEidInterfaceCollCompField;
-	protected CollectionComponentField<Set<XmlEncryptionKeyAgreement>, XmlEncryptionKeyAgreement> xmlkeyAgreesField;
-	protected CollectionComponentField<Set<XmlEncryptionKeyTransport>, XmlEncryptionKeyTransport> xmlkeyTransField;
-	protected CollectionComponentField<Set<Tls>, Tls> tlsSamlCollCompField;
+	protected CollectionComponentField<Set<XmlEncryptionKeyAgreement>, XmlEncryptionKeyAgreement> xmlkeyAgreesFieldSaml;
+	protected CollectionComponentField<Set<XmlEncryptionKeyTransport>, XmlEncryptionKeyTransport> xmlkeyTransFieldSaml;
+
+	protected CollectionComponentField<Set<XmlEncryptionKeyAgreement>, XmlEncryptionKeyAgreement> xmlkeyAgreesFieldEidas;
+	protected CollectionComponentField<Set<XmlEncryptionKeyTransport>, XmlEncryptionKeyTransport> xmlkeyTransFieldEidas;
 
 	protected HorizontalLayout headerLayout;
 	protected Button submitButton;
 	protected Button submitTopButton;
-
-	protected Set<XmlSignature> xmlSignatureAlgorithms;
-	protected Set<CertificateX509> x509Certificates;
-	// not needed Set<Report> reports;
 
 	// groupings:
 	protected TogglePanelLayout icsPanel;
@@ -196,13 +162,11 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 	protected TogglePanelLayout swPanel;
 	protected TogglePanelLayout serverAdressPanel;
 	protected TogglePanelLayout profilesPanel;
-	protected TogglePanelLayout pskPanel;
-	protected TogglePanelLayout attachedServerPanel;
-	protected TogglePanelLayout tlsEIDPanel;
 	protected TogglePanelLayout xmlSignEIDPanel;
-	protected TogglePanelLayout tlsSamlPanel;
 	protected TogglePanelLayout xmlSignSamlPanel;
+	protected TogglePanelLayout xmlSignEidasPanel;
 	protected TogglePanelLayout xmlEncrySamlPanel;
+	protected TogglePanelLayout xmlEncryEidasPanel;
 	protected TogglePanelLayout chipAuthPanel;
 
 	protected List<FormLayout> forms = new ArrayList<>();
@@ -299,7 +263,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 			}
 			else
 			{
-				showMainForms(create, model);
+				showMainForms(false, model);
 			}
 		}
 	}
@@ -320,7 +284,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		Button submitButton = new Button(create ? I18NHandler.getText(I18NText.Button_Add) : I18NHandler.getText(I18NText.Button_Edit), e -> submit(model.getTestCandidate()));
 		submitButton.setIcon(Icon.SAVE.getIcon());
 		submitButton.addStyleName(TestbedTheme.BUTTON_PRIMARY);
-		if (profileName == null || null == profileName.getValue() || profileName.getValue().length() == 0)
+		if (profileName == null || null == profileName.getValue() || profileName.getValue().isEmpty())
 			submitButton.setEnabled(false);
 
 		return submitButton;
@@ -358,17 +322,14 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		}
 	}
 
-	protected void navigateTo(boolean editMode, String id)
+	protected void navigateTo(String id)
 	{
-		if (editMode)
-		{
-			List<String> params = new ArrayList<>();
-			params.add("edit");
-			params.add(id);
-			String navString = NavigatorHelper.getNavigationString(TestBedView.CANDIDATE, params);
-			UI.getCurrent().getNavigator().navigateTo(navString);
-		}
-	}
+        List<String> params = new ArrayList<>();
+        params.add("edit");
+        params.add(id);
+        String navString = NavigatorHelper.getNavigationString(TestBedView.CANDIDATE, params);
+        UI.getCurrent().getNavigator().navigateTo(navString);
+    }
 
 	public void showMainForms(boolean create, TestCandidateModel model)
 	{
@@ -377,17 +338,15 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		generatePanelMainAttributes();
 		generatePanelServerAdresses(create);
 		generatePanelProfiles();
-		generatePanelPSK(model);
-		generatePanelAttachedServer(model);
-		generatePanelTLSEID();
 		generatePanelXMLSignEID();
-		generatePanelTLSSaml();
+		generatePanelXMLSignEidas();
+		generatePanelXMLEncrEidas();
 		generatePanelXMLSignSaml();
 		generatePanelXMLEncrSaml();
 		generatePanelChipAuth();
 
 		// now match the bean to the fields
-		fieldGroup = new BeanFieldGroup<TestCandidate>(TestCandidate.class);
+		fieldGroup = new BeanFieldGroup<>(TestCandidate.class);
 		fieldGroup.bindMemberFields(this);
 		fieldGroup.setItemDataSource(model.getTestCandidate());
 
@@ -421,22 +380,43 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 	public void generatePanelXMLEncrSaml()
 	{
 		List<IcsXmlsecEncryptionContentUri> allXmlEncryptionAlgorithm = Arrays.asList(IcsXmlsecEncryptionContentUri.values());
-		xmlEncryptionAlgorithms = generateTwinColSelect(I18NHandler.getText(I18NText.TestCandidate_xmlEncryptionAlgorithm), allXmlEncryptionAlgorithm);
-		allXmlEncryptionAlgorithm.forEach(b -> xmlEncryptionAlgorithms.setItemCaption(b, I18NHandler.getText(b)));
+		xmlEncryptionAlgorithmsSaml = generateTwinColSelect(I18NHandler.getText(I18NText.TestCandidate_xmlEncryptionAlgorithm), allXmlEncryptionAlgorithm);
+		allXmlEncryptionAlgorithm.forEach(b -> xmlEncryptionAlgorithmsSaml.setItemCaption(b, I18NHandler.getText(b)));
 
 		// XmlEncryptionKeyAgreement
-		Set<XmlEncryptionKeyAgreement> actualDataEncKeyAgr = candidateViewModel.getTestCandidate().getXmlKeyAgreement();
-		String captionKeyAgr = I18NHandler.getText(I18NText.View_TestCandidate_Panel_xmlSignSaml);
-		xmlkeyAgreesField = generateXmlEncryKeyAgreementComponentField(actualDataEncKeyAgr, captionKeyAgr);
+		Set<XmlEncryptionKeyAgreement> actualDataEncKeyAgr = candidateViewModel.getTestCandidate().getXmlKeyAgreementSaml();
+		String captionKeyAgr = I18NHandler.getText(I18NText.View_TestCandidate_Panel_xmlSignSaml_KeyAgr);
+		xmlkeyAgreesFieldSaml = generateXmlEncryKeyAgreementComponentField(actualDataEncKeyAgr, captionKeyAgr);
 
 		// XmlEncryptionKeyTransport
-		Set<XmlEncryptionKeyTransport> actualDataEncKeyTrans = candidateViewModel.getTestCandidate().getXmlKeyTransport();
-		String captionKeyTrans = I18NHandler.getText(I18NText.View_TestCandidate_Panel_xmlSignSaml);
-		xmlkeyTransField = generateXmlEncryKeyTransportComponentField(actualDataEncKeyTrans, captionKeyTrans);
+		Set<XmlEncryptionKeyTransport> actualDataEncKeyTrans = candidateViewModel.getTestCandidate().getXmlKeyTransportSaml();
+		String captionKeyTrans = I18NHandler.getText(I18NText.View_TestCandidate_Panel_xmlSignSaml_KeyTrans);
+		xmlkeyTransFieldSaml = generateXmlEncryKeyTransportComponentField(actualDataEncKeyTrans, captionKeyTrans);
 
-		FormLayout form = generateForm(xmlEncryptionAlgorithms, xmlkeyAgreesField, xmlkeyTransField);
+		FormLayout form = generateForm(xmlEncryptionAlgorithmsSaml, xmlkeyAgreesFieldSaml, xmlkeyTransFieldSaml);
 		xmlEncrySamlPanel = new TogglePanelLayout(I18NHandler.getText(I18NText.View_TestCandidate_Panel_xmlEncrySamlPanel), null, form, false, 100, Unit.PERCENTAGE);
 		addComponent(xmlEncrySamlPanel);
+	}
+
+	public void generatePanelXMLEncrEidas()
+	{
+		List<IcsXmlsecEncryptionContentUri> allXmlEncryptionAlgorithm = Arrays.asList(IcsXmlsecEncryptionContentUri.values());
+		xmlEncryptionAlgorithmsEidas = generateTwinColSelect(I18NHandler.getText(I18NText.TestCandidate_xmlEncryptionAlgorithm), allXmlEncryptionAlgorithm);
+		allXmlEncryptionAlgorithm.forEach(b -> xmlEncryptionAlgorithmsEidas.setItemCaption(b, I18NHandler.getText(b)));
+
+		// XmlEncryptionKeyAgreement
+		Set<XmlEncryptionKeyAgreement> actualDataEncKeyAgr = candidateViewModel.getTestCandidate().getXmlKeyAgreementEidas();
+		String captionKeyAgr = I18NHandler.getText(I18NText.View_TestCandidate_Panel_xmlSignSaml_KeyAgr);
+		xmlkeyAgreesFieldEidas = generateXmlEncryKeyAgreementComponentField(actualDataEncKeyAgr, captionKeyAgr);
+
+		// XmlEncryptionKeyTransport
+		Set<XmlEncryptionKeyTransport> actualDataEncKeyTrans = candidateViewModel.getTestCandidate().getXmlKeyTransportEidas();
+		String captionKeyTrans = I18NHandler.getText(I18NText.View_TestCandidate_Panel_xmlSignSaml_KeyTrans);
+		xmlkeyTransFieldEidas = generateXmlEncryKeyTransportComponentField(actualDataEncKeyTrans, captionKeyTrans);
+
+		FormLayout form = generateForm(xmlEncryptionAlgorithmsEidas, xmlkeyAgreesFieldEidas, xmlkeyTransFieldEidas);
+		xmlEncryEidasPanel = new TogglePanelLayout(I18NHandler.getText(I18NText.View_TestCandidate_Panel_xmlEncryEidasPanel), null, form, false, 100, Unit.PERCENTAGE);
+		addComponent(xmlEncryEidasPanel);
 	}
 
 
@@ -451,16 +431,15 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		addComponent(xmlSignSamlPanel);
 	}
 
-
-	public void generatePanelTLSSaml()
+	public void generatePanelXMLSignEidas()
 	{
-		Set<Tls> actualData = candidateViewModel.getTestCandidate().getTlsSaml();
-		String caption = I18NHandler.getText(I18NText.View_TestCandidate_Panel_tlsSaml);
+		Set<XmlSignature> actualData = candidateViewModel.getTestCandidate().getXmlSignatureAlgorithmsEidas();
+		String caption = I18NHandler.getText(I18NText.View_TestCandidate_Panel_xmlSignEidas);
 
-		tlsSamlCollCompField = generateTLSField(actualData, caption);
+		CollectionComponentField<Set<XmlSignature>, XmlSignature> collCompField = generateXMLSignatureEditPanel(actualData, caption);
 
-		tlsSamlPanel = new TogglePanelLayout(I18NHandler.getText(I18NText.View_TestCandidate_Panel_tlsSaml), null, tlsSamlCollCompField, false, 100, Unit.PERCENTAGE);
-		addComponent(tlsSamlPanel);
+		xmlSignEidasPanel = new TogglePanelLayout(I18NHandler.getText(I18NText.View_TestCandidate_Panel_xmlSignEidas), null, collCompField, false, 100, Unit.PERCENTAGE);
+		addComponent(xmlSignEidasPanel);
 	}
 
 
@@ -473,78 +452,6 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 
 		xmlSignEIDPanel = new TogglePanelLayout(I18NHandler.getText(I18NText.View_TestCandidate_Panel_XmlSignEID), null, collCompField, false, 100, Unit.PERCENTAGE);
 		addComponent(xmlSignEIDPanel);
-	}
-
-
-	public void generatePanelTLSEID()
-	{
-		Set<Tls> actualData = candidateViewModel.getTestCandidate().getTlsEidInterface();
-		String caption = I18NHandler.getText(I18NText.View_TestCandidate_Panel_tlsEID);
-
-		tlsEidInterfaceCollCompField = generateTLSField(actualData, caption);
-
-		tlsEIDPanel = new TogglePanelLayout(I18NHandler.getText(I18NText.View_TestCandidate_Panel_tlsEID), null, tlsEidInterfaceCollCompField, false, 100, Unit.PERCENTAGE);
-		addComponent(tlsEIDPanel);
-	}
-
-
-	public void generatePanelPSK(TestCandidateModel model)
-	{
-		Set<Tls> actualData = model.getTestCandidate().getTlsEcardApiPsk();
-		String caption = I18NHandler.getText(I18NText.View_TestCandidate_Panel_pskeCardAPI);
-
-		pskTLSCollCompField = generateTLSField(actualData, caption);
-		pskTLSCollCompField.setCaptionConverter(o -> I18NHandler.getText(o.getTlsVersion()));
-
-		pskPanel = new TogglePanelLayout(I18NHandler.getText(I18NText.View_TestCandidate_Panel_pskeCardAPI), null, pskTLSCollCompField, false, 100, Unit.PERCENTAGE);
-
-		Button collButton = new Button(null, e -> pskTLSCollCompField.hideEditor());
-		collButton.setIcon(FontAwesome.CARET_UP);
-		collButton.addStyleName(TestbedTheme.BUTTON_BORDERLESS);
-		pskPanel.setExtraHeaderContent(Arrays.asList(collButton));
-
-		addComponent(pskPanel);
-	}
-
-	public void generatePanelAttachedServer(TestCandidateModel model)
-	{
-		Set<IcsTlsCiphersuite> allTlsCiphersuites = new HashSet<>(Arrays.asList(IcsTlsCiphersuite.values()));
-		SortedMultiValueListSelection<IcsTlsCiphersuite> tlsCiphersuites = generateSortedMultiValueList(allTlsCiphersuites, I18NHandler.getText(I18NText.TLS_tlsCiphersuites));
-		tlsCiphersuites.setCaptionConverter(ec -> ec.name());
-
-		List<IcsEllipticcurve> allEllipticCurves = Arrays.asList(IcsEllipticcurve.values());
-		TwinColSelect ellipticCurves = generateTwinColSelect(I18NHandler.getText(I18NText.TLS_ellipticCurves), allEllipticCurves);
-		allEllipticCurves.forEach(ec -> ellipticCurves.setItemCaption(ec, I18NHandler.getText(ec)));
-
-		List<IcsTlsSignaturealgorithms> allSignatureAlgorithms = Arrays.asList(IcsTlsSignaturealgorithms.values());
-		TwinColSelect signatureAlgorithms = generateTwinColSelect(I18NHandler.getText(I18NText.TLS_signatureAlgorithm), allSignatureAlgorithms);
-		allSignatureAlgorithms.forEach(sa -> signatureAlgorithms.setItemCaption(sa, I18NHandler.getText(sa)));
-
-		List<IcsTlsVersion> tlsversions = Arrays.asList(IcsTlsVersion.values());
-		ComboBox tlsVersion = new ComboBox(I18NHandler.getText(I18NText.TLS_TlsVersion), tlsversions);
-		tlsversions.forEach(b -> tlsVersion.setItemCaption(b, I18NHandler.getText(b)));
-
-		FormLayout form = generateForm(tlsCiphersuites, ellipticCurves, signatureAlgorithms, tlsVersion);
-
-		BeanFieldGroup<Tls> fieldGroupTls = new BeanFieldGroup<Tls>(Tls.class);
-		fieldGroupTls.bind(tlsCiphersuites, "tlsCiphersuites");
-		fieldGroupTls.bind(ellipticCurves, "ellipticCurves");
-		fieldGroupTls.bind(signatureAlgorithms, "signatureAlgorithms");
-		fieldGroupTls.bind(tlsVersion, "tlsVersion");
-
-		Set<Tls> actualData = model.getTestCandidate().getTlsEcardApiAttached();
-		tlsEcardApiAttachedCollCompField = new CollectionComponentField<>(I18NHandler.getText(I18NText.View_TestCandidate_Panel_AttachedServer), actualData, null, form, fieldGroupTls, Tls.class,
-				tlsDAO);
-		tlsEcardApiAttachedCollCompField.setCaptionConverter(o -> I18NHandler.getText(o.getTlsVersion()));
-
-		attachedServerPanel = new TogglePanelLayout(I18NHandler.getText(I18NText.View_TestCandidate_Panel_AttachedServer), null, tlsEcardApiAttachedCollCompField, false, 100, Unit.PERCENTAGE);
-
-		Button collButton = new Button(null, e -> tlsEcardApiAttachedCollCompField.hideEditor());
-		collButton.setIcon(FontAwesome.CARET_UP);
-		collButton.addStyleName(TestbedTheme.BUTTON_BORDERLESS);
-		attachedServerPanel.setExtraHeaderContent(Arrays.asList(collButton));
-
-		addComponent(attachedServerPanel);
 	}
 
 
@@ -586,6 +493,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 			certdownlButton.setDescription(I18NHandler.getText(I18NText.Button_Download));
 			certdownlButton.setIcon(FontAwesome.DOWNLOAD);
 			StreamResource streamResource = new StreamResource(new StreamSource() {
+				@Serial
 				private static final long serialVersionUID = -7308680845393515801L;
 
 				@Override
@@ -619,16 +527,14 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		profileName = generateTextField(I18NHandler.getText(I18NText.TestCandidate_profileName));
 
 		// NOTE: Due to Vaadin timing errors the UniqueCandidateProfileNameValidator cannot be used here
-		//
-		// profileName.addValidator(
-		// new UniqueCandidateProfileNameValidator(I18NHandler.getText(I18NText.Warning_ValueAlreadyTaken), candidateController, candidateViewModel.getTestCandidate().getProfileName()));
 		profileName.addTextChangeListener(new TextChangeListener() {
+			@Serial
 			private static final long serialVersionUID = -1484764597270042772L;
 
 			@Override
 			public void textChange(TextChangeEvent event)
 			{
-				if (event.getText().length() > 0)
+				if (!event.getText().isEmpty())
 				{
 					if (candidateController.isCandidateNameAlreadyTaken(event.getText()))
 					{
@@ -698,37 +604,15 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 
 		FormLayout form = generateForm(signatureAlgorithm, bitLengths, ellipticCurves, canonicalizationMethods, digestMethod);
 
-		BeanFieldGroup<XmlSignature> fieldGroup = new BeanFieldGroup<XmlSignature>(XmlSignature.class);
+		BeanFieldGroup<XmlSignature> fieldGroup = new BeanFieldGroup<>(XmlSignature.class);
 		fieldGroup.bind(signatureAlgorithm, "signatureAlgorithm");
 		fieldGroup.bind(bitLengths, "bitLengths");
 		fieldGroup.bind(ellipticCurves, "ellipticCurves");
 		fieldGroup.bind(canonicalizationMethods, "canonicalizationMethod");
 		fieldGroup.bind(digestMethod, "digestMethod");
 
-		CollectionComponentField<Set<XmlSignature>, XmlSignature> collCompField = new CollectionComponentField<>(caption, actualData, null, form, fieldGroup, XmlSignature.class, tlsDAO);
+		CollectionComponentField<Set<XmlSignature>, XmlSignature> collCompField = new CollectionComponentField<>(caption, actualData, null, form, fieldGroup, XmlSignature.class, xmlSignatureAlgorithmDAO);
 		collCompField.setCaptionConverter(o -> o.getSignatureAlgorithm().value());
-		return collCompField;
-	}
-
-	protected CollectionComponentField<Set<Tls>, Tls> generateTLSField(Set<Tls> actualData, String caption)
-	{
-		Set<IcsTlsCiphersuite> allTlsCiphersuites = new HashSet<>(Arrays.asList(IcsTlsCiphersuite.values()));
-		SortedMultiValueListSelection<IcsTlsCiphersuite> tlsCiphersuites = generateSortedMultiValueList(allTlsCiphersuites, I18NHandler.getText(I18NText.TLS_tlsCiphersuites));
-
-		List<IcsTlsVersion> tlsversions = Arrays.asList(IcsTlsVersion.values());
-		ComboBox tlsVersion = new ComboBox(I18NHandler.getText(I18NText.TLS_TlsVersion), tlsversions);
-		tlsversions.forEach(b -> tlsVersion.setItemCaption(b, I18NHandler.getText(b)));
-
-		FormLayout form = generateForm(tlsCiphersuites, tlsVersion);
-
-		BeanFieldGroup<Tls> fieldGroupTls = new BeanFieldGroup<Tls>(Tls.class);
-		fieldGroupTls.bind(tlsCiphersuites, "tlsCiphersuites");
-		fieldGroupTls.bind(tlsVersion, "tlsVersion");
-
-		CollectionComponentField<Set<Tls>, Tls> collCompField = new CollectionComponentField<>(caption, actualData, null, form, fieldGroupTls, Tls.class, tlsDAO);
-		collCompField.setCaptionConverter(o -> I18NHandler.getText(o.getTlsVersion()));
-		collCompField.selectFirst();
-
 		return collCompField;
 	}
 
@@ -736,7 +620,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 	{
 		// fields
 		List<IcsXmlsecEncryptionKeyAgreementUri> availableUris = Arrays.asList(IcsXmlsecEncryptionKeyAgreementUri.values());
-		ComboBox uriSelection = generateComboBox(I18NHandler.getText(I18NText.IcsXmlsecEncryptionKeyTransportUri), availableUris);
+		ComboBox uriSelection = generateComboBox(I18NHandler.getText(I18NText.IcsXmlsecEncryptionKeyAgreementUri), availableUris);
 		availableUris.forEach(b -> uriSelection.setItemCaption(b, I18NHandler.getText(b)));
 
 		List<IcsXmlsecEncryptionKeyAgreementWrappingUri> availableWrapperUris = Arrays.asList(IcsXmlsecEncryptionKeyAgreementWrappingUri.values());
@@ -756,7 +640,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		form.setMargin(false);
 
 		// binding
-		BeanFieldGroup<XmlEncryptionKeyAgreement> fieldGroup = new BeanFieldGroup<XmlEncryptionKeyAgreement>(XmlEncryptionKeyAgreement.class);
+		BeanFieldGroup<XmlEncryptionKeyAgreement> fieldGroup = new BeanFieldGroup<>(XmlEncryptionKeyAgreement.class);
 		fieldGroup.bind(uriSelection, "keyAgreementAlgorithm");
 		fieldGroup.bind(wrapperUriSelection, "keyWrappingAlgorithm");
 		fieldGroup.bind(bitLengths, "bitLengths");
@@ -765,7 +649,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		// actual field
 		CollectionComponentField<Set<XmlEncryptionKeyAgreement>, XmlEncryptionKeyAgreement> collCompField = new CollectionComponentField<>(caption, actualData, null, form, fieldGroup,
 				XmlEncryptionKeyAgreement.class, encKeyAgreeDAO);
-		collCompField.setCaptionConverter(o -> I18NHandler.getText(o));
+		collCompField.setCaptionConverter(I18NHandler::getText);
 		collCompField.setCaption(caption);
 		collCompField.selectFirst();
 
@@ -792,7 +676,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		form.setMargin(false);
 
 		// binding
-		BeanFieldGroup<XmlEncryptionKeyTransport> fieldGroup = new BeanFieldGroup<XmlEncryptionKeyTransport>(XmlEncryptionKeyTransport.class);
+		BeanFieldGroup<XmlEncryptionKeyTransport> fieldGroup = new BeanFieldGroup<>(XmlEncryptionKeyTransport.class);
 		fieldGroup.bind(uriSelection, "transportAlgorithm");
 		fieldGroup.bind(bitLengths, "bitLengths");
 		fieldGroup.bind(ellipticCurves, "ellipticCurves");
@@ -800,7 +684,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		// actual field
 		CollectionComponentField<Set<XmlEncryptionKeyTransport>, XmlEncryptionKeyTransport> collCompField = new CollectionComponentField<>(caption, actualData, null, form, fieldGroup,
 				XmlEncryptionKeyTransport.class, encKeyTransDAO);
-		collCompField.setCaptionConverter(o -> I18NHandler.getText(o));
+		collCompField.setCaptionConverter(I18NHandler::getText);
 		collCompField.setCaption(caption);
 		collCompField.selectFirst();
 
@@ -815,14 +699,6 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		comboBox.setRequired(true);
 
 		return comboBox;
-	}
-
-	protected <T> SortedMultiValueListSelection<T> generateSortedMultiValueList(Set<T> available, String caption)
-	{
-		SortedMultiValueListSelection<T> list = new SortedMultiValueListSelection<>(available, new ArrayList<>(), caption, null);
-		list.setWidth(100, Unit.PERCENTAGE);
-
-		return list;
 	}
 
 	protected TwinColSelect generateTwinColSelect(String caption, Collection<?> addAvailableData)
@@ -841,8 +717,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		layout.setSpacing(true);
 
 		if (fields != null)
-			for (int i = 0; i < fields.length; i++)
-				layout.addComponent(fields[i]);
+            for (Field<?> field : fields) layout.addComponent(field);
 
 		forms.add(layout);
 
@@ -863,9 +738,9 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 
 
 	/**
-	 * Save the given a new {@link TestCandidate} or modify an existing one.
+	 * Save the {@link TestCandidate}.
 	 * 
-	 * @param candidate
+	 * @param candidate Candidate to save
 	 */
 	protected void submit(TestCandidate candidate)
 	{
@@ -875,7 +750,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 			fieldGroup.commit();
 
 			candidateController.saveCandidate(candidate);
-			navigateTo(true, candidate.getId());
+			navigateTo(candidate.getId());
 			Notification.show("Success", "The test candidate has been saved successfully", Notification.Type.ASSISTIVE_NOTIFICATION);
 		}
 		catch (CommitException e)
@@ -918,6 +793,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 			setComponentAlignment(wait, Alignment.MIDDLE_CENTER);
 
 			final PollListener pollListener = new PollListener() {
+				@Serial
 				private static final long serialVersionUID = -672908335500609086L;
 
 				@Override
@@ -940,6 +816,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 				}
 			};
 			UI.getCurrent().getNavigator().addViewChangeListener(new ViewChangeListener() {
+				@Serial
 				private static final long serialVersionUID = -3966295373991132417L;
 
 				@Override
@@ -994,12 +871,13 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		}
 	}
 
-	private class StringToUrlConverter implements Converter<String, URL>
+	private static class StringToUrlConverter implements Converter<String, URL>
 	{
+		@Serial
 		private static final long serialVersionUID = 8308014496038127914L;
 
 		@Override
-		public URL convertToModel(String urlString, Class<? extends URL> targetType, Locale locale) throws com.vaadin.data.util.converter.Converter.ConversionException
+		public URL convertToModel(String urlString, Class<? extends URL> targetType, Locale locale) throws com.vaadin.v7.data.util.converter.Converter.ConversionException
 		{
 			if (!urlString.isEmpty())
 			{
@@ -1017,7 +895,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 		}
 
 		@Override
-		public String convertToPresentation(URL value, Class<? extends String> targetType, Locale locale) throws com.vaadin.data.util.converter.Converter.ConversionException
+		public String convertToPresentation(URL value, Class<? extends String> targetType, Locale locale) throws com.vaadin.v7.data.util.converter.Converter.ConversionException
 		{
 			if (value != null)
 			{
@@ -1025,7 +903,7 @@ public class TestCandidateView extends AbstractTestbedView implements View, Prop
 			}
 			else
 			{
-				return new String();
+				return "";
 			}
 		}
 

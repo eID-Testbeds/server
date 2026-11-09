@@ -6,7 +6,7 @@ import java.util.Locale;
 
 import com.secunet.eidserver.testbed.web.i18n.I18NHandler;
 import com.secunet.eidserver.testbed.web.i18n.I18NText;
-import com.vaadin.data.util.converter.StringToIntegerConverter;
+import com.vaadin.v7.data.util.converter.StringToIntegerConverter;
 
 /**
  * Parameter version for formating.

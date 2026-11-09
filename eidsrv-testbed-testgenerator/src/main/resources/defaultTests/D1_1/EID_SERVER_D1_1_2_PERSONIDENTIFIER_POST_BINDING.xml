@@ -26,7 +26,7 @@
 		<p:step>IN_EIDAS_RESPONSE_POST</p:step>
 	</p:steps>
 	<p:variables>
-		<!-- request the minimum dataset minus PersonIdentifier -->
+		<!-- request ATTRIBUTE_SET_EIDAS minus PersonIdentifier -->
 		<p:variable name="EIDAS_ATTR_FirstName">REQUIRED</p:variable>
 		<p:variable name="PERSONAL_FirstName">ERIKA</p:variable>
 		<p:variable name="USEOP_GIVENNAMES">REQUIRED</p:variable>
@@ -41,5 +41,20 @@
 		<p:variable name="PERSONAL_DateOfBirth">1964-08-12</p:variable>
 		<p:variable name="USEOP_DATEOFBIRTH">REQUIRED</p:variable>
 		<p:variable name="OABU_DATEOFBIRTH">ALLOWED</p:variable>
+
+		<p:variable name="EIDAS_ATTR_PlaceOfBirth">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_PlaceOfBirth">BERLIN</p:variable>
+		<p:variable name="USEOP_PLACEOFBIRTH">REQUIRED</p:variable>
+		<p:variable name="OABU_PLACEOFBIRTH">ALLOWED</p:variable>
+
+		<p:variable name="EIDAS_ATTR_BirthName">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_BirthName">ERIKA GABLER</p:variable>
+		<p:variable name="USEOP_BIRTHNAME">REQUIRED</p:variable>
+		<p:variable name="OABU_BIRTHNAME">ALLOWED</p:variable>
+
+		<p:variable name="EIDAS_ATTR_CurrentAddress">REQUIRED</p:variable>
+		<p:variable name="PERSONAL_CurrentAddress">Thoroughfare=HEIDESTRASSE%2017;PostName=EMDEN;AdminunitFirstline=D;PostCode=51147</p:variable>
+		<p:variable name="USEOP_PLACEOFRESIDENCE">REQUIRED</p:variable>
+		<p:variable name="OABU_PLACEOFRESIDENCE">ALLOWED</p:variable>
 	</p:variables>
 </p:testcaseDefinition>

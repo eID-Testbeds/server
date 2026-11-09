@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <p:testcaseDefinition xmlns:p="http://www.secunet.com"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.secunet.com ../xmlScheme/sn_TestcaseDefinition.xsd ">
+	xsi:schemaLocation="http://www.secunet.com ../../xmlScheme/sn_TestcaseDefinition.xsd ">
 	<p:name>EID_SERVER_C1_3_12</p:name>
 	<p:description>This test checks the behaviour of the eID-Server in case the DIDAuthenticateResponse_EAC2OutputType signalizes an error in the element "Result".</p:description>
 	<p:modulePath>
@@ -32,10 +32,9 @@
 		<p:step>OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_B</p:step>
 		<p:step>IN_DID_AUTHENTICATE_EACADDITIONALINPUTTYPE</p:step>
 		<p:step>OUT_DID_AUTHENTICATE_EAC_2_OUTPUTTYPE_A_INTERNALERROR</p:step>
-		<p:step>IN_START_PAOS_RESPONSE_CUSTOM_ERROR</p:step>
+		<p:step>IN_START_PAOS_RESPONSE_ANY_ERROR</p:step>
 	</p:steps>
 	<p:variables>
 		<p:variable name="REQUIREDCHAT">7F4C12060904007F00070301020253050000001007</p:variable> <!-- If present, the element "RequiredCHAT" contains the CHAT value for reading [ATTRIBUTE_SET1]. -->
-		<p:variable name="RES_MIN_IN_START_PAOS_RESPONSE_CUSTOM_ERROR">http://www.bsi.bund.de/ecard/api/1.1/resultminor/al/common#internalError</p:variable>
 	</p:variables>
 </p:testcaseDefinition>

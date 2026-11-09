@@ -1,14 +1,13 @@
 package com.secunet.eidserver.testbed.model.database.dao;
 
-import java.util.Collection;
-import java.util.Set;
-
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-
 import com.secunet.eidserver.testbed.common.interfaces.dao.TestCandidateDAO;
 import com.secunet.eidserver.testbed.common.interfaces.entities.TestCandidate;
 import com.secunet.eidserver.testbed.model.entities.TestCandidateEntity;
+
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+import java.util.Collection;
+import java.util.Set;
 
 @Stateless
 public class TestCandidateJPA extends GenericJPA<TestCandidate> implements TestCandidateDAO

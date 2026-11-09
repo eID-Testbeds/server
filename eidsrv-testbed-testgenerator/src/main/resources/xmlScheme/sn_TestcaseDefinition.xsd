@@ -53,7 +53,15 @@
 			<xs:enumeration value="EIDCARD_1" />
 			<xs:enumeration value="EIDCARD_2" />
 			<xs:enumeration value="EIDCARD_3" />
-			<xs:enumeration value="EIDCARD_4" />
+			<xs:enumeration value="EIDCARD_4_T_BRAINPOOLP256R1_CA_ECDH_AES_CBC_CMAC_128" />
+			<xs:enumeration value="EIDCARD_4_T_BRAINPOOLP256R1_CA_ECDH_AES_CBC_CMAC_192" />
+			<xs:enumeration value="EIDCARD_4_T_BRAINPOOLP256R1_CA_ECDH_AES_CBC_CMAC_256" />
+			<xs:enumeration value="EIDCARD_4_T_BRAINPOOLP384R1_CA_ECDH_AES_CBC_CMAC_128" />
+			<xs:enumeration value="EIDCARD_4_T_BRAINPOOLP384R1_CA_ECDH_AES_CBC_CMAC_192" />
+			<xs:enumeration value="EIDCARD_4_T_BRAINPOOLP384R1_CA_ECDH_AES_CBC_CMAC_256" />
+			<xs:enumeration value="EIDCARD_4_T_BRAINPOOLP512R1_CA_ECDH_AES_CBC_CMAC_128" />
+			<xs:enumeration value="EIDCARD_4_T_BRAINPOOLP512R1_CA_ECDH_AES_CBC_CMAC_192" />
+			<xs:enumeration value="EIDCARD_4_T_BRAINPOOLP512R1_CA_ECDH_AES_CBC_CMAC_256" />
 			<xs:enumeration value="EIDCARD_5" />
 			<xs:enumeration value="EIDCARD_6" />
 			<xs:enumeration value="EIDCARD_7" />
@@ -65,6 +73,8 @@
 			<xs:enumeration value="EIDCARD_12_2" />
 			<xs:enumeration value="EIDCARD_12_3" />
 			<xs:enumeration value="EIDCARD_13" />
+			<xs:enumeration value="EIDCARD_1_NOMAC" />
+			<xs:enumeration value="EIDCARD_1_INVMAC" />
 			<xs:enumeration value="EIDCARD_14" />
 			<xs:enumeration value="EIDCARD_15" />
 		</xs:restriction>
@@ -145,10 +155,10 @@
 			<xs:enumeration value="IN_START_PAOS_RESPONSE" />
 			<xs:enumeration value="IN_START_PAOS_RESPONSE_INTERNAL_ERROR" />
 			<xs:enumeration value="IN_START_PAOS_RESPONSE_CUSTOM_ERROR" />
+			<xs:enumeration value="IN_START_PAOS_RESPONSE_ANY_ERROR" />
 			<xs:enumeration value="IN_TC_TOKEN" />			<!-- The TC Token received from the SAML processor -->
 			<xs:enumeration value="IN_TC_TOKEN_ATTACHED" />			<!-- The TC Token of the attached eService -->
 			<xs:enumeration value="IN_TC_TOKEN_SAML_ATTACHED" />
-			<xs:enumeration value="IN_TLS" />
 			<xs:enumeration value="IN_TRANSMIT" />
 			<xs:enumeration value="IN_USEID_RESPONSE" />
 			<xs:enumeration value="IN_USEID_RESPONSE_NO_PSK" />
@@ -208,10 +218,6 @@
 			<xs:enumeration value="OUT_SAML_ASSERTION" />
 			<xs:enumeration value="OUT_START_PAOS" />
 			<xs:enumeration value="OUT_START_PAOS_DIDPROTOCOLS" />
-			<xs:enumeration value="OUT_TLS_ATTACHED" />
-			<xs:enumeration value="OUT_TLS_ECARDAPI" />
-			<xs:enumeration value="OUT_TLS_EID" />
-			<xs:enumeration value="OUT_TLS_SAML" />
 			<xs:enumeration value="OUT_TRANSMIT" />
 			<xs:enumeration value="OUT_TRANSMIT_INVALID_MAC" />
 			<xs:enumeration value="OUT_TRANSMIT_NO_APDUS" />
@@ -252,8 +258,6 @@
 			<xs:enumeration value="SAML" />
 			<xs:enumeration value="SAML_ATTACHED" />
 			<xs:enumeration value="ESER_ATTACHED" />
-			<xs:enumeration value="TLS_PSK" />
-			<xs:enumeration value="TLS_ETM" />
 			<xs:enumeration value="ALL_LINK" />
 			<xs:enumeration value="CONF_MAX_SE" />
 			<xs:enumeration value="CONF_TM_OUT" />
@@ -306,8 +310,6 @@
 					type="xs:boolean" />
 				<xs:element name="Schema" minOccurs="0" maxOccurs="1"
 					type="xs:string" />
-				<xs:element name="TlsStepToken" minOccurs="0" maxOccurs="unbounded"
-					type="stepToken" />
 				<xs:element name="HttpStepToken" minOccurs="0" maxOccurs="unbounded"
 					type="stepToken" />
 				<xs:element name="ProtocolStepToken" minOccurs="0"
@@ -324,11 +326,13 @@
 			<xs:element name="parentName" type="xs:string" minOccurs="0" />
 			<xs:element name="value" type="xs:string" minOccurs="0" />
 			<xs:element name="attributes" type="attributes" minOccurs="0" />
-			<xs:element name="maxNumberOfOccurences" type="xs:positiveInteger"
+			<xs:element name="maxNumberOfOccurences" type="xs:nonNegativeInteger"
 				minOccurs="0" /> <!-- Maximum number of times this element is allowed to occur. If this is 
 				not provided, the value is set to 1 -->
 			<xs:element name="isMandatory" type="xs:boolean"
 				minOccurs="1" />
+			<xs:element name="isReallyMandatory" type="xs:string"
+						minOccurs="0" /> <!-- In fact boolean, but needed for value replacement -->
 		</xs:sequence>
 		<xs:attribute name="negate" type="xs:boolean" default="false"/>
 	</xs:complexType>

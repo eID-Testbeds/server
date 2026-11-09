@@ -191,7 +191,6 @@ public enum I18NText
 
 	/** EN:'Candidate Name' */
 	TestCandidate_candidateName("TestCandidate.candidateName"),
-
 	/** EN:'eCard-API address (URL)' */
 	TestCandidate_ecardapiUrl("TestCandidate.ecardapiUrl"),
 
@@ -405,11 +404,23 @@ public enum I18NText
 	/** EN:'TLS (SAML-Profile)' */
 	View_TestCandidate_Panel_tlsSaml("View.TestCandidate.Panel.tlsSaml"),
 
-	/** EN:'XML encryption (SAML-Profile)' */
+	/** EN:'XML Encryption (SAML-Profile)' */
 	View_TestCandidate_Panel_xmlEncrySamlPanel("View.TestCandidate.Panel.xmlEncrySamlPanel"),
+
+	/** EN:'XML encryption (eIDAS-Profile)' */
+	View_TestCandidate_Panel_xmlEncryEidasPanel("View.TestCandidate.Panel.xmlEncryEidasPanel"),
 
 	/** EN:'XML Signature (SAML-Profile)' */
 	View_TestCandidate_Panel_xmlSignSaml("View.TestCandidate.Panel.xmlSignSaml"),
+
+	/** EN:'Key Agreement' */
+	View_TestCandidate_Panel_xmlSignSaml_KeyAgr("View.TestCandidate.Panel.xmlSignSaml.KeyAgr"),
+
+	/** EN:'Key Transport' */
+	View_TestCandidate_Panel_xmlSignSaml_KeyTrans("View.TestCandidate.Panel.xmlSignSaml.KeyTrans"),
+
+	/** EN:'XML Signature (eIDAS-Profile)' */
+	View_TestCandidate_Panel_xmlSignEidas("View.TestCandidate.Panel.xmlSignEidas"),
 
 	/** EN:'Upload ICS file' */
 	View_TestCandidate_UploadICSFile("View.TestCandidate.UploadICSFile"),

@@ -57,27 +57,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IcsCryptoTlsTypeEcAndSignature }
-     * 
-     */
-    public IcsCryptoTlsTypeEcAndSignature createIcsCryptoTlsTypeEcAndSignature() {
-        return new IcsCryptoTlsTypeEcAndSignature();
-    }
-
-    /**
      * Create an instance of {@link IcsProfiles }
      * 
      */
     public IcsProfiles createIcsProfiles() {
         return new IcsProfiles();
-    }
-
-    /**
-     * Create an instance of {@link IcsCryptoEcardapi }
-     * 
-     */
-    public IcsCryptoEcardapi createIcsCryptoEcardapi() {
-        return new IcsCryptoEcardapi();
     }
 
     /**
@@ -97,14 +81,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IcsCryptoTlsCiphersuitesType }
-     * 
-     */
-    public IcsCryptoTlsCiphersuitesType createIcsCryptoTlsCiphersuitesType() {
-        return new IcsCryptoTlsCiphersuitesType();
-    }
-
-    /**
      * Create an instance of {@link IcsXmlsignature }
      * 
      */
@@ -113,51 +89,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IcsCryptoEidinterfaceTlsTypeEcAndSignatureWithClientcertificates }
+     * Create an instance of {@link IcsXmlencryptionKeyagreementAlgorithms }
      * 
      */
-    public IcsCryptoEidinterfaceTlsTypeEcAndSignatureWithClientcertificates createIcsCryptoEidinterfaceTlsTypeEcAndSignatureWithClientcertificates() {
-        return new IcsCryptoEidinterfaceTlsTypeEcAndSignatureWithClientcertificates();
+    public IcsXmlencryptionKeyagreementAlgorithms createIcsCryptoSamlXmlencryptionKeyagreementAlgorithms() {
+        return new IcsXmlencryptionKeyagreementAlgorithms();
     }
 
     /**
-     * Create an instance of {@link IcsCryptoEidinterfaceTlsClientcertificatesType }
+     * Create an instance of {@link IcsXmlencryptionKeytransportAlgorithm }
      * 
      */
-    public IcsCryptoEidinterfaceTlsClientcertificatesType createIcsCryptoEidinterfaceTlsClientcertificatesType() {
-        return new IcsCryptoEidinterfaceTlsClientcertificatesType();
+    public IcsXmlencryptionKeytransportAlgorithm createIcsCryptoSamlXmlencryptionKeytransportAlgorithm() {
+        return new IcsXmlencryptionKeytransportAlgorithm();
     }
 
     /**
-     * Create an instance of {@link IcsCryptoSamlXmlencryptionKeyagreementAlgorithms }
+     * Create an instance of {@link IcsXmlencryption }
      * 
      */
-    public IcsCryptoSamlXmlencryptionKeyagreementAlgorithms createIcsCryptoSamlXmlencryptionKeyagreementAlgorithms() {
-        return new IcsCryptoSamlXmlencryptionKeyagreementAlgorithms();
-    }
-
-    /**
-     * Create an instance of {@link IcsCryptoSamlXmlencryptionKeytransportAlgorithm }
-     * 
-     */
-    public IcsCryptoSamlXmlencryptionKeytransportAlgorithm createIcsCryptoSamlXmlencryptionKeytransportAlgorithm() {
-        return new IcsCryptoSamlXmlencryptionKeytransportAlgorithm();
-    }
-
-    /**
-     * Create an instance of {@link IcsCryptoEcardapiPsktls }
-     * 
-     */
-    public IcsCryptoEcardapiPsktls createIcsCryptoEcardapiPsktls() {
-        return new IcsCryptoEcardapiPsktls();
-    }
-
-    /**
-     * Create an instance of {@link IcsCryptoSamlXmlencryption }
-     * 
-     */
-    public IcsCryptoSamlXmlencryption createIcsCryptoSamlXmlencryption() {
-        return new IcsCryptoSamlXmlencryption();
+    public IcsXmlencryption createIcsXmlencryption() {
+        return new IcsXmlencryption();
     }
 
     /**
@@ -177,43 +129,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IcsCryptoSamlXmlencryptionKeytransport }
+     * Create an instance of {@link IcsXmlencryptionKeytransport }
      * 
      */
-    public IcsCryptoSamlXmlencryptionKeytransport createIcsCryptoSamlXmlencryptionKeytransport() {
-        return new IcsCryptoSamlXmlencryptionKeytransport();
+    public IcsXmlencryptionKeytransport createIcsCryptoSamlXmlencryptionKeytransport() {
+        return new IcsXmlencryptionKeytransport();
     }
 
     /**
-     * Create an instance of {@link IcsCryptoEidinterfaceTlsClientcertificate }
+     * Create an instance of {@link IcsXmlencryptionKeyagreementAlgorithm }
      * 
      */
-    public IcsCryptoEidinterfaceTlsClientcertificate createIcsCryptoEidinterfaceTlsClientcertificate() {
-        return new IcsCryptoEidinterfaceTlsClientcertificate();
-    }
-
-    /**
-     * Create an instance of {@link IcsCryptoTlsEllipticcurves }
-     * 
-     */
-    public IcsCryptoTlsEllipticcurves createIcsCryptoTlsEllipticcurves() {
-        return new IcsCryptoTlsEllipticcurves();
-    }
-
-    /**
-     * Create an instance of {@link IcsCryptoTlsSignaturealgorithms }
-     * 
-     */
-    public IcsCryptoTlsSignaturealgorithms createIcsCryptoTlsSignaturealgorithms() {
-        return new IcsCryptoTlsSignaturealgorithms();
-    }
-
-    /**
-     * Create an instance of {@link IcsCryptoSamlXmlencryptionKeyagreementAlgorithm }
-     * 
-     */
-    public IcsCryptoSamlXmlencryptionKeyagreementAlgorithm createIcsCryptoSamlXmlencryptionKeyagreementAlgorithm() {
-        return new IcsCryptoSamlXmlencryptionKeyagreementAlgorithm();
+    public IcsXmlencryptionKeyagreementAlgorithm createIcsCryptoSamlXmlencryptionKeyagreementAlgorithm() {
+        return new IcsXmlencryptionKeyagreementAlgorithm();
     }
 
     /**
@@ -222,22 +150,6 @@ public class ObjectFactory {
      */
     public IcsCryptoCa createIcsCryptoCa() {
         return new IcsCryptoCa();
-    }
-
-    /**
-     * Create an instance of {@link IcsCryptoTls }
-     * 
-     */
-    public IcsCryptoTls createIcsCryptoTls() {
-        return new IcsCryptoTls();
-    }
-
-    /**
-     * Create an instance of {@link IcsCryptoTlsType }
-     * 
-     */
-    public IcsCryptoTlsType createIcsCryptoTlsType() {
-        return new IcsCryptoTlsType();
     }
 
     /**
@@ -257,11 +169,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IcsCryptoSamlXmlencryptionContentencryption }
+     * Create an instance of {@link IcsXmlencryptionContentencryption }
      * 
      */
-    public IcsCryptoSamlXmlencryptionContentencryption createIcsCryptoSamlXmlencryptionContentencryption() {
-        return new IcsCryptoSamlXmlencryptionContentencryption();
+    public IcsXmlencryptionContentencryption createIcsCryptoSamlXmlencryptionContentencryption() {
+        return new IcsXmlencryptionContentencryption();
     }
 
     /**

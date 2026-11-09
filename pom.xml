@@ -6,11 +6,12 @@
 
 	<groupId>com.secunet</groupId>
 	<artifactId>eidserver-testbed</artifactId>
-	<version>${project.version}</version>
+	<version>${revision}</version>
 	<packaging>pom</packaging>
 	<name>eID-Server Testbed (Metapackage)</name>
 
 	<modules>
+		<module>resetbuttonfortextfield</module>
 		<module>eidsrv-testbed-testing</module>
 		<module>eidsrv-testbed-common</module>
 		<module>eidsrv-testbed-database</module>
@@ -19,24 +20,20 @@
 		<module>eidsrv-testbed-runner</module>
 		<module>eidsrv-testbed-webui</module>
 		<module>eidsrv-testbed-core</module>
-		<module>eidsrv-testbed-tls</module>
 		<module>eidsrv-testbed-application</module>
-		
-
-		<!-- compile patched starterkit from source -->
-		<module>eidas-common</module>
-		<module>eidas-starterkit</module>
 	</modules>
 
 	<properties>
-		<project.version>1.0-beta-4</project.version>
+		<revision>1.0-beta-5</revision>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<opensaml-security-ext.version>1.0.7</opensaml-security-ext.version>
-		<opensaml.version>3.4.5</opensaml.version>
+		<opensaml-security-ext.version>4.1.1</opensaml-security-ext.version>
+		<opensaml.version>5.1.2</opensaml.version>
 		<junit.version>4.13.1</junit.version>
-		<xmlsec.version>2.0.8</xmlsec.version>
-		<slf4j.version>1.7.10</slf4j.version>
-		<log4j.version>1.2.17</log4j.version>
+		<xmlsec.version>3.0.4</xmlsec.version>
+		<slf4j.version>1.7.36</slf4j.version>
+		<log4j.version>2.24.0</log4j.version>
+		<bc.version>1.78.1</bc.version>
 
 		<copyright>Copyright (c) 2013-2021 Federal Office for Information Security</copyright>
 		<!-- sonarqube and jacoco -->
@@ -49,58 +46,192 @@
 		<jacoco.out.it.file>jacoco-it.exec</jacoco.out.it.file>
 		<sonar.jacoco.reportPath>${jacoco.outputDir}/${jacoco.out.ut.file}</sonar.jacoco.reportPath>
 		<sonar.jacoco.itReportPath>${jacoco.outputDir}/${jacoco.out.it.file}</sonar.jacoco.itReportPath>
-		<jacoco-maven-plugin.version>0.7.7.201606060606</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
 		<sonar-jacoco-listeners.version>4.2.1.6971</sonar-jacoco-listeners.version>
 		<sonar.language>java</sonar.language>
 		<sonar-maven-plugin.version>3.2</sonar-maven-plugin.version>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 
 		<!-- Test execution -->
-		<maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
-		<maven-failsafe-plugin.version>2.19.1</maven-failsafe-plugin.version>
+		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>jaspersoft-new</id>
+			<name>JasperSoft Repository</name>
+			<url>https://jaspersoft.jfrog.io/jaspersoft/jaspersoft-repo</url>
+		</repository>
+		<repository>
+			<id>shibboleth</id>
+			<name>Shibboleth Maven Repo</name>
+			<url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<!-- Basic -->
 		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>7.0</version>
+			<groupId>jakarta.platform</groupId>
+			<artifactId>jakarta.jakartaee-api</artifactId>
+			<version>8.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>2.3.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.3.3</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.57</version>
-			<scope>compile</scope>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>${bc.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcutil-jdk18on</artifactId>
+			<version>${bc.version}</version>
+		</dependency>
+
+
+		<!-- OpenSAML -->
+
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-core -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-core-api</artifactId>
+			<version>${opensaml.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-saml-api -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-saml-api</artifactId>
+			<version>${opensaml.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-saml-impl -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-saml-impl</artifactId>
+			<version>${opensaml.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-security-api -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-security-api</artifactId>
+			<version>${opensaml.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-security-impl -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-security-impl</artifactId>
+			<version>${opensaml.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-soap-api -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-soap-api</artifactId>
+			<version>${opensaml.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-soap-impl -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-soap-impl</artifactId>
+			<version>${opensaml.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-xmlsec-api -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-xmlsec-api</artifactId>
+			<version>${opensaml.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.opensaml/opensaml-xmlsec-impl -->
+		<dependency>
+			<groupId>org.opensaml</groupId>
+			<artifactId>opensaml-xmlsec-impl</artifactId>
+			<version>${opensaml.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>se.swedenconnect.opensaml</groupId>
+			<artifactId>opensaml-eidas</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.santuario/xmlsec -->
+		<dependency>
+			<groupId>org.apache.santuario</groupId>
+			<artifactId>xmlsec</artifactId>
+			<version>${xmlsec.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>se.swedenconnect.opensaml</groupId>
+			<artifactId>opensaml-security-ext</artifactId>
+			<version>${opensaml-security-ext.version}</version>
 		</dependency>
 
 		<!-- Logging -->
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
 			<version>${log4j.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
+			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-ext</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
 
 		<!-- Unit-Testing -->
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
+			<artifactId>mockito-core</artifactId>
+			<version>5.12.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-testng</artifactId>
+			<version>0.5.2</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>6.9.10</version>
+			<version>7.9.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -110,17 +241,18 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.13.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>17</source>
+					<target>17</target>
 					<encoding>UTF-8</encoding>
+					<forceLegacyJavacApi>true</forceLegacyJavacApi>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ejb-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>3.2.1</version>
 				<configuration>
 					<ejbVersion>3.1</ejbVersion>
 				</configuration>
@@ -150,15 +282,18 @@
 					<encoding>${file.encoding}</encoding>
 					<runOrder>random</runOrder>
 					<!-- Sets the VM argument line used when unit tests are run. -->
-					<argLine>${surefireArgLine}</argLine>
-					<!-- Skips unit tests if the value of skip.unit.tests property is true -->
-					<skipTests>${skip.unit.tests}</skipTests>
+					<!--suppress UnresolvedMavenProperty -->
+					<argLine>${surefireArgLine} --illegal-access=permit</argLine>
 					<!-- Excludes integration tests when unit tests are run. -->
 					<excludes>
 						<!-- Only valid naming convention for IT tests! -->
 						<exclude>**/*IT.java</exclude>
 						<!-- <exclude>**/IT*.java</exclude> <exclude>**/*ITCase.java</exclude> -->
 					</excludes>
+					<argLine>
+						--add-exports org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED
+						--add-exports org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED
+					</argLine>
 				</configuration>
 			</plugin>
 
@@ -183,17 +318,21 @@
 						</goals>
 						<configuration>
 							<!-- Sets the VM argument line used when integration tests are run. -->
-							<argLine>${failsafeArgLine}</argLine>
-							<!-- Skips integration tests if the value of skip.integration.tests
-								property is true -->
-							<skipTests>${skip.integration.tests}</skipTests>
+							<!--suppress UnresolvedMavenProperty -->
+							<argLine>
+								${failsafeArgLine} --illegal-access=permit
+								--add-exports org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED
+								--add-exports org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED
+							</argLine>
 							<includes>
+								<!--suppress UnresolvedMavenProperty -->
 								<include>${included.tests}</include>
 							</includes>
 							<excludes>
 								<exclude>**/Test*.java</exclude>
 								<exclude>**/*Test.java</exclude>
 								<exclude>**/*TestCase.java</exclude>
+								<!--suppress UnresolvedMavenProperty -->
 								<exclude>${excluded.tests}</exclude>
 							</excludes>
 						</configuration>
@@ -207,9 +346,6 @@
 						<configuration>
 							<!-- Sets the VM argument line used when integration tests are run. -->
 							<argLine>${failsafeArgLine}</argLine>
-							<!-- Skips integration tests if the value of skip.integration.tests
-								property is true -->
-							<skipTests>${skip.integration.tests}</skipTests>
 							<includes>
 								<include>${included.tests}</include>
 							</includes>
@@ -226,7 +362,7 @@
 
 			<!-- sonarqube integration -->
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
+				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>${sonar-maven-plugin.version}</version>
 				<configuration>
@@ -308,6 +444,29 @@
 							<!-- Sets the output directory for the code coverage report. -->
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Software Bill of Materials of the whole project, from the root only:
+				writes target/sbom.json. Skipped by the plugin in offline mode (mvn -o). -->
+			<plugin>
+				<groupId>org.cyclonedx</groupId>
+				<artifactId>cyclonedx-maven-plugin</artifactId>
+				<version>2.9.3</version>
+				<inherited>false</inherited>
+				<configuration>
+					<outputName>sbom</outputName>
+					<outputFormat>json</outputFormat>
+					<includeProvidedScope>false</includeProvidedScope>
+					<skipAttach>true</skipAttach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>makeAggregateBom</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

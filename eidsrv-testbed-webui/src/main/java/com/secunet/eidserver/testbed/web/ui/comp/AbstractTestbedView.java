@@ -2,7 +2,7 @@ package com.secunet.eidserver.testbed.web.ui.comp;
 
 import com.secunet.eidserver.testbed.web.core.App;
 import com.vaadin.server.Page;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.VerticalLayout;
 
 abstract public class AbstractTestbedView extends VerticalLayout
 {

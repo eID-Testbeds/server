@@ -30,7 +30,7 @@ public interface CandidateController
 	 * 
 	 * @param candidate
 	 */
-	public void deleteCandidate(TestCandidate canidate);
+	public void deleteCandidate(TestCandidate candidate);
 
 	/**
 	 * Delete a test candidate given it's ID
@@ -53,7 +53,7 @@ public interface CandidateController
 	/**
 	 * Update the given profile in the database and simultaneously add the certificates
 	 * 
-	 * @param profile
+	 * @param candidate
 	 *            The {@link TestCandidate} which contains all the data about a given candidate. This may have been updates by the user and therefore needs to be persisted.
 	 * @throws CandidateException
 	 */
