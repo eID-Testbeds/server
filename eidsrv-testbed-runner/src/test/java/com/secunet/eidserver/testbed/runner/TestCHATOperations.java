@@ -53,6 +53,16 @@ public class TestCHATOperations extends RunnerTestBase
 	}
 
 	@Test
+	public void testNothingAllowedChat() throws Exception
+	{
+		KnownValues knownValues = new KnownValues();
+		knownValues.add(new KnownValue(GeneralConstants.ALLOWED_BY_USER_PREFIX + RequestAttribute.FamilyNames.toString().toUpperCase(), GeneralConstants.PERMISSION_PROHIBITED));
+		knownValues.add(new KnownValue(GeneralConstants.ALLOWED_BY_USER_PREFIX + RequestAttribute.GivenNames.toString().toUpperCase(), GeneralConstants.PERMISSION_PROHIBITED));
+		String chat = CHATOperations.computeCHAT(knownValues);
+		Assert.assertEquals(chat, "0000000000");
+	}
+
+	@Test
 	public void testEverything() throws Exception
 	{
 		KnownValues knownValues = new KnownValues();

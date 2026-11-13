@@ -42,30 +42,18 @@ public class CHATOperations
 				}
 			}
 		}
-		byte[] chat = computeCHAT(attributeSet, functionSet);
-		if (null == chat)
-		{
-			return "000000000000000000000000";
-		}
-		else
-		{
-			return DatatypeConverter.printHexBinary(chat);
-		}
+		return DatatypeConverter.printHexBinary(computeCHAT(attributeSet, functionSet));
 	}
 
 	/**
-	 * Computes the CHAT given the input data
+	 * Computes the 5 byte CHAT bit mask given the input data. If nothing is allowed, all bits are zero.
 	 * 
 	 * @param attributes
-	 * @param ageVerification
-	 * @param placeVerification
-	 * @param restrictedId
+	 * @param functions
 	 * @return
 	 */
 	public static byte[] computeCHAT(Set<RequestAttribute> attributes, Set<SpecialFunction> functions)
 	{
-		if (attributes.size() == 0 && functions.size() == 0)
-			return null;
 		BitSet chat = new BitSet(40);
 		// add attribute flags
 		attributes.forEach(a -> chat.set(a.getChatId(), true));
